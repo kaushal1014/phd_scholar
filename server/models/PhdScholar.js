@@ -1,48 +1,49 @@
 const mongoose = require('mongoose');
 
 const phdScholarSchema = new mongoose.Schema({
-  firstName: String,
-  middleName: String,
-  lastName: String,
-  dateOfBirth: Date,
-  nationality: String,
-  mobileNumber: String,
-  // Admission and Academic Details
-  admissionDetails: String,
-  entranceExamination: String,
-  qualifyingExamination: String,
-  allotmentNumber: String,
-  admissionDate: {
-    date: Number,
-    month: String,
-    year: Number
+  personalDetails: {
+    firstName: String,
+    middleName: String,
+    lastName: String,
+    dateOfBirth: Date,
+    nationality: String,
+    mobileNumber: String,
   },
-  department: String,
-  usn: String,
-  srn: String,
-  modeOfProgram: String,  // Full Time/Part Time - Internal/External
-  // Research Supervisors and Doctoral Committee
-  researchSupervisor: String,
-  researchCoSupervisor: String,
-  doctoralCommittee: {
-    member1: String,
-    member2: String,
-    member3: String,
-    member4: String
+  admissionDetails: {
+    entranceExamination: String,
+    qualifyingExamination: String,
+    allotmentNumber: String,
+    admissionDate: {
+      day: Number,
+      month: String,
+      year: Number
+    },
+    department: String,
+    usn: String,
+    srn: String,
+    modeOfProgram: String,  // Full Time/Part Time - Internal/External
   },
-  // Course Work
+  researchDetails: {
+    researchSupervisor: String,
+    researchCoSupervisor: String,
+    doctoralCommittee: {
+      member1: String,
+      member2: String,
+      member3: String,
+      member4: String
+    },
+  },
   courseWork: [{
     course: String,
     subjectCode: String,
     subjectName: String,
     subjectGrade: String,
     status: String,
-    eligibilityDate: String
+    eligibilityDate: Date
   }],
-  // PhD Milestones
   phdMilestones: {
     courseworkCompletionDate: Date,
-    dcMeetings: [Date],
+    dcMeetings: [Date],  // Dates for Doctoral Committee Meetings
     comprehensiveExamDate: Date,
     proposalDefenseDate: Date,
     openSeminarDate1: Date,
@@ -52,7 +53,6 @@ const phdScholarSchema = new mongoose.Schema({
     thesisDefenseDate: Date,
     awardDate: Date
   },
-  // Publications
   publications: {
     journals: [{
       title: String,
