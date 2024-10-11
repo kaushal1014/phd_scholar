@@ -13,11 +13,7 @@ const phdScholarSchema = new mongoose.Schema({
     entranceExamination: String,
     qualifyingExamination: String,
     allotmentNumber: String,
-    admissionDate: {
-      day: Number,
-      month: String,
-      year: Number
-    },
+    admissionDate: Date,
     department: String,
     usn: String,
     srn: String,
