@@ -161,18 +161,18 @@ const phdScholarSchema = new Schema<PhdScholar>({
       DCM: [
         {
           scheduledDate: { type: Date, required: true },
-          actualDate: { type: Date, required: true },
+          actualDate: { type: Date, required: false },
         },
       ],
     },
-    comprehensiveExamDate: { type: Date, required: true },
-    proposalDefenseDate: { type: Date, required: true },
-    openSeminarDate1: { type: Date, required: true },
-    preSubmissionSeminarDate: { type: Date, required: true },
-    synopsisSubmissionDate: { type: Date, required: true },
-    thesisSubmissionDate: { type: Date, required: true },
-    thesisDefenseDate: { type: Date, required: true },
-    awardOfDegreeDate: { type: Date, required: true },
+    comprehensiveExamDate: { type: Date, required: false },
+    proposalDefenseDate: { type: Date, required: false },
+    openSeminarDate1: { type: Date, required: false },
+    preSubmissionSeminarDate: { type: Date, required: false },
+    synopsisSubmissionDate: { type: Date, required: false },
+    thesisSubmissionDate: { type: Date, required: false },
+    thesisDefenseDate: { type: Date, required: false },
+    awardOfDegreeDate: { type: Date, required: false },
   },
   publications: {
     journals: [
