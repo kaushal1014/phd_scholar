@@ -4,12 +4,12 @@ import { NextResponse } from 'next/server';
 
 export async function POST(req: Request) {
   try {
+    const data = await req.json();
+    console.log(data.courseworkCompletionDate4);
+    
     // Connect to the database
     await connectDB();
     console.log('Database connected');
-
-    // Parse the request body
-    const data = await req.json();
 
     // Create a new instance of PhD Scholar
     const newScholar = new PhDScholar({
@@ -25,67 +25,71 @@ export async function POST(req: Request) {
         entranceExamination: data.entranceExamination as string,
         qualifyingExamination: data.qualifyingExamination as string,
         allotmentNumber: data.allotmentNumber as string,
-        admissionDate: new Date(`${data.admissionDateYear}-${data.admissionDateMonth}-${data.admissionDateDay}`),
+        admissionDate: new Date(data.admissionDate), // Ensure this is correctly formatted
         department: data.department as string,
         usn: data.usn as string,
         srn: data.srn as string,
         modeOfProgram: data.modeOfProgram as string, // Full-Time/Part-Time - Internal/External
       },
-      researchDetails: {
-        researchSupervisor: data.researchSupervisor as string,
-        researchCoSupervisor: data.researchCoSupervisor as string,
-        doctoralCommittee: {
-          member1: data.doctoralCommitteeMember1 as string,
-          member2: data.doctoralCommitteeMember2 as string,
-          member3: data.doctoralCommitteeMember3 as string,
-          member4: data.doctoralCommitteeMember4 as string,
-        },
+      researchSupervisor: data.researchSupervisor as string,
+      researchCoSupervisor: data.researchCoSupervisor as string,
+      doctoralCommittee: {
+        member1: data.doctoralCommitteeMember1 as string,
+        member2: data.doctoralCommitteeMember2 as string,
+        member3: data.doctoralCommitteeMember3 as string,
+        member4: data.doctoralCommitteeMember4 as string,
       },
-      coursework: [
-        {
-          subjectCode: data.courseWork1SubjectCode as string,
-          subjectName: data.courseWork1SubjectName as string,
-          subjectGrade: data.courseWork1SubjectGrade as string,
-          status: data.courseWork1Status as string,
-          eligibilityDate: new Date(data.courseWork1EligibilityDate),
-        },
-        {
-          subjectCode: data.courseWork2SubjectCode as string,
-          subjectName: data.courseWork2SubjectName as string,
-          subjectGrade: data.courseWork2SubjectGrade as string,
-          status: data.courseWork2Status as string,
-          eligibilityDate: new Date(data.courseWork2EligibilityDate),
-        },
-        {
-          subjectCode: data.courseWork3SubjectCode as string,
-          subjectName: data.courseWork3SubjectName as string,
-          subjectGrade: data.courseWork3SubjectGrade as string,
-          status: data.courseWork3Status as string,
-          eligibilityDate: new Date(data.courseWork3EligibilityDate),
-        },
-        {
-          subjectCode: data.courseWork4SubjectCode as string,
-          subjectName: data.courseWork4SubjectName as string,
-          subjectGrade: data.courseWork4SubjectGrade as string,
-          status: data.courseWork4Status as string,
-          eligibilityDate: new Date(data.courseWork4EligibilityDate),
-        },
-      ],
+      courseWork1: {
+        subjectCode: data.courseWork1SubjectCode as string,
+        subjectName: data.courseWork1SubjectName as string,
+        subjectGrade: data.courseWork1SubjectGrade as string,
+        status: data.courseWork1Status as string,
+        eligibilityDate: new Date(data.courseWork1EligibilityDate),
+      },
+      courseWork2: {
+        subjectCode: data.courseWork2SubjectCode as string,
+        subjectName: data.courseWork2SubjectName as string,
+        subjectGrade: data.courseWork2SubjectGrade as string,
+        status: data.courseWork2Status as string,
+        eligibilityDate: new Date(data.courseWork2EligibilityDate),
+      },
+      courseWork3: {
+        subjectCode: data.courseWork3SubjectCode as string,
+        subjectName: data.courseWork3SubjectName as string,
+        subjectGrade: data.courseWork3SubjectGrade as string,
+        status: data.courseWork3Status as string,
+        eligibilityDate: new Date(data.courseWork3EligibilityDate),
+      },
+      courseWork4: {
+        subjectCode: data.courseWork4SubjectCode as string,
+        subjectName: data.courseWork4SubjectName as string,
+        subjectGrade: data.courseWork4SubjectGrade as string,
+        status: data.courseWork4Status as string,
+        eligibilityDate: new Date(data.courseWork4EligibilityDate),
+      },
       phdMilestones: {
-        courseworkCompletionDates: [
-          new Date(data.courseworkCompletionDate1),
-          new Date(data.courseworkCompletionDate2),
-          new Date(data.courseworkCompletionDate3),
-          new Date(data.courseworkCompletionDate4),
-        ],
-        comprehensiveExamDate: new Date(data.comprehensiveExamDate),
-        proposalDefenseDate: new Date(data.proposalDefenseDate),
-        openSeminarDate1: new Date(data.openSeminarDate1),
-        preSubmissionSeminarDate: new Date(data.preSubmissionSeminarDate),
-        synopsisSubmissionDate: new Date(data.synopsisSubmissionDate),
-        thesisSubmissionDate: new Date(data.thesisSubmissionDate),
-        thesisDefenseDate: new Date(data.thesisDefenseDate),
-        awardOfDegreeDate: new Date(data.awardOfDegreeDate),
+        courseworkCompletionDate: {
+          coursework1: new Date(data.courseworkCompletionDate1),
+          coursework2: new Date(data.courseworkCompletionDate2),
+          coursework3: new Date(data.courseworkCompletionDate3),
+          coursework4: new Date(data.courseworkCompletionDate4),
+        },
+        dcMeetings: {
+          DCM: Array.isArray(data.dcMeetings)
+            ? data.dcMeetings.map((meeting: any) => ({
+                scheduledDate: new Date(meeting.scheduledDate),
+                actualDate: meeting.actualDate ? new Date(meeting.actualDate) : undefined, // Handle optional actualDate
+              }))
+            : [],
+        },
+        comprehensiveExamDate: data.comprehensiveExamDate ? new Date(data.comprehensiveExamDate) : undefined,
+        proposalDefenseDate: data.proposalDefenseDate ? new Date(data.proposalDefenseDate) : undefined,
+        openSeminarDate1: data.openSeminarDate1 ? new Date(data.openSeminarDate1) : undefined,
+        preSubmissionSeminarDate: data.preSubmissionSeminarDate ? new Date(data.preSubmissionSeminarDate) : undefined,
+        synopsisSubmissionDate: data.synopsisSubmissionDate ? new Date(data.synopsisSubmissionDate) : undefined,
+        thesisSubmissionDate: data.thesisSubmissionDate ? new Date(data.thesisSubmissionDate) : undefined,
+        thesisDefenseDate: data.thesisDefenseDate ? new Date(data.thesisDefenseDate) : undefined,
+        awardOfDegreeDate: data.awardOfDegreeDate ? new Date(data.awardOfDegreeDate) : undefined,
       },
       publications: {
         journals: Array.isArray(data.journals)
