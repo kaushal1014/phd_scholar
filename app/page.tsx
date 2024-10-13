@@ -85,61 +85,61 @@ const MAXCONFERENCES = 5;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
-    middleName: '',
-    lastName: '',
-    dateOfBirth: '',
-    nationality: '',
-    mobileNumber: '',
-    entranceExamination: '',
-    qualifyingExamination: '',
-    allotmentNumber: '',
-    admissionDate: '',
-    department: '',
-    usn: '',
-    srn: '',
-    modeOfProgram: '',
-    researchSupervisor: '',
-    researchCoSupervisor: '',
-    doctoralCommitteeMember1: '',
-    doctoralCommitteeMember2: '',
-    doctoralCommitteeMember3: '',
-    doctoralCommitteeMember4: '',
-    courseWork1SubjectCode: '',
-    courseWork1SubjectName: '',
-    courseWork1SubjectGrade: '',
-    courseWork1Status: '',
-    courseWork1EligibilityDate: '',
-    courseWork2SubjectCode: '',
-    courseWork2SubjectName: '',
-    courseWork2SubjectGrade: '',
-    courseWork2Status: '',
-    courseWork2EligibilityDate: '',
-    courseWork3SubjectCode: '',
-    courseWork3SubjectName: '',
-    courseWork3SubjectGrade: '',
-    courseWork3Status: '',
-    courseWork3EligibilityDate: '',
-    courseWork4SubjectCode: '',
-    courseWork4SubjectName: '',
-    courseWork4SubjectGrade: '',
-    courseWork4Status: '',
-    courseWork4EligibilityDate: '',
-    courseworkCompletionDate1: '',
-    courseworkCompletionDate2: '',
-    courseworkCompletionDate3: '',
-    courseworkCompletionDate4: '',
-    dcMeetings: [{ scheduledDate: '', actualDate: '' }],
-    comprehensiveExamDate: '',
-    proposalDefenseDate: '',
-    openSeminarDate1: '',
-    preSubmissionSeminarDate: '',
-    synopsisSubmissionDate: '',
-    thesisSubmissionDate: '',
-    thesisDefenseDate: '',
-    awardOfDegreeDate: '',
-    journals: [{ title: '', journalName: '', publicationYear: '', volumeNumber: '', issueNumber: '', pageNumbers: '', impactFactor: '' }],
-    conferences: [{ title: '', conferenceName: '', publicationYear: '' }]
+    firstName: 'xZXzX',
+    middleName: 'zXczxc',
+    lastName: 'bdfbdf',
+    dateOfBirth: '2024-03-04',
+    nationality: 'dasdas',
+    mobileNumber: '9886031975',
+    entranceExamination: 'dasdas',
+    qualifyingExamination: 'ddasdsa',
+    allotmentNumber: 'dasdas',
+    admissionDate: '2024-03-04',
+    department: '4234',
+    usn: '43324',
+    srn: '4324',
+    modeOfProgram: '423',
+    researchSupervisor: '4324',
+    researchCoSupervisor: '4324',
+    doctoralCommitteeMember1: '423432',
+    doctoralCommitteeMember2: '432423',
+    doctoralCommitteeMember3: '42342',
+    doctoralCommitteeMember4: '423423',
+    courseWork1SubjectCode: '423432',
+    courseWork1SubjectName: '423432',
+    courseWork1SubjectGrade: '234',
+    courseWork1Status: '4234',
+    courseWork1EligibilityDate: '2024-03-04',
+    courseWork2SubjectCode: '6456',
+    courseWork2SubjectName: '64564',
+    courseWork2SubjectGrade: '4566',
+    courseWork2Status: '645654',
+    courseWork2EligibilityDate: '2024-03-04',
+    courseWork3SubjectCode: '423426',
+    courseWork3SubjectName: '423',
+    courseWork3SubjectGrade: '42342',
+    courseWork3Status: '42342',
+    courseWork3EligibilityDate: '2024-03-04',
+    courseWork4SubjectCode: '234234',
+    courseWork4SubjectName: '4234',
+    courseWork4SubjectGrade: '4234',
+    courseWork4Status: '432432',
+    courseWork4EligibilityDate: '2024-03-04',
+    courseworkCompletionDate1: '2024-10-18',
+    courseworkCompletionDate2: '2024-10-18',
+    courseworkCompletionDate3: '2024-10-18',
+    courseworkCompletionDate4: '2024-10-18',
+    dcMeetings: [{ scheduledDate: '2024-03-04', actualDate: '2024-03-04' }],
+    comprehensiveExamDate: '2024-03-04',
+    proposalDefenseDate: '2024-03-04',
+    openSeminarDate1: '2024-03-04',
+    preSubmissionSeminarDate: '2024-03-04',
+    synopsisSubmissionDate: '2024-03-04',
+    thesisSubmissionDate: '2024-03-04',
+    thesisDefenseDate: '2024-03-04',
+    awardOfDegreeDate: '2024-03-04',
+    journals: [{ title: '4234432', journalName: '4234', publicationYear: '4234', volumeNumber: '423', issueNumber: '4234', pageNumbers: '4234', impactFactor: '23423' }],
+    conferences: [{ title: '4234', conferenceName: '324234', publicationYear: '234234' }]
   });
 
   const notifyErr = (msg: string) => toast.error(msg);
@@ -218,7 +218,6 @@ const PhDScholarForm: React.FC = () => {
       notifyErr('Something went wrong');
     }
   };
-
   return (
     <div className="flex justify-center items-center min-h-screen">
       <ToastContainer />
@@ -688,7 +687,49 @@ const PhDScholarForm: React.FC = () => {
                 </div>
               </div>
             </div>
+            <div>
+              <Label htmlFor="courseworkCompletionDate1">Coursework Completion Date 1</Label>
+              <Input
+                type="date"
+                id="courseworkCompletionDate1"
+                value={formData.courseworkCompletionDate1}
+                onChange={(e) => setFormData({ ...formData, courseworkCompletionDate1: e.target.value })}
+                required // Optional: Add required attribute if needed
+              />
+            </div>
+            
+            <div>
+              <Label htmlFor="courseworkCompletionDate2">Coursework Completion Date 2</Label>
+              <Input
+                type="date"
+                id="courseworkCompletionDate2"
+                value={formData.courseworkCompletionDate2}
+                onChange={(e) => setFormData({ ...formData, courseworkCompletionDate2: e.target.value })}
+                required // Optional: Add required attribute if needed
+              />
+            </div>
 
+            <div>
+              <Label htmlFor="courseworkCompletionDate3">Coursework Completion Date 3</Label>
+              <Input
+                type="date"
+                id="courseworkCompletionDate3"
+                value={formData.courseworkCompletionDate3}
+                onChange={(e) => setFormData({ ...formData, courseworkCompletionDate3: e.target.value })}
+                required // Optional: Add required attribute if needed
+              />
+            </div>
+
+            <div>
+              <Label htmlFor="courseworkCompletionDate4">Coursework Completion Date 4</Label>
+              <Input
+                type="date"
+                id="courseworkCompletionDate4"
+                value={formData.courseworkCompletionDate4}
+                onChange={(e) => setFormData({ ...formData, courseworkCompletionDate4: e.target.value })}
+                required // Optional: Add required attribute if needed
+              />
+            </div>
             <CardHeader>
             <CardTitle>DC Meetings</CardTitle>
             </CardHeader>
