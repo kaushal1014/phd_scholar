@@ -13,23 +13,30 @@ export default function LoginPage() {
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gray-100">
-      <Card className="w-full max-w-md">
-        <CardHeader className="space-y-1">
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-4">
+      <Card className="w-full max-w-md bg-white shadow-lg border-2 border-gray-200 rounded-xl overflow-hidden">
+        <CardHeader className="space-y-1 bg-gradient-to-b from-white to-gray-50 border-b-2 border-gray-200 p-6">
+          <CardTitle className="text-2xl font-bold text-center text-gray-800">Login</CardTitle>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6 p-6">
           <div className="space-y-2">
-            <Label htmlFor="email">Email</Label>
-            <Input id="email" type="email" placeholder="m@example.com" required />
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+            <Input 
+              id="email" 
+              type="email" 
+              placeholder="m@example.com" 
+              required 
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
           </div>
           <div className="space-y-2">
-            <Label htmlFor="password">Password</Label>
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
             <div className="relative">
               <Input 
                 id="password" 
                 type={showPassword ? "text" : "password"} 
                 required 
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
               <button
                 type="button"
@@ -44,15 +51,17 @@ export default function LoginPage() {
               </button>
             </div>
           </div>
-          <Button className="w-full">Sign In</Button>
+          <Button className="w-full hover:bg-blue-700 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg">
+            Sign In
+          </Button>
         </CardContent>
-        <CardFooter className="flex flex-col space-y-2 text-center text-sm text-gray-600">
-          <Link href="/forgot-password" className="hover:underline">
+        <CardFooter className="flex flex-col space-y-2 text-center text-sm bg-gradient-to-t from-white to-gray-50 border-t-2 border-gray-200 p-6">
+          <Link href="/forgot-password" className="text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
             Forgot your password?
           </Link>
-          <div>
+          <div className="text-gray-600">
             Don't have an account?{" "}
-            <Link href="/signup" className="font-semibold text-blue-600 hover:underline">
+            <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
               Sign up
             </Link>
           </div>

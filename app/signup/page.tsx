@@ -303,15 +303,15 @@ const PhDScholarForm: React.FC = () => {
     }
   };
   return (
-    <div className="flex justify-center items-center min-h-screen">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
       <ToastContainer />
       <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-      <h1 className="text-3xl font-bold text-center text-gray-800 mb-6 my-12">PhDScholar Registration</h1>
-      <Card className="bg-white shadow-lg border border-gray-200 rounded-xl overflow-hidden">
-        <CardHeader className="border-b bg-gray-50 p-6">
-          <CardTitle className="text-2xl font-bold text-gray-800">Personal Details</CardTitle>
-        </CardHeader>
-    <CardContent className="p-6 space-y-6">
+        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">PhD Scholar Registration</h1>
+        <Card className="bg-white shadow-lg border-2 border-gray-300 rounded-xl overflow-hidden">
+          <CardHeader className="border-b-2 border-gray-200 bg-gray-50 p-6">
+            <CardTitle className="text-2xl font-bold text-gray-800">Personal Details</CardTitle>
+          </CardHeader>
+          <CardContent className="p-6 space-y-6">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-2">
           <Label htmlFor="firstName">First Name</Label>
