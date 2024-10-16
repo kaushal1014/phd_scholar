@@ -82,6 +82,8 @@ type FormData = {
 const MAXJOURNALS = 5;
 const MAXDCMMEETINGS = 8;
 const MAXCONFERENCES = 5;
+const MIN_JOURNALS=1;
+const MIN_CONFERENCES=1;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -229,6 +231,18 @@ const PhDScholarForm: React.FC = () => {
     }
   };
 
+  const deleteJournal = (index: number) => {
+    if (formData.journals.length > MIN_JOURNALS) {
+      setFormData({
+        ...formData,
+        journals: formData.journals.filter((_, i) => i !== index),
+      });
+      notifyInfo("Journal deleted.");
+    } else {
+      notifyErr("You must have at least one journal.");
+    }
+  };
+
   const addNewConference = () => {
     if (formData.conferences.length < MAXCONFERENCES) {
       setFormData({
@@ -240,6 +254,17 @@ const PhDScholarForm: React.FC = () => {
       notifyErr('Maximum conferences reached!');
     }
   };
+
+  const deleteConference= (index:number)=>{
+    if (formData.conferences.length> MIN_CONFERENCES){
+      setFormData({...formData,
+        conferences : formData.conferences.filter((_,i)=>i !==index),}
+      );
+      notifyErr("Conference Deleted")
+    }else {
+      notifyErr("You must have at least one conference.");
+    }
+  }
 
   const addDcmMeetings = () => {
     if (formData.dcMeetings.length < MAXDCMMEETINGS) {
@@ -923,94 +948,98 @@ const PhDScholarForm: React.FC = () => {
             <CardHeader className="border-b">
     <CardTitle className="text-2xl font-bold">Publications</CardTitle>
   </CardHeader>
-    <div className="space-y-6">
-      <h3 className="text-xl font-semibold">Journals</h3>
-      {formData.journals.map((journal, index) => (
-        <div key={index} className="space-y-4 p-4 border rounded-lg shadow-sm bg-muted">
-          <h4 className="font-semibold text-lg">Journal {index + 1}</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-title`}>Title</Label>
-              <Input
-                id={`journal-${index}-title`}
-                placeholder="Title"
-                name={`journals[${index}].title`}
-                value={journal.title}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-name`}>Journal Name</Label>
-              <Input
-                id={`journal-${index}-name`}
-                placeholder="Journal Name"
-                name={`journals[${index}].journalName`}
-                value={journal.journalName}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-year`}>Publication Year</Label>
-              <Input
-                id={`journal-${index}-year`}
-                placeholder="Publication Year"
-                name={`journals[${index}].publicationYear`}
-                value={journal.publicationYear}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-volume`}>Volume Number</Label>
-              <Input
-                id={`journal-${index}-volume`}
-                placeholder="Volume Number"
-                name={`journals[${index}].volumeNumber`}
-                value={journal.volumeNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-issue`}>Issue Number</Label>
-              <Input
-                id={`journal-${index}-issue`}
-                placeholder="Issue Number"
-                name={`journals[${index}].issueNumber`}
-                value={journal.issueNumber}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-pages`}>Page Numbers</Label>
-              <Input
-                id={`journal-${index}-pages`}
-                placeholder="Page Numbers"
-                name={`journals[${index}].pageNumbers`}
-                value={journal.pageNumbers}
-                onChange={handleChange}
-                required
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor={`journal-${index}-impact`}>Impact Factor</Label>
-              <Input
-                id={`journal-${index}-impact`}
-                placeholder="Impact Factor"
-                name={`journals[${index}].impactFactor`}
-                value={journal.impactFactor}
-                onChange={handleChange}
-                required
-              />
-            </div>
-          </div>
+  <div className="space-y-6">
+  <h3 className="text-xl font-semibold">Journals</h3>
+  {formData.journals.map((journal, index) => (
+    <div key={index} className="space-y-4 p-4 border rounded-lg shadow-sm bg-muted">
+      <h4 className="font-semibold text-lg">Journal {index + 1}</h4>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-title`}>Title</Label>
+          <Input
+            id={`journal-${index}-title`}
+            placeholder="Title"
+            name={`journals[${index}].title`}
+            value={journal.title}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-name`}>Journal Name</Label>
+          <Input
+            id={`journal-${index}-name`}
+            placeholder="Journal Name"
+            name={`journals[${index}].journalName`}
+            value={journal.journalName}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-year`}>Publication Year</Label>
+          <Input
+            id={`journal-${index}-year`}
+            placeholder="Publication Year"
+            name={`journals[${index}].publicationYear`}
+            value={journal.publicationYear}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-volume`}>Volume Number</Label>
+          <Input
+            id={`journal-${index}-volume`}
+            placeholder="Volume Number"
+            name={`journals[${index}].volumeNumber`}
+            value={journal.volumeNumber}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-issue`}>Issue Number</Label>
+          <Input
+            id={`journal-${index}-issue`}
+            placeholder="Issue Number"
+            name={`journals[${index}].issueNumber`}
+            value={journal.issueNumber}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-pages`}>Page Numbers</Label>
+          <Input
+            id={`journal-${index}-pages`}
+            placeholder="Page Numbers"
+            name={`journals[${index}].pageNumbers`}
+            value={journal.pageNumbers}
+            onChange={handleChange}
+            required
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor={`journal-${index}-impact`}>Impact Factor</Label>
+          <Input
+            id={`journal-${index}-impact`}
+            placeholder="Impact Factor"
+            name={`journals[${index}].impactFactor`}
+            value={journal.impactFactor}
+            onChange={handleChange}
+            required
+          />
+        </div>
+      </div>
+            <Button type="button" onClick={() => deleteJournal(index)} className="mt-2 bg-red-500 text-white">
+            Delete Journal
+          </Button>
         </div>
       ))}
       <Button type="button" onClick={addNewJournal} className="mt-4">Add Journal</Button>
     </div>
+
 
     <div className="space-y-6">
       <h3 className="text-xl font-semibold">Conferences</h3>
@@ -1052,6 +1081,9 @@ const PhDScholarForm: React.FC = () => {
               />
             </div>
           </div>
+          <Button type="button" onClick={() => deleteConference(index)} className="mt-2 bg-red-500 text-white">
+            Delete Conference
+          </Button>
         </div>
       ))}
       <Button type="button" onClick={addNewConference} className="mt-4">Add Conference</Button>
