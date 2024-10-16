@@ -1,4 +1,4 @@
-import mongoose, { Document, Schema } from 'mongoose';
+import mongoose, { Schema, Document, Model } from 'mongoose';
 
 interface PhdScholar extends Document {
   personalDetails: {
@@ -196,4 +196,7 @@ const phdScholarSchema = new Schema<PhdScholar>({
   },
 });
 
-export default mongoose.model<PhdScholar>('PhD_Scholar', phdScholarSchema);
+
+const PhDScholar: Model<PhdScholar> = mongoose.models.PhD_Scholar || mongoose.model<PhdScholar>('PhD_Scholar', phdScholarSchema);
+
+export default PhDScholar;
