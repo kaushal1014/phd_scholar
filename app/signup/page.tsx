@@ -87,7 +87,8 @@ const MIN_CONFERENCES=1;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-    firstName: '',
+
+  firstName: '',
   middleName: '',
   lastName: '',
   dateOfBirth: '',
@@ -144,7 +145,7 @@ const PhDScholarForm: React.FC = () => {
   conferences: [{ title: '', conferenceName: '', publicationYear: '' }]
 
   //Testing purposes
-    /*
+  /*
     firstName: 'xZXzX',
     middleName: 'zXczxc',
     lastName: 'bdfbdf',
@@ -200,7 +201,7 @@ const PhDScholarForm: React.FC = () => {
     awardOfDegreeDate: '2024-03-04',
     journals: [{ title: '4234432', journalName: '4234', publicationYear: '4234', volumeNumber: '423', issueNumber: '4234', pageNumbers: '4234', impactFactor: '23423' }],
     conferences: [{ title: '4234', conferenceName: '324234', publicationYear: '234234' }]
-    */
+  */
   });
 
   const notifyErr = (msg: string) => toast.error(msg);
@@ -294,7 +295,7 @@ const PhDScholarForm: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('api/', formData);
+      const response = await axios.post('api/signup', formData);
       if (response.status === 200) {
         notifySucc(response.data.message);
       }
