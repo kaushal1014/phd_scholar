@@ -1,38 +1,38 @@
-import mongoose from "mongoose";
+import mongoose, { Schema, Document } from 'mongoose';
 
+// Define the User schema
 const userSchema = new mongoose.Schema({
-    firstName: {
-        type: String,
-        required: [true, "Please provide a first name"]
-    },
-    lastName: {
-        type: String,
-        required: [true, "Please provide a last name"]
-    },
-    email: {
-        type: String,
-        required: [true, "Please provide an email"],
-        unique: true,
-    },
-    password: {
-        type: String,
-        required: [true, "Please provide a password"],
-    },
-    isVerified: {
-        type: Boolean,
-        default: false,
-    },
-    isAdmin: {
-        type: Boolean,
-        default: false,
-    },
-    forgotPasswordToken: String,
-    forgotPasswordTokenExpiry: Date,
-    verifyToken: String,
-    verifyTokenExpiry: Date,
+  firstName: {
+    type: String,
+    required: [true, "Please provide a first name"],
+  },
+  lastName: {
+    type: String,
+    required: [true, "Please provide a last name"],
+  },
+  email: {
+    type: String,
+    required: [true, "Please provide an email"],
+    unique: true,
+  },
+  password: {
+    type: String,
+    required: [true, "Please provide a password"],
+  },
+  isVerified: {
+    type: Boolean,
+    default: false,
+  },
+  isAdmin: {
+    type: Boolean,
+    default: false,
+  },
+  phdScholar: { // Simulate a foreign key by referencing the PhD scholar
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'PhD_Scholar',
+  },
 });
 
-
-const User = mongoose.models.users || mongoose.model("users", userSchema);
+const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;
