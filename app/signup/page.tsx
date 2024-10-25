@@ -330,6 +330,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.firstName}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -339,6 +340,7 @@ const PhDScholarForm: React.FC = () => {
               name="middleName"
               value={formData.middleName}
               onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -349,6 +351,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.lastName}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -360,6 +363,7 @@ const PhDScholarForm: React.FC = () => {
               placeholder="john@example.com"
               onChange={handleChange}
               required 
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -394,6 +398,7 @@ const PhDScholarForm: React.FC = () => {
               type="date"
               value={formData.dateOfBirth}
               onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
           </div>
@@ -405,6 +410,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.nationality}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -415,6 +421,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.mobileNumber}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -428,6 +435,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.entranceExamination}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -438,6 +446,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.qualifyingExamination}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -448,6 +457,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.allotmentNumber}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -459,6 +469,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.admissionDate}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -469,6 +480,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.department}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -479,6 +491,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.usn}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -489,6 +502,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.srn}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -499,6 +513,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.modeOfProgram}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -509,6 +524,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.researchSupervisor}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -518,6 +534,7 @@ const PhDScholarForm: React.FC = () => {
               name="researchCoSupervisor"
               value={formData.researchCoSupervisor}
               onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -533,6 +550,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.doctoralCommitteeMember1}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -543,6 +561,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.doctoralCommitteeMember2}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -552,6 +571,7 @@ const PhDScholarForm: React.FC = () => {
               name="doctoralCommitteeMember3"
               value={formData.doctoralCommitteeMember3}
               onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -561,6 +581,7 @@ const PhDScholarForm: React.FC = () => {
               name="doctoralCommitteeMember4"
               value={formData.doctoralCommitteeMember4}
               onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -581,6 +602,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork1SubjectCode}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -592,6 +614,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork1SubjectName}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -605,6 +628,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork1SubjectGrade}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -616,6 +640,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork1Status}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -628,6 +653,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork1EligibilityDate}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -640,6 +666,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.courseworkCompletionDate1}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -656,6 +683,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork2SubjectCode}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -667,6 +695,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork2SubjectName}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -680,6 +709,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork2SubjectGrade}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -691,6 +721,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork2Status}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -703,6 +734,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork2EligibilityDate}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -715,6 +747,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.courseworkCompletionDate2}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -731,6 +764,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork3SubjectCode}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -742,6 +776,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork3SubjectName}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -755,6 +790,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork3SubjectGrade}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -766,6 +802,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork3Status}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -778,6 +815,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork3EligibilityDate}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -790,6 +828,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.courseworkCompletionDate3}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -806,6 +845,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork4SubjectCode}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -817,6 +857,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork4SubjectName}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -830,6 +871,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork4SubjectGrade}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -841,6 +883,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork4Status}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
             <div>
@@ -853,6 +896,7 @@ const PhDScholarForm: React.FC = () => {
                 value={formData.courseWork4EligibilityDate}
                 onChange={handleChange}
                 required
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               />
             </div>
           </div>
@@ -865,6 +909,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.courseworkCompletionDate4}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -887,6 +932,7 @@ const PhDScholarForm: React.FC = () => {
                         value={meeting.scheduledDate}
                         onChange={handleChange}
                         required
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                     <div className="space-y-2">
@@ -898,6 +944,7 @@ const PhDScholarForm: React.FC = () => {
                         type="date"
                         value={meeting.actualDate}
                         onChange={handleChange}
+                        className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                       />
                     </div>
                   </div>
@@ -919,6 +966,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.comprehensiveExamDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -929,6 +977,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.proposalDefenseDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -939,6 +988,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.openSeminarDate1}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -949,6 +999,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.preSubmissionSeminarDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -959,6 +1010,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.synopsisSubmissionDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -969,6 +1021,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.thesisSubmissionDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -979,6 +1032,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.thesisDefenseDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                   <div className="space-y-2">
@@ -989,6 +1043,7 @@ const PhDScholarForm: React.FC = () => {
                       type="date"
                       value={formData.awardOfDegreeDate}
                       onChange={handleChange}
+                      className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     />
                   </div>
                 </div>
@@ -1011,6 +1066,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.title}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -1022,6 +1078,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.journalName}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -1033,6 +1090,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.publicationYear}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -1044,6 +1102,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.volumeNumber}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -1055,6 +1114,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.issueNumber}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -1066,6 +1126,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.pageNumbers}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
           <div className="space-y-2">
@@ -1077,6 +1138,7 @@ const PhDScholarForm: React.FC = () => {
               value={journal.impactFactor}
               onChange={handleChange}
               required
+              className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             />
           </div>
         </div>
@@ -1104,6 +1166,7 @@ const PhDScholarForm: React.FC = () => {
                   value={conference.title}
                   onChange={handleChange}
                   required
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div className="space-y-2">
@@ -1115,6 +1178,7 @@ const PhDScholarForm: React.FC = () => {
                   value={conference.conferenceName}
                   onChange={handleChange}
                   required
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
               <div className="space-y-2">
@@ -1126,6 +1190,7 @@ const PhDScholarForm: React.FC = () => {
                   value={conference.publicationYear}
                   onChange={handleChange}
                   required
+                  className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 />
               </div>
             </div>
