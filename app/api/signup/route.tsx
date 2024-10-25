@@ -1,15 +1,40 @@
-import connectDB from '@/server/db'; // Import your DB connection function
-import PhDScholar from '@/server/models/PhdScholar'; // Import the PhD Scholar model
-import { NextResponse } from 'next/server';
+import connectDB from "@/server/db";
+import User from "@/server/models/userModel";
+import PhDScholar from "@/server/models/PhdScholar";
+import { NextRequest, NextResponse } from "next/server";
+import bcryptjs from "bcryptjs";
+
+// Ensure DB is connected
+connectDB();
 
 export async function POST(req: Request) {
   try {
-    const data = await req.json();    
-    // Connect to the database
-    await connectDB();
-    console.log('Database connected');
+    const data = await req.json();
+    console.log("hi");
+    console.log(data.firstName);
 
-    // Create a new instance of PhD Scholar
+    // Check if the user already exists
+  const existingUser = await User.findOne({ email: data.email });
+
+  if (existingUser) {
+    return NextResponse.json({ message: "User already exists" }, { status: 400 });
+}
+
+
+    // Hash the password
+    const salt = await bcryptjs.genSalt(10);
+    const hashedPassword = await bcryptjs.hash(data.password, salt);
+
+    // Create a new user
+    const newUser = new User({
+      email:data.email,
+      password: hashedPassword,
+      firstName: data.firstName,
+      lastName: data.lastName,
+    });
+    const savedUser = await newUser.save();
+
+    // Create a new PhD Scholar linked to the new user
     const newScholar = new PhDScholar({
       personalDetails: {
         firstName: data.firstName as string,
@@ -111,12 +136,22 @@ export async function POST(req: Request) {
       },
     });
 
-    // Save the new scholar to the database
-    await newScholar.save();
+    // Save the new PhD Scholar
+    const savedScholar = await newScholar.save();
 
-    return NextResponse.json({ message: 'PhD Scholar data saved successfully' }, { status: 200 });
-  } catch (err) {
-    console.error('Error saving PhD Scholar:', err);
-    return NextResponse.json({ message: 'Internal Server Error' }, { status: 500 });
+    // Update the user to link to the PhD Scholar
+    savedUser.phdScholar = savedScholar._id;
+    await savedUser.save();
+
+    return NextResponse.json({
+      message: "User and PhD Scholar created successfully",
+      success: true,
+      savedUser,
+      savedScholar
+    });
+
+  } catch (error: any) {
+    console.error("Error creating User and PhD Scholar:", error);
+    return NextResponse.json({ error: error.message }, { status: 500 });
   }
 }

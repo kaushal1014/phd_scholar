@@ -90,6 +90,7 @@ const MIN_CONFERENCES=1;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
+    /*
   email: '',
   password:'',
   firstName: '',
@@ -147,9 +148,10 @@ const PhDScholarForm: React.FC = () => {
   awardOfDegreeDate: '',
   journals: [{ title: '', journalName: '', publicationYear: '', volumeNumber: '', issueNumber: '', pageNumbers: '', impactFactor: '' }],
   conferences: [{ title: '', conferenceName: '', publicationYear: '' }]
-
+  */
   //Testing purposes
-  /*
+    email: '',
+    password:'',
     firstName: 'xZXzX',
     middleName: 'zXczxc',
     lastName: 'bdfbdf',
@@ -205,7 +207,7 @@ const PhDScholarForm: React.FC = () => {
     awardOfDegreeDate: '2024-03-04',
     journals: [{ title: '4234432', journalName: '4234', publicationYear: '4234', volumeNumber: '423', issueNumber: '4234', pageNumbers: '4234', impactFactor: '23423' }],
     conferences: [{ title: '4234', conferenceName: '324234', publicationYear: '234234' }]
-  */
+  
   });
 
   const notifyErr = (msg: string) => toast.error(msg);
@@ -299,14 +301,19 @@ const PhDScholarForm: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+
     try {
-      const response = await axios.post('api/signup', formData);
+      const response = await axios.post('/api/signup', formData);
       if (response.status === 200) {
         notifySucc(response.data.message);
       }
-    } catch (err) {
-      notifyErr('Something went wrong');
+    } catch (err: any) {
+      console.log('Axios Error:', err); // Log full error for further details
+      const errorMsg = err.response?.data?.message || err.message;
+      notifyErr(errorMsg); //doesnt work clearly, fix!
     }
+    
+    
 
  
 

@@ -1,11 +1,12 @@
 'use client';
-import { useState } from 'react'
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Button } from "@/components/ui/button"
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
-import Link from 'next/link'
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';  // Make sure to import from 'next/navigation'
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Button } from "@/components/ui/button";
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import Link from 'next/link';
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -13,43 +14,43 @@ import 'react-toastify/dist/ReactToastify.css';
 type FormData = {
   email: string;
   password: string;
-}
+};
 
 const notifyErr = (msg: string) => toast.error(msg);
 const notifySucc = (msg: string) => toast.success(msg);
-const notifyWarn = (msg: string) => toast.warn(msg);
-const notifyInfo = (msg: string) => toast.info(msg);
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false)
-  const [formData, setFormData] = useState<FormData>({
-    email: '',
-    password: ''
-  });
+  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState<FormData>({ email: '', password: '' });
+  const router = useRouter();  // Use router from 'next/navigation'
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
-  }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('api/login', formData);
+      const response = await axios.post('/api/login', formData);
       if (response.status === 200) {
         notifySucc('Login successful');
+        setTimeout(() => {
+          router.push('/dashboard');  // Redirect after a brief delay
+      }, 1500);
       } else {
-        notifyErr('Something went wrong');
+        notifyErr('Invalid credentials');
       }
     } catch (err) {
       notifyErr('Something went wrong');
     }
-  }
+  };
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword)
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-4">
+      <ToastContainer />
       <Card className="w-full max-w-md bg-white shadow-lg border-2 border-gray-200 rounded-xl overflow-hidden">
         <CardHeader className="space-y-1 bg-gradient-to-b from-white to-gray-50 border-b-2 border-gray-200 p-6">
           <CardTitle className="text-2xl font-bold text-center text-gray-800">Login</CardTitle>
@@ -103,12 +104,12 @@ export default function LoginPage() {
           </Link>
           <div className="text-gray-600">
             Don't have an account?{" "}
-            <Link href="/signup" className="font-semibold text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
+            <Link href="/signUp" className="font-semibold text-blue-600 hover:text-blue-800 transition duration-300 ease-in-out">
               Sign up
             </Link>
           </div>
         </CardFooter>
       </Card>
     </div>
-  )
+  );
 }
