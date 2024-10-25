@@ -8,8 +8,11 @@ import { Label } from "@/components/ui/label";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import { EyeIcon, EyeOffIcon } from 'lucide-react';
 
 type FormData = {
+  email: string;
+  password: string;
   firstName: string;
   middleName: string;
   lastName: string;
@@ -87,7 +90,8 @@ const MIN_CONFERENCES=1;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-
+  email: '',
+  password:'',
   firstName: '',
   middleName: '',
   lastName: '',
@@ -208,7 +212,8 @@ const PhDScholarForm: React.FC = () => {
   const notifySucc = (msg: string) => toast.success(msg);
   const notifyWarn = (msg: string) => toast.warn(msg);
   const notifyInfo = (msg: string) => toast.info(msg);
-
+  const [showPassword, setShowPassword] = useState(false);
+  const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const addNewJournal = () => {
     if (formData.journals.length < MAXJOURNALS) {
       setFormData({
@@ -302,179 +307,220 @@ const PhDScholarForm: React.FC = () => {
     } catch (err) {
       notifyErr('Something went wrong');
     }
+
+ 
+
   };
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 py-12 px-4 sm:px-6 lg:px-8">
-      <ToastContainer />
-      <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">PhD Scholar Registration</h1>
-        <Card className="bg-white shadow-lg border-2 border-gray-300 rounded-xl overflow-hidden">
-          <CardHeader className="border-b-2 border-gray-200 bg-gray-50 p-6">
-            <CardTitle className="text-2xl font-bold text-gray-800">Personal Details</CardTitle>
-          </CardHeader>
-          <CardContent className="p-6 space-y-6">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="space-y-2">
-          <Label htmlFor="firstName">First Name</Label>
-          <Input
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
-            onChange={handleChange}
-            required
-          />
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
+  <ToastContainer />
+  <form onSubmit={handleSubmit} className="w-full max-w-4xl">
+    <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">PhD Scholar Registration</h1>
+    <Card className="bg-white shadow-lg border-2 border-gray-300 rounded-xl overflow-hidden">
+      <CardHeader className="border-b-2 border-gray-200 bg-gray-50 p-6">
+        <CardTitle className="text-2xl font-bold text-gray-800">Personal Details</CardTitle>
+      </CardHeader>
+      <CardContent className="p-6 space-y-8">
+        <div className="flex flex-col items-center space-y-6 mb-8">
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="firstName">First Name</Label>
+            <Input
+              id="firstName"
+              name="firstName"
+              value={formData.firstName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="middleName">Middle Name</Label>
+            <Input
+              id="middleName"
+              name="middleName"
+              value={formData.middleName}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="lastName">Last Name</Label>
+            <Input
+              id="lastName"
+              name="lastName"
+              value={formData.lastName}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">Email</Label>
+            <Input 
+              id="email"
+              name="email"
+              type="email"
+              placeholder="john@example.com"
+              onChange={handleChange}
+              required 
+            />
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">Password</Label>
+            <div className="relative">
+              <Input 
+                id="password"
+                name="password"
+                type={showPassword ? "text" : "password"}
+                onChange={handleChange}
+                required 
+                className="w-full px-3 py-2 border-2 border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              />
+              <button
+                type="button"
+                onClick={togglePasswordVisibility}
+                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
+              >
+                {showPassword ? (
+                  <EyeOffIcon className="h-5 w-5" />
+                ) : (
+                  <EyeIcon className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="dateOfBirth">Date of Birth</Label>
+            <Input
+              id="dateOfBirth"
+              name="dateOfBirth"
+              type="date"
+              value={formData.dateOfBirth}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="nationality">Nationality</Label>
+            <Input
+              id="nationality"
+              name="nationality"
+              value={formData.nationality}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="w-full max-w-md space-y-2">
+            <Label htmlFor="mobileNumber">Mobile Number</Label>
+            <Input
+              id="mobileNumber"
+              name="mobileNumber"
+              value={formData.mobileNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="middleName">Middle Name</Label>
-          <Input
-            id="middleName"
-            name="middleName"
-            value={formData.middleName}
-            onChange={handleChange}
-          />
+        
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="space-y-2">
+            <Label htmlFor="entranceExamination">Entrance Examination</Label>
+            <Input
+              id="entranceExamination"
+              name="entranceExamination"
+              value={formData.entranceExamination}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="qualifyingExamination">Qualifying Examination</Label>
+            <Input
+              id="qualifyingExamination"
+              name="qualifyingExamination"
+              value={formData.qualifyingExamination}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="allotmentNumber">Allotment Number</Label>
+            <Input
+              id="allotmentNumber"
+              name="allotmentNumber"
+              value={formData.allotmentNumber}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="admissionDate">Admission Date</Label>
+            <Input
+              id="admissionDate"
+              name="admissionDate"
+              type="date"
+              value={formData.admissionDate}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="department">Department</Label>
+            <Input
+              id="department"
+              name="department"
+              value={formData.department}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="usn">USN</Label>
+            <Input
+              id="usn"
+              name="usn"
+              value={formData.usn}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="srn">SRN</Label>
+            <Input
+              id="srn"
+              name="srn"
+              value={formData.srn}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="modeOfProgram">Mode of Program</Label>
+            <Input
+              id="modeOfProgram"
+              name="modeOfProgram"
+              value={formData.modeOfProgram}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="researchSupervisor">Research Supervisor</Label>
+            <Input
+              id="researchSupervisor"
+              name="researchSupervisor"
+              value={formData.researchSupervisor}
+              onChange={handleChange}
+              required
+            />
+          </div>
+          <div className="space-y-2">
+            <Label htmlFor="researchCoSupervisor">Research Co-Supervisor</Label>
+            <Input
+              id="researchCoSupervisor"
+              name="researchCoSupervisor"
+              value={formData.researchCoSupervisor}
+              onChange={handleChange}
+            />
+          </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="lastName">Last Name</Label>
-          <Input
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="dateOfBirth">Date of Birth</Label>
-          <Input
-            id="dateOfBirth"
-            name="dateOfBirth"
-            type="date"
-            value={formData.dateOfBirth}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="nationality">Nationality</Label>
-          <Input
-            id="nationality"
-            name="nationality"
-            value={formData.nationality}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="mobileNumber">Mobile Number</Label>
-          <Input
-            id="mobileNumber"
-            name="mobileNumber"
-            value={formData.mobileNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="entranceExamination">Entrance Examination</Label>
-          <Input
-            id="entranceExamination"
-            name="entranceExamination"
-            value={formData.entranceExamination}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="qualifyingExamination">Qualifying Examination</Label>
-          <Input
-            id="qualifyingExamination"
-            name="qualifyingExamination"
-            value={formData.qualifyingExamination}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="allotmentNumber">Allotment Number</Label>
-          <Input
-            id="allotmentNumber"
-            name="allotmentNumber"
-            value={formData.allotmentNumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="admissionDate">Admission Date</Label>
-          <Input
-            id="admissionDate"
-            name="admissionDate"
-            type="date"
-            value={formData.admissionDate}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="department">Department</Label>
-          <Input
-            id="department"
-            name="department"
-            value={formData.department}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="usn">USN</Label>
-          <Input
-            id="usn"
-            name="usn"
-            value={formData.usn}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="srn">SRN</Label>
-          <Input
-            id="srn"
-            name="srn"
-            value={formData.srn}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="modeOfProgram">Mode of Program</Label>
-          <Input
-            id="modeOfProgram"
-            name="modeOfProgram"
-            value={formData.modeOfProgram}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="researchSupervisor">Research Supervisor</Label>
-          <Input
-            id="researchSupervisor"
-            name="researchSupervisor"
-            value={formData.researchSupervisor}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        <div className="space-y-2">
-          <Label htmlFor="researchCoSupervisor">Research Co-Supervisor</Label>
-          <Input
-            id="researchCoSupervisor"
-            name="researchCoSupervisor"
-            value={formData.researchCoSupervisor}
-            onChange={handleChange}
-          />
-        </div>
-      </div>
 
       <div className="space-y-4">
         <h3 className="text-xl font-semibold">Doctoral Committee Members</h3>
