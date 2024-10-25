@@ -49,7 +49,7 @@ export default function LoginPage() {
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 p-4">
+    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-blue-50 to-blue-100 py-12 px-4 sm:px-6 lg:px-8">
       <Card className="w-full max-w-md bg-white shadow-lg border-2 border-gray-200 rounded-xl overflow-hidden">
         <CardHeader className="space-y-1 bg-gradient-to-b from-white to-gray-50 border-b-2 border-gray-200 p-6">
           <CardTitle className="text-2xl font-bold text-center text-gray-800">Login</CardTitle>
