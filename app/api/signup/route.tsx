@@ -25,14 +25,6 @@ export async function POST(req: Request) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(data.password, salt);
 
-    // Create a new user
-    const newUser = new User({
-      email:data.email,
-      password: hashedPassword,
-      firstName: data.firstName,
-      lastName: data.lastName,
-    });
-    const savedUser = await newUser.save();
 
     // Create a new PhD Scholar linked to the new user
     const newScholar = new PhDScholar({
@@ -139,6 +131,14 @@ export async function POST(req: Request) {
     // Save the new PhD Scholar
     const savedScholar = await newScholar.save();
 
+        // Create a new user
+        const newUser = new User({
+          email:data.email,
+          password: hashedPassword,
+          firstName: data.firstName,
+          lastName: data.lastName,
+        });
+        const savedUser = await newUser.save();
     // Update the user to link to the PhD Scholar
     savedUser.phdScholar = savedScholar._id;
     await savedUser.save();
