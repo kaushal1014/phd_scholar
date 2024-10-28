@@ -9,6 +9,7 @@ import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
+import { useRouter } from 'next/navigation';
 
 type FormData = {
   email: string;
@@ -211,6 +212,7 @@ const PhDScholarForm: React.FC = () => {
   });
 
   const notifyErr = (msg: string) => toast.error(msg);
+  const router = useRouter();
   const notifySucc = (msg: string) => toast.success(msg);
   const notifyWarn = (msg: string) => toast.warn(msg);
   const notifyInfo = (msg: string) => toast.info(msg);
@@ -306,6 +308,9 @@ const PhDScholarForm: React.FC = () => {
       const response = await axios.post('/api/signup', formData);
       if (response.status === 200) {
         notifySucc(response.data.message);
+        setTimeout(() => {
+          router.push('login');  // Redirect after a brief delay
+      }, 1500);
       }
     } catch (err: any) {
       console.log('Axios Error:', err); // Log full error for further details
