@@ -1092,6 +1092,7 @@ const PhDScholarForm: React.FC = () => {
             <Label htmlFor={`journal-${index}-year`}>Publication Year</Label>
             <Input
               id={`journal-${index}-year`}
+              type="number"
               placeholder="Publication Year"
               name={`journals[${index}].publicationYear`}
               value={journal.publicationYear}
@@ -1192,6 +1193,7 @@ const PhDScholarForm: React.FC = () => {
                 <Label htmlFor={`conference-${index}-year`}>Publication Year</Label>
                 <Input
                   id={`conference-${index}-year`}
+                  type="number"
                   placeholder="Publication Year"
                   name={`conferences[${index}].publicationYear`}
                   value={conference.publicationYear}
