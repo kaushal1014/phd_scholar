@@ -144,7 +144,7 @@ export async function POST(req: Request) {
     await savedUser.save();
 
     return NextResponse.json({
-      message: "User and PhD Scholar created successfully",
+      message: "User created successfully",
       success: true,
       savedUser,
       savedScholar
