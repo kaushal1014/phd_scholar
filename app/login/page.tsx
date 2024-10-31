@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';  // Make sure to import from 'next/navigation'
+import { useRouter } from 'next/navigation';
+import { signIn } from "next-auth/react";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -32,8 +33,12 @@ export default function LoginPage() {
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     try {
-      const response = await axios.post('/api/login', formData);
-      if (response.status === 200) {
+      const response = await signIn("credentials", {
+        email: formData.email,
+        password: formData.password,
+        redirect: false,
+      });
+      if (response?.status === 200) {
         notifySucc('Login successful');
         setTimeout(() => {
           router.push('/dashboard');  // Redirect after a brief delay

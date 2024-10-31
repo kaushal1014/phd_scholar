@@ -1,11 +1,13 @@
-'use client'
+'use client';
 
-import React from 'react'
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts'
-import { BookOpen, FileText, Users, Calendar, Bell, Search, BookMarked, GraduationCap } from 'lucide-react'
+import React, { useEffect } from 'react';
+import { useSession } from "next-auth/react";
+import { useRouter } from 'next/navigation'; 
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { BookOpen, FileText, Users, Calendar, Bell, Search, BookMarked, GraduationCap } from 'lucide-react';
 
 const publicationData = [
   { year: '2018', count: 2 },
@@ -14,9 +16,33 @@ const publicationData = [
   { year: '2021', count: 4 },
   { year: '2022', count: 5 },
   { year: '2023', count: 3 },
-]
+];
 
 export default function PhDResearchDashboard() {
+  const { data: session, status } = useSession();
+  const router = useRouter();
+
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push('/login');
+    }
+  }, [status, session, router]);
+
+  // Render loading spinner if status is "loading"
+  if (status === "loading") {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <svg
+          className="animate-spin h-5 w-5 mr-2 text-gray-500"
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 24 24">
+          <circle className="opacity-25" cx="12" cy="12" r="10" fill="none" stroke="currentColor" strokeWidth="4"/>
+          <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 1 0 16 0A8 8 0 0 0 4 12z"/></svg>
+        <span className="text-gray-500 text-sm">Loading...</span>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <header className="bg-white dark:bg-gray-800 shadow">
@@ -154,5 +180,5 @@ export default function PhDResearchDashboard() {
         </div>
       </main>
     </div>
-  )
+  );
 }
