@@ -8,11 +8,12 @@ import { usePathname } from "next/navigation"
 import { Moon, Sun } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeProvider } from "@/components/theme-provider"
-import { ToastContainer, toast } from 'react-toastify'
+import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import { useTheme } from "next-themes"
+import { AuthProvider } from "./Providers";
 
-
+// Load local fonts
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -25,6 +26,7 @@ const geistMono = localFont({
   weight: "100 900",
 })
 
+// Header component
 function Header() {
   const pathname = usePathname()
   const [mounted, setMounted] = React.useState(false)
@@ -45,17 +47,13 @@ function Header() {
             <nav className="flex items-center space-x-6 sm:space-x-8">
               <Link 
                 href="/" 
-                className={`text-xl font-semibold transition-colors duration-200 hover:text-primary ${
-                  pathname === "/" ? "text-primary" : "text-foreground"
-                }`}
+                className={`text-xl font-semibold transition-colors duration-200 hover:text-primary ${pathname === "/" ? "text-primary" : "text-foreground"}`}
               >
                 Home
               </Link>
               <Link 
                 href="/about" 
-                className={`text-xl transition-colors duration-200 hover:text-primary ${
-                  pathname === "/about" ? "text-primary" : "text-foreground"
-                }`}
+                className={`text-xl transition-colors duration-200 hover:text-primary ${pathname === "/about" ? "text-primary" : "text-foreground"}`}
               >
                 About
               </Link>
@@ -85,6 +83,7 @@ function Header() {
   )
 }
 
+// Theme toggle button component
 function ThemeToggle() {
   const { setTheme, theme } = useTheme()
 
@@ -102,25 +101,30 @@ function ThemeToggle() {
   )
 }
 
+// Main layout component
 export default function RootLayout({
   children,
+  session,
 }: Readonly<{
   children: React.ReactNode
+  session: any // Adjust this type according to your session object structure
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Header />
-          <main>{children}</main>
-          <ToastContainer />
-        </ThemeProvider>
-      </body>
-    </html>
+      <html lang="en" suppressHydrationWarning>
+        <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}>
+          <AuthProvider>
+            <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <Header />
+            <main>{children}</main>
+            <ToastContainer />
+          </ThemeProvider>
+          </AuthProvider>
+        </body>
+      </html>
   )
 }
