@@ -1,43 +1,53 @@
-"use client"
+"use client";
 
-import localFont from "next/font/local"
-import "./globals.css"
-import * as React from "react"
-import Link from "next/link"
-import { usePathname } from "next/navigation"
-import { Moon, Sun } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { ThemeProvider } from "@/components/theme-provider"
-import { ToastContainer } from 'react-toastify'
-import 'react-toastify/dist/ReactToastify.css'
-import { useTheme } from "next-themes"
+import localFont from "next/font/local";
+import "./globals.css";
+import * as React from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+import { Moon, Sun } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { ThemeProvider } from "@/components/theme-provider";
+import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
+import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import { useTheme } from "next-themes";
 import { AuthProvider } from "./Providers";
+import { useSession, signOut } from "next-auth/react";
 
 // Load local fonts
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
-})
+});
 
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
-})
+});
 
 // Header component
 function Header() {
-  const pathname = usePathname()
-  const [mounted, setMounted] = React.useState(false)
+  const { data: session } = useSession(); // Get session data
+  const pathname = usePathname();
+  const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
-    setMounted(true)
-  }, [])
+    setMounted(true);
+  }, []);
 
   if (!mounted) {
-    return null
+    return null;
   }
+
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (error) {
+      toast.error("Error signing out."); // Show error if sign out fails
+    }
+  };
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
@@ -45,14 +55,14 @@ function Header() {
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
             <nav className="flex items-center space-x-6 sm:space-x-8">
-              <Link 
-                href="/" 
+              <Link
+                href="/"
                 className={`text-xl font-semibold transition-colors duration-200 hover:text-primary ${pathname === "/" ? "text-primary" : "text-foreground"}`}
               >
                 Home
               </Link>
-              <Link 
-                href="/about" 
+              <Link
+                href="/about"
                 className={`text-xl transition-colors duration-200 hover:text-primary ${pathname === "/about" ? "text-primary" : "text-foreground"}`}
               >
                 About
@@ -60,32 +70,45 @@ function Header() {
             </nav>
           </div>
           <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="lg"
-              className="text-lg hover:bg-primary/10"
-              asChild
-            >
-              <Link href="/login">Login</Link>
-            </Button>
-            <Button 
-              size="lg"
-              className="text-lg"
-              asChild
-            >
-              <Link href="/signup">Sign Up</Link>
-            </Button>
+            {!session ? (
+              <>
+                <Button
+                  variant="ghost"
+                  size="lg"
+                  className="text-lg hover:bg-primary/10"
+                  asChild
+                >
+                  <Link href="/login">Login</Link>
+                </Button>
+                <Button
+                  size="lg"
+                  className="text-lg"
+                  asChild
+                >
+                  <Link href="/signup">Sign Up</Link>
+                </Button>
+              </>
+            ) : (
+              <Button
+                variant="ghost"
+                size="lg"
+                className="text-lg"
+                onClick={handleSignOut} // Use handleSignOut for sign out
+              >
+                Sign Out
+              </Button>
+            )}
             <ThemeToggle />
           </div>
         </div>
       </div>
     </header>
-  )
+  );
 }
 
 // Theme toggle button component
 function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
+  const { setTheme, theme } = useTheme();
 
   return (
     <Button
@@ -98,7 +121,7 @@ function ThemeToggle() {
       <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Toggle theme</span>
     </Button>
-  )
+  );
 }
 
 // Main layout component
@@ -106,14 +129,14 @@ export default function RootLayout({
   children,
   session,
 }: Readonly<{
-  children: React.ReactNode
-  session: any // Adjust this type according to your session object structure
+  children: React.ReactNode;
+  session: any; // Adjust this type according to your session object structure
 }>) {
   return (
-      <html lang="en" suppressHydrationWarning>
-        <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}>
-          <AuthProvider>
-            <ThemeProvider
+    <html lang="en" suppressHydrationWarning>
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}>
+        <AuthProvider>
+          <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
@@ -121,10 +144,10 @@ export default function RootLayout({
           >
             <Header />
             <main>{children}</main>
-            <ToastContainer />
+            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
           </ThemeProvider>
-          </AuthProvider>
-        </body>
-      </html>
-  )
+        </AuthProvider>
+      </body>
+    </html>
+  );
 }
