@@ -5,16 +5,15 @@ import "./globals.css";
 import * as React from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Moon, Sun } from "lucide-react";
+import { Moon, Sun, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
-import { ToastContainer, toast } from 'react-toastify'; // Import ToastContainer and toast
-import 'react-toastify/dist/ReactToastify.css'; // Import toast styles
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from "next-themes";
 import { AuthProvider } from "./Providers";
 import { useSession, signOut } from "next-auth/react";
 
-// Load local fonts
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
@@ -27,9 +26,8 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-// Header component
 function Header() {
-  const { data: session } = useSession(); // Get session data
+  const { data: session } = useSession();
   const pathname = usePathname();
   const [mounted, setMounted] = React.useState(false);
 
@@ -45,7 +43,7 @@ function Header() {
     try {
       await signOut();
     } catch (error) {
-      toast.error("Error signing out."); // Show error if sign out fails
+      toast.error("Error signing out.");
     }
   };
 
@@ -54,35 +52,57 @@ function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
-            <nav className="flex items-center space-x-6 sm:space-x-8">
-              <Link
-                href="/"
-                className={`text-xl font-semibold transition-colors duration-200 hover:text-primary ${pathname === "/" ? "text-primary" : "text-foreground"}`}
-              >
-                Home
-              </Link>
-              <Link
-                href="/about"
-                className={`text-xl transition-colors duration-200 hover:text-primary ${pathname === "/about" ? "text-primary" : "text-foreground"}`}
-              >
-                About
-              </Link>
-            </nav>
+          <GraduationCap className="h-10 w-10 text-blue-600 dark:text-blue-400 mr-3" />
+            <span className="text-2xl font-bold text-foreground">PhD Scholar Portal</span>
           </div>
+          <nav className="hidden md:flex items-center space-x-6">
+            <Link
+              href="/"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === "/" ? "text-primary" : "text-foreground/60"
+              }`}
+            >
+              Home
+            </Link>
+            <Link
+              href="/dashboard"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === "/dashboard" ? "text-primary" : "text-foreground/60"
+              }`}
+            >
+              Dashboard
+            </Link>
+            <Link
+              href="/publications"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === "/publications" ? "text-primary" : "text-foreground/60"
+              }`}
+            >
+              Publications
+            </Link>
+            <Link
+              href="/milestones"
+              className={`text-sm font-medium transition-colors hover:text-primary ${
+                pathname === "/milestones" ? "text-primary" : "text-foreground/60"
+              }`}
+            >
+              Milestones
+            </Link>
+          </nav>
           <div className="flex items-center space-x-4">
             {!session ? (
               <>
                 <Button
                   variant="ghost"
-                  size="lg"
-                  className="text-lg hover:bg-primary/10"
+                  size="sm"
+                  className="text-sm hover:bg-primary/10"
                   asChild
                 >
                   <Link href="/login">Login</Link>
                 </Button>
                 <Button
-                  size="lg"
-                  className="text-lg"
+                  size="sm"
+                  className="text-sm"
                   asChild
                 >
                   <Link href="/signup">Sign Up</Link>
@@ -91,9 +111,9 @@ function Header() {
             ) : (
               <Button
                 variant="ghost"
-                size="lg"
-                className="text-lg"
-                onClick={handleSignOut} // Use handleSignOut for sign out
+                size="sm"
+                className="text-sm"
+                onClick={handleSignOut}
               >
                 Sign Out
               </Button>
@@ -106,7 +126,6 @@ function Header() {
   );
 }
 
-// Theme toggle button component
 function ThemeToggle() {
   const { setTheme, theme } = useTheme();
 
@@ -124,13 +143,12 @@ function ThemeToggle() {
   );
 }
 
-// Main layout component
 export default function RootLayout({
   children,
   session,
 }: Readonly<{
   children: React.ReactNode;
-  session: any; // Adjust this type according to your session object structure
+  session: any;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -143,7 +161,7 @@ export default function RootLayout({
             disableTransitionOnChange
           >
             <Header />
-            <main>{children}</main>
+            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
             <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
           </ThemeProvider>
         </AuthProvider>
