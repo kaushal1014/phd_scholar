@@ -52,13 +52,13 @@ function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
-          <GraduationCap className="h-10 w-10 text-blue-600 dark:text-blue-400 mr-3" />
+            <GraduationCap className="h-10 w-10 text-blue-600 dark:text-blue-400 mr-3" />
             <span className="text-2xl font-bold text-foreground">PhD Scholar Portal</span>
           </div>
-          <nav className="hidden md:flex items-center space-x-6">
+          <nav className="hidden md:flex items-center space-x-8">
             <Link
               href="/"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-lg font-medium transition-colors hover:text-primary ${
                 pathname === "/" ? "text-primary" : "text-foreground/60"
               }`}
             >
@@ -66,23 +66,15 @@ function Header() {
             </Link>
             <Link
               href="/dashboard"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-lg font-medium transition-colors hover:text-primary ${
                 pathname === "/dashboard" ? "text-primary" : "text-foreground/60"
               }`}
             >
               Dashboard
             </Link>
             <Link
-              href="/publications"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
-                pathname === "/publications" ? "text-primary" : "text-foreground/60"
-              }`}
-            >
-              Publications
-            </Link>
-            <Link
               href="/milestones"
-              className={`text-sm font-medium transition-colors hover:text-primary ${
+              className={`text-lg font-medium transition-colors hover:text-primary ${
                 pathname === "/milestones" ? "text-primary" : "text-foreground/60"
               }`}
             >
@@ -95,14 +87,14 @@ function Header() {
                 <Button
                   variant="ghost"
                   size="sm"
-                  className="text-sm hover:bg-primary/10"
+                  className="text-base hover:bg-primary/10"
                   asChild
                 >
                   <Link href="/login">Login</Link>
                 </Button>
                 <Button
                   size="sm"
-                  className="text-sm"
+                  className="text-base"
                   asChild
                 >
                   <Link href="/signup">Sign Up</Link>
@@ -110,9 +102,8 @@ function Header() {
               </>
             ) : (
               <Button
-                variant="ghost"
                 size="sm"
-                className="text-sm"
+                className="text-base"
                 onClick={handleSignOut}
               >
                 Sign Out
