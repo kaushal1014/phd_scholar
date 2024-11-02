@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect } from 'react';
 import { useSession } from "next-auth/react";
 import { useRouter } from 'next/navigation'; 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -21,7 +22,12 @@ export default function PhDResearchDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-
+  useEffect(() => {
+    if (status === "unauthenticated") {
+      router.push('/login');
+    }
+  }, [status, session, router]);
+  
   // Render loading spinner if status is "loading"
   if (status === "loading") {
     return (
