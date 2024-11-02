@@ -54,69 +54,75 @@ export default function LoginPage() {
   const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 p-4 transition-colors duration-300">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-background/80 p-4 transition-colors duration-300">
       <ToastContainer />
-      <Card className="w-full max-w-md bg-white dark:bg-gray-800 shadow-lg border-2 border-gray-200 dark:border-gray-700 rounded-xl overflow-hidden transition-colors duration-300">
-        <CardHeader className="space-y-1 bg-gradient-to-b from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 border-b-2 border-gray-200 dark:border-gray-600 p-6">
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">Login</CardTitle>
-          </div>
-        </CardHeader>
-        <form onSubmit={handleSubmit}>
-          <CardContent className="space-y-6 p-6">
-            <div className="space-y-2">
-              <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
-              <Input
-                id="email"
-                name="email"
-                onChange={handleChange}
-                type="email"
-                placeholder="m@example.com"
-                required
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</Label>
-              <div className="relative">
+      <div className="w-full max-w-md -mt-20">
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
+          </CardHeader>
+          <form onSubmit={handleSubmit}>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email">Email</Label>
                 <Input
-                  id="password"
-                  name="password"
-                  onChange={handleChange}
-                  type={showPassword ? "text" : "password"}
+                  id="email"
+                  name="email"
+                  type="email"
+                  placeholder="m@example.com"
                   required
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+                  onChange={handleChange}
                 />
-                <button
-                  type="button"
-                  onClick={togglePasswordVisibility}
-                  className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
-                >
-                  {showPassword ? (
-                    <EyeOffIcon className="h-5 w-5" />
-                  ) : (
-                    <EyeIcon className="h-5 w-5" />
-                  )}
-                </button>
               </div>
-            </div>
-            <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 text-white font-semibold py-2 px-4 rounded-md transition duration-300 ease-in-out transform hover:-translate-y-1 hover:shadow-lg dark:bg-blue-700 dark:hover:bg-blue-600">
-              Sign In
-            </Button>
-          </CardContent>
-        </form>
-        <CardFooter className="flex flex-col space-y-2 text-center text-sm bg-gradient-to-t from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 border-t-2 border-gray-200 dark:border-gray-600 p-6">
-          <Link href="/forgot-password" className="text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-sm dark:text-blue-400 dark:hover:text-blue-300 transition duration-300 ease-in-out">
-            Forgot your password?
-          </Link>
-          <div className="text-gray-600 dark:text-gray-400">
-            Don't have an account?{" "}
-            <Link href="/signUp" className="font-semibold text-blue-600 hover:text-blue-800 focus:outline-none focus:ring-2 focus:ring-blue-500 rounded-sm dark:text-blue-400 dark:hover:text-blue-300 transition duration-300 ease-in-out">
-              Sign up
+              <div className="space-y-2">
+                <Label htmlFor="password">Password</Label>
+                <div className="relative">
+                  <Input
+                    id="password"
+                    name="password"
+                    type={showPassword ? "text" : "password"}
+                    required
+                    onChange={handleChange}
+                  />
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                    onClick={togglePasswordVisibility}
+                  >
+                    {showPassword ? (
+                      <EyeOffIcon className="h-4 w-4" />
+                    ) : (
+                      <EyeIcon className="h-4 w-4" />
+                    )}
+                  </Button>
+                </div>
+              </div>
+              <Button type="submit" className="w-full">
+                Sign In
+              </Button>
+            </CardContent>
+          </form>
+          <CardFooter className="flex flex-col space-y-2 text-center text-sm">
+            <Link 
+              href="/forgot-password" 
+              className="text-sm text-muted-foreground hover:text-primary"
+            >
+              Forgot your password?
             </Link>
-          </div>
-        </CardFooter>
-      </Card>
+            <div className="text-muted-foreground">
+              Don't have an account?{" "}
+              <Link 
+                href="/signup" 
+                className="font-medium text-primary hover:underline"
+              >
+                Sign up
+              </Link>
+            </div>
+          </CardFooter>
+        </Card>
+      </div>
     </div>
   )
 }
