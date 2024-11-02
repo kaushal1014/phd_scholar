@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import * as React from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { useRouter, usePathname } from 'next/navigation';
 import { Moon, Sun, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
@@ -29,6 +29,7 @@ const geistMono = localFont({
 function Header() {
   const { data: session } = useSession();
   const pathname = usePathname();
+  const router = useRouter();
   const [mounted, setMounted] = React.useState(false);
 
   React.useEffect(() => {
@@ -39,9 +40,14 @@ function Header() {
     return null;
   }
 
-  const handleSignOut = async () => {
+  const handleSignOut = async () => {  
     try {
-      await signOut();
+      await signOut({ redirect: false });
+      toast.success("Signed out");
+  
+      if (pathname === '/dashboard') {
+        router.push('/login');
+      }
     } catch (error) {
       toast.error("Error signing out.");
     }

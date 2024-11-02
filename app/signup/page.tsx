@@ -6,7 +6,7 @@ import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/componen
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import axios from 'axios';
-import { ToastContainer, toast } from 'react-toastify';
+import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -260,7 +260,6 @@ const PhDScholarForm: React.FC = () => {
 
   return (
     <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-  <ToastContainer />
   <form onSubmit={handleSubmit} className="w-full max-w-4xl">
     <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">PhD Scholar Registration</h1>
     <Card className="bg-white dark:bg-gray-800 shadow-lg border-2 border-gray-300 dark:border-gray-700 rounded-xl overflow-hidden">
