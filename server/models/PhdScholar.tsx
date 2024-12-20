@@ -22,10 +22,9 @@ interface PhdScholar extends Document {
   researchSupervisor: string;
   researchCoSupervisor?: string;
   doctoralCommittee: {
-    member1: string;
-    member2: string;
-    member3: string;
-    member4: string;
+    members: {
+      name: string;
+    }[];
   };
   courseWork1: {
     subjectCode: string;
@@ -97,100 +96,101 @@ interface PhdScholar extends Document {
 
 const phdScholarSchema = new Schema<PhdScholar>({
   personalDetails: {
-    firstName: { type: String, required: true },
+    firstName: { type: String,  default: "" },
     middleName: { type: String },
-    lastName: { type: String, required: true },
-    dateOfBirth: { type: Date, required: true },
-    nationality: { type: String, required: true },
-    mobileNumber: { type: String, required: true },
+    lastName: { type: String,  default: "" },
+    dateOfBirth: { type: Date,  default: "" },
+    nationality: { type: String,  default: "" },
+    mobileNumber: { type: String,  default: "" },
   },
   admissionDetails: {
-    entranceExamination: { type: String, required: true },
-    qualifyingExamination: { type: String, required: true },
-    allotmentNumber: { type: String, required: true },
-    admissionDate: { type: Date, required: true },
-    department: { type: String, required: true },
-    usn: { type: String, required: true },
-    srn: { type: String, required: true },
-    modeOfProgram: { type: String, required: true },
+    entranceExamination: { type: String,  default: "" },
+    qualifyingExamination: { type: String,  default: "" },
+    allotmentNumber: { type: String,  default: "" },
+    admissionDate: { type: Date,  default: "" },
+    department: { type: String,  default: "" },
+    usn: { type: String,  default: "" },
+    srn: { type: String,  default: "" },
+    modeOfProgram: { type: String,  default: "" },
   },
-  researchSupervisor: { type: String, required: true },
+  researchSupervisor: { type: String,  default: "" },
   researchCoSupervisor: { type: String },
   doctoralCommittee: {
-    member1: { type: String, required: true },
-    member2: { type: String, required: true },
-    member3: { type: String, required: true },
-    member4: { type: String, required: true },
+    members: [
+      {
+        name: { type: String,  default: "" },
+      },
+    ],
   },
   courseWork1: {
-    subjectCode: { type: String, required: true },
-    subjectName: { type: String, required: true },
-    subjectGrade: { type: String, required: true },
-    status: { type: String, required: true },
-    eligibilityDate: { type: Date, required: true },
+    subjectCode: { type: String,  default: "" },
+    subjectName: { type: String,  default: "" },
+    subjectGrade: { type: String,  default: "" },
+    status: { type: String,  default: "" },
+    eligibilityDate: { type: Date, default: null },
   },
   courseWork2: {
-    subjectCode: { type: String, required: true },
-    subjectName: { type: String, required: true },
-    subjectGrade: { type: String, required: true },
-    status: { type: String, required: true },
-    eligibilityDate: { type: Date, required: true },
+    subjectCode: { type: String,  default: "" },
+    subjectName: { type: String,  default: "" },
+    subjectGrade: { type: String,  default: "" },
+    status: { type: String,  default: "" },
+    eligibilityDate: { type: Date,  default: null },
   },
   courseWork3: {
-    subjectCode: { type: String, required: true },
-    subjectName: { type: String, required: true },
-    subjectGrade: { type: String, required: true },
-    status: { type: String, required: true },
-    eligibilityDate: { type: Date, required: true },
+    subjectCode: { type: String,  default: "" },
+    subjectName: { type: String,  default: "" },
+    subjectGrade: { type: String,  default: "" },
+    status: { type: String,  default: "" },
+    eligibilityDate: { type: Date,  default: null },
   },
   courseWork4: {
-    subjectCode: { type: String, required: true },
-    subjectName: { type: String, required: true },
-    subjectGrade: { type: String, required: true },
-    status: { type: String, required: true },
-    eligibilityDate: { type: Date, required: true },
+    subjectCode: { type: String,  default: "" },
+    subjectName: { type: String,  default: "" },
+    subjectGrade: { type: String,  default: "" },
+    status: { type: String,  default: "" },
+    eligibilityDate: { type: Date,  default: null },
   },
   phdMilestones: {
     courseworkCompletionDate: {
-      coursework1: { type: Date, required: true },
-      coursework2: { type: Date, required: true },
-      coursework3: { type: Date, required: true },
-      coursework4: { type: Date, required: true },
+      coursework1: { type: Date,  default: null },
+      coursework2: { type: Date,  default: null },
+      coursework3: { type: Date,  default: null },
+      coursework4: { type: Date,  default: null },
     },
     dcMeetings: {
       DCM: [
         {
-          scheduledDate: { type: Date, required: true },
-          actualDate: { type: Date, required: false },
+          scheduledDate: { type: Date, default: null },
+          actualDate: { type: Date, default: null },
         },
       ],
     },
-    comprehensiveExamDate: { type: Date, required: false },
-    proposalDefenseDate: { type: Date, required: false },
-    openSeminarDate1: { type: Date, required: false },
-    preSubmissionSeminarDate: { type: Date, required: false },
-    synopsisSubmissionDate: { type: Date, required: false },
-    thesisSubmissionDate: { type: Date, required: false },
-    thesisDefenseDate: { type: Date, required: false },
-    awardOfDegreeDate: { type: Date, required: false },
+    comprehensiveExamDate: { type: Date, default: null },
+    proposalDefenseDate: { type: Date, default: null },
+    openSeminarDate1: { type: Date, default: null },
+    preSubmissionSeminarDate: { type: Date, default: null },
+    synopsisSubmissionDate: { type: Date, default: null },
+    thesisSubmissionDate: { type: Date, default: null },
+    thesisDefenseDate: { type: Date, default: null },
+    awardOfDegreeDate: { type: Date, default: null },
   },
   publications: {
     journals: [
       {
-        title: { type: String, required: true },
-        journalName: { type: String, required: true },
-        publicationYear: { type: Number, required: true },
-        volumeNumber: { type: String, required: true },
-        issueNumber: { type: String, required: true },
-        pageNumbers: { type: String, required: true },
-        impactFactor: { type: Number, required: true },
+        title: { type: String,  default: "" },
+        journalName: { type: String,  default: "" },
+        publicationYear: { type: Number,  default: "0" },
+        volumeNumber: { type: String,  default: "" },
+        issueNumber: { type: String,  default: "" },
+        pageNumbers: { type: String,  default: "" },
+        impactFactor: { type: Number,  default: "0" },
       },
     ],
     conferences: [
       {
-        title: { type: String, required: true },
-        conferenceName: { type: String, required: true },
-        publicationYear: { type: Number, required: true },
+        title: { type: String,  default: "" },
+        conferenceName: { type: String,  default: "" },
+        publicationYear: { type: Number,  default: "0" },
       },
     ],
   },

@@ -30,10 +30,7 @@ type FormData = {
   modeOfProgram: string;
   researchSupervisor: string;
   researchCoSupervisor: string;
-  doctoralCommitteeMember1: string;
-  doctoralCommitteeMember2: string;
-  doctoralCommitteeMember3: string;
-  doctoralCommitteeMember4: string;
+  doctoralCommitteeMembers: {name : string}[];
   courseWork1SubjectCode: string;
   courseWork1SubjectName: string;
   courseWork1SubjectGrade: string;
@@ -88,6 +85,7 @@ const MAXDCMMEETINGS = 8;
 const MAXCONFERENCES = 5;
 const MIN_JOURNALS=1;
 const MIN_CONFERENCES=1;
+const MAX_DCMEMBERS=10;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
@@ -109,10 +107,7 @@ const PhDScholarForm: React.FC = () => {
   modeOfProgram: '',
   researchSupervisor: '',
   researchCoSupervisor: '',
-  doctoralCommitteeMember1: '',
-  doctoralCommitteeMember2: '',
-  doctoralCommitteeMember3: '',
-  doctoralCommitteeMember4: '',
+  doctoralCommitteeMembers: [{name : ''}],
   courseWork1SubjectCode: '',
   courseWork1SubjectName: '',
   courseWork1SubjectGrade: '',
@@ -169,10 +164,7 @@ const PhDScholarForm: React.FC = () => {
     modeOfProgram: '423',
     researchSupervisor: '4324',
     researchCoSupervisor: '4324',
-    doctoralCommitteeMember1: '423432',
-    doctoralCommitteeMember2: '432423',
-    doctoralCommitteeMember3: '42342',
-    doctoralCommitteeMember4: '423423',
+    doctoralCommitteeMembers: [{name : 'dsdsds'}],
     courseWork1SubjectCode: '423432',
     courseWork1SubjectName: '423432',
     courseWork1SubjectGrade: '234',
@@ -238,6 +230,30 @@ const PhDScholarForm: React.FC = () => {
       notifyInfo("Added journal.");
     } else {
       notifyErr("Maximum journals reached!");
+    }
+  };
+
+  const addNewCommitteeMember = () => {
+    if (formData.doctoralCommitteeMembers.length < MAX_DCMEMBERS){
+    setFormData({
+      ...formData,
+      doctoralCommitteeMembers: [...formData.doctoralCommitteeMembers, { name: '' }]
+    });
+    notifyInfo("Added committee member.");
+    }else {
+      notifyErr('Maximum members reached!');
+    }
+  };
+
+  const deleteCommitteeMember = (index: number) => {
+    if (formData.doctoralCommitteeMembers.length > 1) {
+      setFormData({
+        ...formData,
+        doctoralCommitteeMembers: formData.doctoralCommitteeMembers.filter((_, i) => i !== index)
+      });
+      notifyInfo("Committee member deleted.");
+    } else {
+      notifyErr("You must have at least one committee member.");
     }
   };
 
@@ -338,7 +354,7 @@ const PhDScholarForm: React.FC = () => {
               onChange={handleChange}
                
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+            required/>
           </div>
           <div className="w-full max-w-md space-y-2">
             <Label htmlFor="middleName" className="text-gray-700 dark:text-gray-300">Middle Name</Label>
@@ -359,7 +375,7 @@ const PhDScholarForm: React.FC = () => {
               onChange={handleChange}
                
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+            required/>
           </div>
           <div className="w-full max-w-md space-y-2">
             <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
@@ -371,7 +387,7 @@ const PhDScholarForm: React.FC = () => {
               onChange={handleChange}
                 
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+            required/>
           </div>
           <div className="w-full max-w-md space-y-2">
             <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</Label>
@@ -384,7 +400,7 @@ const PhDScholarForm: React.FC = () => {
                 onChange={handleChange}
                   
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
+              required/>
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -547,54 +563,26 @@ const PhDScholarForm: React.FC = () => {
           </div>
         </div>
 
-      <div className="space-y-4">
+        <div className="space-y-6">
         <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Doctoral Committee Members</h3>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="doctoralCommitteeMember1" className="text-gray-700 dark:text-gray-300">Member 1</Label>
+        {formData.doctoralCommitteeMembers.map((member, index) => (
+          <div key={index} className="space-y-2">
+            <Label htmlFor={`doctoralCommitteeMembers[${index}].name`} className="text-gray-700 dark:text-gray-300">Member {index + 1}</Label>
             <Input
-              id="doctoralCommitteeMember1"
-              name="doctoralCommitteeMember1"
-              value={formData.doctoralCommitteeMember1}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="doctoralCommitteeMember2" className="text-gray-700 dark:text-gray-300">Member 2</Label>
-            <Input
-              id="doctoralCommitteeMember2"
-              name="doctoralCommitteeMember2"
-              value={formData.doctoralCommitteeMember2}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="doctoralCommitteeMember3" className="text-gray-700 dark:text-gray-300">Member 3</Label>
-            <Input
-              id="doctoralCommitteeMember3"
-              name="doctoralCommitteeMember3"
-              value={formData.doctoralCommitteeMember3}
+              id={`doctoralCommitteeMembers[${index}].name`}
+              name={`doctoralCommitteeMembers[${index}].name`}
+              value={member.name}
               onChange={handleChange}
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
+            <Button type="button" onClick={() => deleteCommitteeMember(index)} className="mt-2 bg-red-500 hover:bg-red-600 text-white dark:bg-red-700 dark:hover:bg-red-600">
+              Delete Member
+            </Button>
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="doctoralCommitteeMember4" className="text-gray-700 dark:text-gray-300">Member 4</Label>
-            <Input
-              id="doctoralCommitteeMember4"
-              name="doctoralCommitteeMember4"
-              value={formData.doctoralCommitteeMember4}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-        </div>
+        ))}
+        <Button type="button" onClick={addNewCommitteeMember} className="mt-4 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-600">Add Member</Button>
       </div>
-
+      
       <div className="space-y-6">
         <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Course Work</h3>
         
