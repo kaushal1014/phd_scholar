@@ -663,6 +663,18 @@ const PhDScholarForm: React.FC = () => {
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
+            <div>
+              <Label htmlFor="courseworkCompletionDate1" className="text-gray-700 dark:text-gray-300">Course Work 1 Completion Date</Label>
+              <Input
+                id="courseworkCompletionDate1"
+                type="date"
+                name="courseworkCompletionDate1"
+                value={formData.courseworkCompletionDate1}
+                onChange={handleChange}
+                 
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
           </div>
         </div>
 
@@ -726,6 +738,18 @@ const PhDScholarForm: React.FC = () => {
                 type="date"
                 name="courseWork2EligibilityDate"
                 value={formData.courseWork2EligibilityDate}
+                onChange={handleChange}
+                 
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
+            <div>
+              <Label htmlFor="courseworkCompletionDate2" className="text-gray-700 dark:text-gray-300">Course Work 2 Completion Date</Label>
+              <Input
+                id="courseworkCompletionDate2"
+                type="date"
+                name="courseworkCompletionDate2"
+                value={formData.courseworkCompletionDate2}
                 onChange={handleChange}
                  
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
@@ -799,6 +823,18 @@ const PhDScholarForm: React.FC = () => {
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
+            <div>
+              <Label htmlFor="courseworkCompletionDate3" className="text-gray-700 dark:text-gray-300">Course Work 3 Completion Date</Label>
+              <Input
+                id="courseworkCompletionDate3"
+                type="date"
+                name="courseworkCompletionDate3"
+                value={formData.courseworkCompletionDate3}
+                onChange={handleChange}
+                 
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              />
+            </div>
           </div>
         </div>
 
@@ -862,48 +898,6 @@ const PhDScholarForm: React.FC = () => {
                 type="date"
                 name="courseWork4EligibilityDate"
                 value={formData.courseWork4EligibilityDate}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Course Work Completion Dates</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="courseworkCompletionDate1" className="text-gray-700 dark:text-gray-300">Course Work 1 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate1"
-                type="date"
-                name="courseworkCompletionDate1"
-                value={formData.courseworkCompletionDate1}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseworkCompletionDate2" className="text-gray-700 dark:text-gray-300">Course Work 2 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate2"
-                type="date"
-                name="courseworkCompletionDate2"
-                value={formData.courseworkCompletionDate2}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseworkCompletionDate3" className="text-gray-700 dark:text-gray-300">Course Work 3 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate3"
-                type="date"
-                name="courseworkCompletionDate3"
-                value={formData.courseworkCompletionDate3}
                 onChange={handleChange}
                  
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
