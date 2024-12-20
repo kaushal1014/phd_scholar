@@ -10,8 +10,8 @@ connectDB();
 export async function POST(req: Request) {
   try {
     const data = await req.json();
-    console.log("hi");
-    console.log(data?.firstName || "No First Name Provided");
+
+    console.log("Received data:", data);
 
     // Check if the user already exists
     const existingUser = await User.findOne({ email: data?.email });
@@ -20,7 +20,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ message: "User already exists" }, { status: 400 });
     }
 
-    // Hash the password (ensure `data.password` is not empty)
+    // Hash the password
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(data?.password || "default_password", salt);
 
@@ -47,10 +47,7 @@ export async function POST(req: Request) {
       researchSupervisor: data?.researchSupervisor || "",
       researchCoSupervisor: data?.researchCoSupervisor || "",
       doctoralCommittee: {
-        member1: data?.doctoralCommitteeMember1 || "",
-        member2: data?.doctoralCommitteeMember2 || "",
-        member3: data?.doctoralCommitteeMember3 || "",
-        member4: data?.doctoralCommitteeMember4 || "",
+        members: data?.doctoralCommitteeMembers || [],
       },
       courseWork1: {
         subjectCode: data?.courseWork1SubjectCode || "",
@@ -138,7 +135,7 @@ export async function POST(req: Request) {
     });
     const savedUser = await newUser.save();
 
-    // Update the user to link to the PhD Scholar
+    // Link the user with the PhD Scholar
     savedUser.phdScholar = savedScholar._id;
     await savedUser.save();
 
