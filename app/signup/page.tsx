@@ -288,7 +288,7 @@ const PhDScholarForm: React.FC = () => {
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
 
     if (name.includes('[') && name.includes(']')) {
@@ -641,15 +641,13 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork1Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <Input
-                id="courseWork1Status"
-                placeholder="Status"
-                name="courseWork1Status"
-                value={formData.courseWork1Status}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
+              <select value={formData.courseWork1Status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
+                <option>Pending</option>
+                <option>Enrolled</option>
+                <option>Completed</option>
+              </select>
             </div>
             <div>
               <Label htmlFor="courseWork1EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
@@ -721,15 +719,13 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork2Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <Input
-                id="courseWork2Status"
-                placeholder="Status"
-                name="courseWork2Status"
-                value={formData.courseWork2Status}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
+              <select value={formData.courseWork2Status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
+                <option>Pending</option>
+                <option>Enrolled</option>
+                <option>Completed</option>
+              </select>
             </div>
             <div>
               <Label htmlFor="courseWork2EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
@@ -801,15 +797,13 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork3Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <Input
-                id="courseWork3Status"
-                placeholder="Status"
-                name="courseWork3Status"
-                value={formData.courseWork3Status}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
+              <select value={formData.courseWork3Status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
+                <option>Pending</option>
+                <option>Enrolled</option>
+                <option>Completed</option>
+              </select>
             </div>
             <div>
               <Label htmlFor="courseWork3EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
@@ -881,15 +875,13 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork4Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <Input
-                id="courseWork4Status"
-                placeholder="Status"
-                name="courseWork4Status"
-                value={formData.courseWork4Status}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
+              <select value={formData.courseWork4Status}
+              onChange={handleChange}
+              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
+                <option>Pending</option>
+                <option>Enrolled</option>
+                <option>Completed</option>
+              </select>
             </div>
             <div>
               <Label htmlFor="courseWork4EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
