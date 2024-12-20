@@ -336,7 +336,7 @@ const PhDScholarForm: React.FC = () => {
               name="firstName"
               value={formData.firstName}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -357,7 +357,7 @@ const PhDScholarForm: React.FC = () => {
               name="lastName"
               value={formData.lastName}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -369,7 +369,7 @@ const PhDScholarForm: React.FC = () => {
               type="email"
               placeholder="john@example.com"
               onChange={handleChange}
-              required 
+                
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -382,7 +382,7 @@ const PhDScholarForm: React.FC = () => {
                 type={showPassword ? "text" : 
                 "password"}
                 onChange={handleChange}
-                required 
+                  
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
               <button
@@ -407,7 +407,7 @@ const PhDScholarForm: React.FC = () => {
               value={formData.dateOfBirth}
               onChange={handleChange}
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              required
+               
             />
           </div>
           <div className="w-full max-w-md space-y-2">
@@ -417,7 +417,7 @@ const PhDScholarForm: React.FC = () => {
               name="nationality"
               value={formData.nationality}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -428,7 +428,7 @@ const PhDScholarForm: React.FC = () => {
               name="mobileNumber"
               value={formData.mobileNumber}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -442,7 +442,7 @@ const PhDScholarForm: React.FC = () => {
               name="entranceExamination"
               value={formData.entranceExamination}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -453,7 +453,7 @@ const PhDScholarForm: React.FC = () => {
               name="qualifyingExamination"
               value={formData.qualifyingExamination}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -464,7 +464,7 @@ const PhDScholarForm: React.FC = () => {
               name="allotmentNumber"
               value={formData.allotmentNumber}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -476,7 +476,7 @@ const PhDScholarForm: React.FC = () => {
               type="date"
               value={formData.admissionDate}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -487,7 +487,7 @@ const PhDScholarForm: React.FC = () => {
               name="department"
               value={formData.department}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -498,7 +498,7 @@ const PhDScholarForm: React.FC = () => {
               name="usn"
               value={formData.usn}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -509,7 +509,7 @@ const PhDScholarForm: React.FC = () => {
               name="srn"
               value={formData.srn}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -520,7 +520,7 @@ const PhDScholarForm: React.FC = () => {
               name="modeOfProgram"
               value={formData.modeOfProgram}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -531,7 +531,7 @@ const PhDScholarForm: React.FC = () => {
               name="researchSupervisor"
               value={formData.researchSupervisor}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -557,7 +557,7 @@ const PhDScholarForm: React.FC = () => {
               name="doctoralCommitteeMember1"
               value={formData.doctoralCommitteeMember1}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -568,7 +568,7 @@ const PhDScholarForm: React.FC = () => {
               name="doctoralCommitteeMember2"
               value={formData.doctoralCommitteeMember2}
               onChange={handleChange}
-              required
+               
               className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
             />
           </div>
@@ -609,7 +609,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork1SubjectCode"
                 value={formData.courseWork1SubjectCode}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -621,7 +621,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork1SubjectName"
                 value={formData.courseWork1SubjectName}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -635,7 +635,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork1SubjectGrade"
                 value={formData.courseWork1SubjectGrade}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -647,7 +647,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork1Status"
                 value={formData.courseWork1Status}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -659,7 +659,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork1EligibilityDate"
                 value={formData.courseWork1EligibilityDate}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -677,7 +677,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork2SubjectCode"
                 value={formData.courseWork2SubjectCode}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -689,7 +689,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork2SubjectName"
                 value={formData.courseWork2SubjectName}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -703,7 +703,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork2SubjectGrade"
                 value={formData.courseWork2SubjectGrade}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -715,7 +715,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork2Status"
                 value={formData.courseWork2Status}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -727,7 +727,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork2EligibilityDate"
                 value={formData.courseWork2EligibilityDate}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -745,7 +745,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork3SubjectCode"
                 value={formData.courseWork3SubjectCode}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -757,7 +757,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork3SubjectName"
                 value={formData.courseWork3SubjectName}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -771,7 +771,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork3SubjectGrade"
                 value={formData.courseWork3SubjectGrade}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -783,7 +783,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork3Status"
                 value={formData.courseWork3Status}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -795,7 +795,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork3EligibilityDate"
                 value={formData.courseWork3EligibilityDate}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -813,7 +813,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork4SubjectCode"
                 value={formData.courseWork4SubjectCode}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -825,7 +825,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork4SubjectName"
                 value={formData.courseWork4SubjectName}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -839,7 +839,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork4SubjectGrade"
                 value={formData.courseWork4SubjectGrade}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -851,7 +851,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork4Status"
                 value={formData.courseWork4Status}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -863,7 +863,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseWork4EligibilityDate"
                 value={formData.courseWork4EligibilityDate}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -881,7 +881,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseworkCompletionDate1"
                 value={formData.courseworkCompletionDate1}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -893,7 +893,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseworkCompletionDate2"
                 value={formData.courseworkCompletionDate2}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -905,7 +905,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseworkCompletionDate3"
                 value={formData.courseworkCompletionDate3}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -917,7 +917,7 @@ const PhDScholarForm: React.FC = () => {
                 name="courseworkCompletionDate4"
                 value={formData.courseworkCompletionDate4}
                 onChange={handleChange}
-                required
+                 
                 className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
               />
             </div>
@@ -942,7 +942,7 @@ const PhDScholarForm: React.FC = () => {
                   type="date"
                   value={meeting.scheduledDate}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1077,7 +1077,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].title`}
                   value={journal.title}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1089,7 +1089,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].journalName`}
                   value={journal.journalName}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1101,7 +1101,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].publicationYear`}
                   value={journal.publicationYear}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1113,7 +1113,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].volumeNumber`}
                   value={journal.volumeNumber}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1125,7 +1125,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].issueNumber`}
                   value={journal.issueNumber}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1137,7 +1137,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].pageNumbers`}
                   value={journal.pageNumbers}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1149,7 +1149,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`journals[${index}].impactFactor`}
                   value={journal.impactFactor}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1176,7 +1176,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`conferences[${index}].title`}
                   value={conference.title}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1188,7 +1188,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`conferences[${index}].conferenceName`}
                   value={conference.conferenceName}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
@@ -1200,7 +1200,7 @@ const PhDScholarForm: React.FC = () => {
                   name={`conferences[${index}].publicationYear`}
                   value={conference.publicationYear}
                   onChange={handleChange}
-                  required
+                   
                   className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
                 />
               </div>
