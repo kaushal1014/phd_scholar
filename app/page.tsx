@@ -3,13 +3,12 @@ import React from 'react';
 import Link from 'next/link';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { GraduationCap, BookOpen, Users, Calendar, ChevronRight, FileText, School, Award } from 'lucide-react';
+import { GraduationCap, BookOpen, Users, Calendar, ChevronRight, FileText, School, Award, ArrowRight } from 'lucide-react';
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800">
-      <header className="bg-white dark:bg-gray-800 shadow">
+      <header className="bg-white dark:bg-gray-800 shadow sticky top-0 z-10">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Ph.D. and M.Tech. by Research</h1>
         </div>
@@ -19,6 +18,9 @@ export default function HomePage() {
         <div className="text-center mb-12">
           <h2 className="text-4xl font-extrabold text-gray-900 dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">Welcome to Your PhD Journey</h2>
           <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500 dark:text-gray-300">Track your progress, manage your research, and stay on top of your academic milestones all in one place.</p>
+          <Button className="mt-8" size="lg">
+            <Link href="/dashboard">Go to Dashboard</Link>
+          </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16">
@@ -84,69 +86,64 @@ export default function HomePage() {
               <p className="mt-4 text-lg leading-6 text-gray-500 dark:text-gray-300">
                 Sign up now to access all features and take control of your academic progress.
               </p>
-              <Button className="mt-8 inline-flex items-center px-6 py-3">
+              <Link href='/signup' className="mt-8 inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
                 Get Started
-              </Button>
+              </Link>
             </div>
           </div>
         </div>
 
-        <Tabs defaultValue="overview" className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
-            <TabsTrigger value="overview">Overview</TabsTrigger>
-            <TabsTrigger value="programs">Programs</TabsTrigger>
-            <TabsTrigger value="eligibility">Eligibility</TabsTrigger>
-            <TabsTrigger value="requirements">Requirements</TabsTrigger>
-          </TabsList>
-          <TabsContent value="overview">
+        <div className="space-y-16">
+          <section id="overview" className="scroll-mt-16">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">PH.D. AND M.TECH. BY RESEARCH</h3>
             <Card>
-              <CardHeader>
-                <CardTitle>PH.D. AND M.TECH. BY RESEARCH</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p>Part-time opportunities also for teachers and industry professionals.</p>
-                <p>Cutting-edge research areas in engineering, science, and management.</p>
-                <p>Highly experienced Ph.D. faculty on campus: over 70</p>
-                <p>TEQIP/World Bank funding including COE</p>
-                <p>Crucible of Research and Innovation (CORI) – for multi-disciplinary research</p>
-                <p>Several ongoing funded research projects</p>
-                <p>Collaboration with reputed universities and industries</p>
-                <p>Fellowship/Scholarship/Financial Assistance available</p>
+              <CardContent className="pt-6">
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                  <li>Part-time opportunities also for teachers and industry professionals.</li>
+                  <li>Cutting-edge research areas in engineering, science, and management.</li>
+                  <li>Highly experienced Ph.D. faculty on campus: over 70</li>
+                  <li>TEQIP/World Bank funding including COE</li>
+                  <li>Crucible of Research and Innovation (CORI) – for multi-disciplinary research</li>
+                  <li>Several ongoing funded research projects</li>
+                  <li>Collaboration with reputed universities and industries</li>
+                  <li>Fellowship/Scholarship/Financial Assistance available</li>
+                </ul>
               </CardContent>
             </Card>
-          </TabsContent>
-          <TabsContent value="programs">
+          </section>
+
+          <section id="programs" className="scroll-mt-16">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">AVAILABLE PROGRAMS</h3>
             <Card>
-              <CardHeader>
-                <CardTitle>AVAILABLE PROGRAMS</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p>Ph.D. and M.Tech by Research in – Computer Science & Engineering, Electrical Engineering, Electronics and Communication Engineering, Mechanical Engineering, and Biotechnology.</p>
-                <p>Ph.D in – Commerce & Management, Science (Maths, Physics & Chemistry), Computer Applications, Psychology, Nursing, and Pharmacy.</p>
-                <p>Candidates wishing to pursue research careers in interdisciplinary areas are especially encouraged.</p>
+              <CardContent className="pt-6">
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                  <li>Ph.D. and M.Tech by Research in – Computer Science & Engineering, Electrical Engineering, Electronics and Communication Engineering, Mechanical Engineering, and Biotechnology.</li>
+                  <li>Ph.D in – Commerce & Management, Science (Maths, Physics & Chemistry), Computer Applications, Psychology, Nursing, and Pharmacy.</li>
+                  <li>Candidates wishing to pursue research careers in interdisciplinary areas are especially encouraged.</li>
+                </ul>
               </CardContent>
             </Card>
-          </TabsContent>
-          <TabsContent value="eligibility">
+          </section>
+
+          <section id="qualifications" className="scroll-mt-16">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">MINIMUM QUALIFICATION</h3>
             <Card>
-              <CardHeader>
-                <CardTitle>MINIMUM QUALIFICATION</CardTitle>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <p>Ph.D.: A post-graduate degree in a related field of study from a UGC recognized university, with a minimum of 60% aggregate marks (or equivalent grade point average)</p>
-                <p>M.Tech. by Research: UG degree in engineering with at least 60% marks (or equivalent GPA).</p>
-                <p>Reservation Categories (as notified by Govt. of Karnataka): 10% relaxation</p>
-                <p>Distance Education Degrees: not recognized</p>
+              <CardContent className="pt-6">
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
+                  <li>Ph.D.: A post-graduate degree in a related field of study from a UGC recognized university, with a minimum of 60% aggregate marks (or equivalent grade point average)</li>
+                  <li>M.Tech. by Research: UG degree in engineering with at least 60% marks (or equivalent GPA).</li>
+                  <li>Reservation Categories (as notified by Govt. of Karnataka): 10% relaxation</li>
+                  <li>Distance Education Degrees: not recognized</li>
+                </ul>
               </CardContent>
             </Card>
-          </TabsContent>
-          <TabsContent value="requirements">
+          </section>
+
+          <section id="eligibility" className="scroll-mt-16">
+            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">ELIGIBILITY FOR THE AWARD OF PH.D./ M.TECH. BY RESEARCH DEGREE</h3>
             <Card>
-              <CardHeader>
-                <CardTitle>ELIGIBILITY FOR THE AWARD OF PH.D./ M.TECH. BY RESEARCH DEGREE</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ul className="list-disc list-inside space-y-2">
+              <CardContent className="pt-6">
+                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
                   <li>Credit compliance for course work within the stipulated maximum time duration</li>
                   <li>Successful Proposal Defense</li>
                   <li>Credit compliance for Research work within the stipulated maximum time duration</li>
@@ -162,8 +159,8 @@ export default function HomePage() {
                 </ul>
               </CardContent>
             </Card>
-          </TabsContent>
-        </Tabs>
+          </section>
+        </div>
       </main>
     </div>
   );
