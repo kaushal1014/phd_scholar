@@ -46,8 +46,15 @@ const authOptions = {
       },
     }),
   ],
+  session: {
+    // The session will expire after 20 minutes of inactivity
+    maxAge: 20 * 60, // 20 minutes in seconds
+    updateAge: 10 * 60,
+  },
+
   pages: {
-    signIn: "/login", // Custom sign-in page
+    signIn: "/login",
+    error: "/auth/error",
   },
   callbacks: {
     async jwt({ token, user }: { token: any; user: any }) {
