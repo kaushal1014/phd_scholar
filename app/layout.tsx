@@ -86,6 +86,14 @@ function Header() {
             >
               Milestones
             </Link>
+            <Link
+              href="/resources"
+              className={`text-lg font-medium transition-colors hover:text-primary ${
+                pathname === "/resources" ? "text-primary" : "text-foreground/60"
+              }`}
+            >
+              Resources
+            </Link>
           </nav>
           <div className="flex items-center space-x-4">
             {!session ? (
