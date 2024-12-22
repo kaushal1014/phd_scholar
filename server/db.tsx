@@ -17,7 +17,6 @@ const connectDB = async (): Promise<void> => {
     // Connect to MongoDB with additional options for stability
     await mongoose.connect(uri);
 
-    console.log('MongoDB connected');
   } catch (err) {
     console.error('MongoDB connection error:', err);
     throw new Error('Database connection failed');
