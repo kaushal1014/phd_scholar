@@ -39,26 +39,7 @@ function Header() {
   if (!mounted) {
     return null;
   }
-
-  React.useEffect(() => {
-    let timeout: NodeJS.Timeout;
-    const resetTimeout = () => {
-      if (timeout) clearTimeout(timeout);
-      timeout = setTimeout(() => {
-        signOut();
-      }, 20 * 60 * 1000); // 20 minutes
-    };
-    const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
-    events.forEach(event => window.addEventListener(event, resetTimeout));
-
-    resetTimeout(); // Initialize timeout on component mount
-
-    return () => {
-      if (timeout) clearTimeout(timeout);
-      events.forEach(event => window.removeEventListener(event, resetTimeout));
-    };
-  }, []);
-
+  
   const handleSignOut = async () => {  
     try {
       await signOut({ redirect: false });
