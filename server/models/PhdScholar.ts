@@ -96,66 +96,66 @@ interface PhdScholar extends Document {
 
 const phdScholarSchema = new Schema<PhdScholar>({
   personalDetails: {
-    firstName: { type: String,  default: "" },
+    firstName: { type: String, default: "" },
     middleName: { type: String },
-    lastName: { type: String,  default: "" },
-    dateOfBirth: { type: Date,  default: "" },
-    nationality: { type: String,  default: "" },
-    mobileNumber: { type: String,  default: "" },
+    lastName: { type: String, default: "" },
+    dateOfBirth: { type: Date, default: "" },
+    nationality: { type: String, default: "" },
+    mobileNumber: { type: String, default: "" },
   },
   admissionDetails: {
-    entranceExamination: { type: String,  default: "" },
-    qualifyingExamination: { type: String,  default: "" },
-    allotmentNumber: { type: String,  default: "" },
-    admissionDate: { type: Date,  default: "" },
-    department: { type: String,  default: "" },
-    usn: { type: String,  default: "" },
-    srn: { type: String,  default: "" },
-    modeOfProgram: { type: String,  default: "" },
+    entranceExamination: { type: String, default: "" },
+    qualifyingExamination: { type: String, default: "" },
+    allotmentNumber: { type: String, default: "" },
+    admissionDate: { type: Date, default: "" },
+    department: { type: String, default: "" },
+    usn: { type: String, default: "" },
+    srn: { type: String, default: "" },
+    modeOfProgram: { type: String, default: "" },
   },
-  researchSupervisor: { type: String,  default: "" },
+  researchSupervisor: { type: String, default: "" },
   researchCoSupervisor: { type: String },
   doctoralCommittee: {
     members: [
       {
-        name: { type: String,  default: "" },
+        name: { type: String, default: "" },
       },
     ],
   },
   courseWork1: {
-    subjectCode: { type: String,  default: "" },
-    subjectName: { type: String,  default: "" },
-    subjectGrade: { type: String,  default: "" },
-    status: { type: String,  default: "" },
+    subjectCode: { type: String, default: "" },
+    subjectName: { type: String, default: "" },
+    subjectGrade: { type: String, default: "" },
+    status: { type: String, default: "" },
     eligibilityDate: { type: Date, default: null },
   },
   courseWork2: {
-    subjectCode: { type: String,  default: "" },
-    subjectName: { type: String,  default: "" },
-    subjectGrade: { type: String,  default: "" },
-    status: { type: String,  default: "" },
-    eligibilityDate: { type: Date,  default: null },
+    subjectCode: { type: String, default: "" },
+    subjectName: { type: String, default: "" },
+    subjectGrade: { type: String, default: "" },
+    status: { type: String, default: "" },
+    eligibilityDate: { type: Date, default: null },
   },
   courseWork3: {
-    subjectCode: { type: String,  default: "" },
-    subjectName: { type: String,  default: "" },
-    subjectGrade: { type: String,  default: "" },
-    status: { type: String,  default: "" },
-    eligibilityDate: { type: Date,  default: null },
+    subjectCode: { type: String, default: "" },
+    subjectName: { type: String, default: "" },
+    subjectGrade: { type: String, default: "" },
+    status: { type: String, default: "" },
+    eligibilityDate: { type: Date, default: null },
   },
   courseWork4: {
-    subjectCode: { type: String,  default: "" },
-    subjectName: { type: String,  default: "" },
-    subjectGrade: { type: String,  default: "" },
-    status: { type: String,  default: "" },
-    eligibilityDate: { type: Date,  default: null },
+    subjectCode: { type: String, default: "" },
+    subjectName: { type: String, default: "" },
+    subjectGrade: { type: String, default: "" },
+    status: { type: String, default: "" },
+    eligibilityDate: { type: Date, default: null },
   },
   phdMilestones: {
     courseworkCompletionDate: {
-      coursework1: { type: Date,  default: null },
-      coursework2: { type: Date,  default: null },
-      coursework3: { type: Date,  default: null },
-      coursework4: { type: Date,  default: null },
+      coursework1: { type: Date, default: null },
+      coursework2: { type: Date, default: null },
+      coursework3: { type: Date, default: null },
+      coursework4: { type: Date, default: null },
     },
     dcMeetings: {
       DCM: [
@@ -177,26 +177,25 @@ const phdScholarSchema = new Schema<PhdScholar>({
   publications: {
     journals: [
       {
-        title: { type: String,  default: "" },
-        journalName: { type: String,  default: "" },
-        publicationYear: { type: Number,  default: "0" },
-        volumeNumber: { type: String,  default: "" },
-        issueNumber: { type: String,  default: "" },
-        pageNumbers: { type: String,  default: "" },
-        impactFactor: { type: Number,  default: "0" },
+        title: { type: String, default: "" },
+        journalName: { type: String, default: "" },
+        publicationYear: { type: Number, default: 0 },
+        volumeNumber: { type: String, default: "" },
+        issueNumber: { type: String, default: "" },
+        pageNumbers: { type: String, default: "" },
+        impactFactor: { type: Number, default: 0 },
       },
     ],
     conferences: [
       {
-        title: { type: String,  default: "" },
-        conferenceName: { type: String,  default: "" },
-        publicationYear: { type: Number,  default: "0" },
+        title: { type: String, default: "" },
+        conferenceName: { type: String, default: "" },
+        publicationYear: { type: Number, default: 0 },
       },
     ],
   },
 });
 
+const PhdScholar = mongoose.models.PhdScholar || mongoose.model('PhdScholar', phdScholarSchema);
 
-const PhDScholar: Model<PhdScholar> = mongoose.models.PhD_Scholar || mongoose.model<PhdScholar>('PhD_Scholar', phdScholarSchema);
-
-export default PhDScholar;
+export default PhdScholar;

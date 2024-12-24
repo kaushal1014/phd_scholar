@@ -6,20 +6,26 @@ import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { GraduationCap, BookMarked, Mail, Shield, CheckCircle, LogIn, Loader2 } from 'lucide-react';
-import { User as UserType } from '@/types';
+import { User as UserType, PhdScholar } from '@/types';
 
 export default function PhDResearchDashboard() {
   const { data: session, status } = useSession();
   const router = useRouter();
-  const [data, setData] = useState<UserType | null>(null);
+  const [userData, setUserData] = useState<UserType | null>(null);
+  const [phdScholarData, setPhdScholarData] = useState<PhdScholar | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (status === "authenticated") {
-      fetch('/api/user/phd-scholar')
+      fetch('/api/user/user')
         .then(response => response.json())
         .then(data => {
-          setData(data);
+          setUserData(data);
+          return fetch(`/api/user/phd-scholar`);
+        })
+        .then(response => response.json())
+        .then(data => {
+          setPhdScholarData(data);
           setLoading(false);
         })
         .catch(error => {
@@ -28,6 +34,25 @@ export default function PhDResearchDashboard() {
         });
     }
   }, [status]);
+
+  useEffect(() => {
+    let timeout: NodeJS.Timeout;
+    const resetTimeout = () => {
+      if (timeout) clearTimeout(timeout);
+      timeout = setTimeout(() => {
+        signOut();
+      }, 20 * 60 * 1000); // 20 minutes
+    };
+    const events = ['load', 'mousemove', 'mousedown', 'click', 'scroll', 'keypress'];
+    events.forEach(event => window.addEventListener(event, resetTimeout));
+
+    resetTimeout(); // Initialize timeout on component mount
+
+    return () => {
+      if (timeout) clearTimeout(timeout);
+      events.forEach(event => window.removeEventListener(event, resetTimeout));
+    };
+  }, []);
 
   if (status === "unauthenticated") {
     return (
@@ -64,7 +89,7 @@ export default function PhDResearchDashboard() {
     );
   }
 
-  if (status === "authenticated" && data && data.phdScholar) {
+  if (status === "authenticated" && userData && phdScholarData) {
     return (
       <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
         <div className="max-w-4xl mx-auto space-y-6">
@@ -105,14 +130,14 @@ export default function PhDResearchDashboard() {
                 <div className="flex items-center">
                   <GraduationCap className="h-4 w-4 mr-2 text-muted-foreground" />
                   <div className="space-y-1">
-                    <p className="text-sm font-medium leading-none">{data.firstName} {data.lastName}</p>
-                    <p className="text-sm text-muted-foreground">Department: {data.phdScholar.admissionDetails.department}</p>
+                    <p className="text-sm font-medium leading-none">{userData.firstName} {userData.lastName}</p>
+                    <p className="text-sm text-muted-foreground">Department: {phdScholarData.admissionDetails.department}</p>
                   </div>
                 </div>
                 <div>
                   <h2 className="text-lg font-bold">Journals</h2>
                   <div className="space-y-4">
-                    {data.phdScholar.publications.journals.map((journal, i) => (
+                    {phdScholarData.publications.journals.map((journal, i) => (
                       <div key={i} className="flex items-center">
                         <BookMarked className="h-4 w-4 mr-2 text-muted-foreground" />
                         <div className="space-y-1">
@@ -126,7 +151,7 @@ export default function PhDResearchDashboard() {
                 <div>
                   <h2 className="text-lg font-bold">Conferences</h2>
                   <div className="space-y-4">
-                    {data.phdScholar.publications.conferences.map((conference, i) => (
+                    {phdScholarData.publications.conferences.map((conference, i) => (
                       <div key={i} className="flex items-center">
                         <BookMarked className="h-4 w-4 mr-2 text-muted-foreground" />
                         <div className="space-y-1">

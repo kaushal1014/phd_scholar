@@ -1,6 +1,5 @@
 import mongoose, { Schema, Document } from 'mongoose';
 
-// Define the User schema
 const userSchema = new mongoose.Schema({
   firstName: {
     type: String,
@@ -29,7 +28,7 @@ const userSchema = new mongoose.Schema({
   },
   phdScholar: { // Simulate a foreign key by referencing the PhD scholar
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PhD_Scholar',
+    ref: 'PhdScholar',
   },
 });
 
