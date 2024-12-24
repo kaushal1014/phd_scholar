@@ -4,8 +4,9 @@ import localFont from "next/font/local";
 import "./globals.css";
 import * as React from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useRouter, usePathname } from 'next/navigation';
-import { Moon, Sun, GraduationCap } from "lucide-react";
+import { Moon, Sun, GraduationCap, User } from 'lucide-react';
 import { Button } from "@/components/ui/button";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ToastContainer, toast } from 'react-toastify';
@@ -13,6 +14,13 @@ import 'react-toastify/dist/ReactToastify.css';
 import { useTheme } from "next-themes";
 import { AuthProvider } from "./Providers";
 import { useSession, signOut } from "next-auth/react";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -43,13 +51,13 @@ function Header() {
   const handleSignOut = async () => {  
     try {
       await signOut({ redirect: false });
-      toast.success("Signed out");
+      toast.success("Signed out successfully");
   
       if (pathname === '/dashboard') {
         router.push('/login');
       }
     } catch (error) {
-      toast.error("Error signing out.");
+      toast.error("Error signing out. Please try again.");
     }
   };
 
@@ -58,7 +66,12 @@ function Header() {
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
-            <GraduationCap className="h-10 w-10 text-blue-600 dark:text-blue-400 mr-3" />
+          {/* <Image 
+              src="/download2.png" 
+              alt="logo" 
+              width={100} 
+              height={100} 
+            /> */}
             <span className="text-2xl font-bold text-foreground">PhD Scholar Portal</span>
           </div>
           <nav className="hidden md:flex items-center space-x-8">
@@ -115,13 +128,29 @@ function Header() {
                 </Button>
               </>
             ) : (
-              <Button
-                size="sm"
-                className="text-base"
-                onClick={handleSignOut}
-              >
-                Sign Out
-              </Button>
+              <div className="flex items-center space-x-4">
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" className="relative h-8 w-8 rounded-full">
+                      <Avatar className="h-12 w-12">
+                        <AvatarImage src="/avatar.png" alt={session.user?.name || "User avatar"} />
+                        <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end">
+                    <DropdownMenuItem asChild>
+                      <Link href={`/myprofile/${session.user.id}`}>Profile</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem asChild>
+                      <Link href="/settings">Settings</Link>
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>
+                      Sign out
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </div>
             )}
             <ThemeToggle />
           </div>
@@ -192,3 +221,4 @@ export default function RootLayout({
     </html>
   );
 }
+
