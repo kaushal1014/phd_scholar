@@ -9,6 +9,8 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { GraduationCap, BookMarked, Mail, Shield, CheckCircle, Loader2, Edit2, Save, X, Calendar } from 'lucide-react';
 import { User as UserType, PhdScholar } from '@/types';
+import { GetStaticPaths, GetStaticProps } from 'next';
+
 
 type IndexedUser = UserType & { [key: string]: any };
 type IndexedPhdScholar = PhdScholar & { [key: string]: any };
@@ -416,7 +418,15 @@ export default function UserProfile({ params }: { params: { id: string } }) {
       </div>
     );
   }
-
-  return null;
 }
+
+// export async function generateStaticParams() {
+//   const res = await fetch('api/allUsers');
+//   const users: IndexedUser[] = await res.json();
+
+//   return users.map(user => ({
+//     id: user._id.toString(),
+//   }));
+// }
+
 
