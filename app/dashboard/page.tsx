@@ -17,7 +17,8 @@ export default function PhDResearchDashboard() {
 
   useEffect(() => {
     if (status === "authenticated") {
-      fetch('/api/user/user')
+      const userId = session.user.id;
+      fetch(`/api/user/user/${userId}`)
         .then(response => response.json())
         .then(data => {
           setUserData(data);
