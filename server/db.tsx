@@ -7,7 +7,7 @@ const connectDB = async (): Promise<void> => {
 
   try {
     // Use the environment variable for the MongoDB URI (fall back to local for development)
-    const uri = process.env.MONGODB_URI;
+    const uri = "mongodb://127.0.0.1:27017/";
 
     // Ensure the MongoDB URI is defined
     if (!uri) {
