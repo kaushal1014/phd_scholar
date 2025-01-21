@@ -168,7 +168,7 @@ const PhDScholarForm: React.FC = () => {
     courseWork1SubjectCode: '423432',
     courseWork1SubjectName: '423432',
     courseWork1SubjectGrade: '234',
-    courseWork1Status: '4234',
+    courseWork1Status: 'Pending',
     courseWork1EligibilityDate: '2024-03-04',
     courseWork2SubjectCode: '6456',
     courseWork2SubjectName: '64564',
@@ -629,12 +629,15 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork1Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select value={formData.courseWork1Status}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                <option>Pending</option>
-                <option>Enrolled</option>
-                <option>Completed</option>
+              <select
+                name="courseWork1Status"
+                value={formData.courseWork1Status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Enrolled">Enrolled</option>
+                <option value="Completed">Completed</option>
               </select>
             </div>
             <div>
@@ -707,12 +710,15 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork2Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select value={formData.courseWork2Status}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                <option>Pending</option>
-                <option>Enrolled</option>
-                <option>Completed</option>
+              <select
+                name="courseWork2Status"
+                value={formData.courseWork2Status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Enrolled">Enrolled</option>
+                <option value="Completed">Completed</option>
               </select>
             </div>
             <div>
@@ -785,12 +791,15 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork3Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select value={formData.courseWork3Status}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                <option>Pending</option>
-                <option>Enrolled</option>
-                <option>Completed</option>
+              <select
+                name="courseWork3Status"
+                value={formData.courseWork3Status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Enrolled">Enrolled</option>
+                <option value="Completed">Completed</option>
               </select>
             </div>
             <div>
@@ -863,12 +872,15 @@ const PhDScholarForm: React.FC = () => {
             </div>
             <div>
               <Label htmlFor="courseWork4Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select value={formData.courseWork4Status}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100">
-                <option>Pending</option>
-                <option>Enrolled</option>
-                <option>Completed</option>
+              <select
+                name="courseWork4Status"
+                value={formData.courseWork4Status}
+                onChange={handleChange}
+                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
+              >
+                <option value="Pending">Pending</option>
+                <option value="Enrolled">Enrolled</option>
+                <option value="Completed">Completed</option>
               </select>
             </div>
             <div>
