@@ -140,7 +140,7 @@ function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href={`/myprofile/${session.user.id}`}>Profile</Link>
+                      <Link href={`/myprofile/`}>Profile</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem asChild>
                       <Link href="/settings">Settings</Link>
