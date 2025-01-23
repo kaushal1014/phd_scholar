@@ -1,72 +1,67 @@
-"use client";
+"use client"
 
-import localFont from "next/font/local";
-import "./globals.css";
-import * as React from "react";
-import Link from "next/link";
-import Image from "next/image";
-import { useRouter, usePathname } from 'next/navigation';
-import { Moon, Sun, GraduationCap, User } from 'lucide-react';
-import { Button } from "@/components/ui/button";
-import { ThemeProvider } from "@/components/theme-provider";
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
-import { useTheme } from "next-themes";
-import { AuthProvider } from "./Providers";
-import { useSession, signOut } from "next-auth/react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import localFont from "next/font/local"
+import "./globals.css"
+import * as React from "react"
+import Link from "next/link"
+import Image from "next/image"
+import { useRouter, usePathname } from "next/navigation"
+import { Moon, Sun, GraduationCap, User } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { ThemeProvider } from "@/components/theme-provider"
+import { ToastContainer, toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import { useTheme } from "next-themes"
+import { AuthProvider } from "./Providers"
+import { useSession, signOut } from "next-auth/react"
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
   variable: "--font-geist-sans",
   weight: "100 900",
-});
+})
 
 const geistMono = localFont({
   src: "./fonts/GeistMonoVF.woff",
   variable: "--font-geist-mono",
   weight: "100 900",
-});
+})
 
 function Header() {
-  const { data: session } = useSession();
-  const pathname = usePathname();
-  const router = useRouter();
-  const [mounted, setMounted] = React.useState(false);
+  const { data: session } = useSession()
+  const pathname = usePathname()
+  const router = useRouter()
+  const [mounted, setMounted] = React.useState(false)
 
   React.useEffect(() => {
-    setMounted(true);
-  }, []);
+    setMounted(true)
+  }, [])
 
   if (!mounted) {
-    return null;
+    return null
   }
-  
-  const handleSignOut = async () => {  
+
+  const handleSignOut = async () => {
     try {
-      await signOut({ redirect: false });
-      toast.success("Signed out successfully");
-  
-      if (pathname === '/dashboard') {
-        router.push('/login');
+      await signOut({ redirect: false })
+      toast.success("Signed out successfully")
+
+      if (pathname === "/dashboard") {
+        router.push("/login")
       }
     } catch (error) {
-      toast.error("Error signing out. Please try again.");
+      toast.error("Error signing out. Please try again.")
     }
-  };
+  }
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
-          {/* <Image 
+            {/* <Image 
               src="/download2.png" 
               alt="logo" 
               width={100} 
@@ -111,19 +106,10 @@ function Header() {
           <div className="flex items-center space-x-4">
             {!session ? (
               <>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="text-base hover:bg-primary/10"
-                  asChild
-                >
+                <Button variant="ghost" size="sm" className="text-base hover:bg-primary/10" asChild>
                   <Link href="/login">Login</Link>
                 </Button>
-                <Button
-                  size="sm"
-                  className="text-base"
-                  asChild
-                >
+                <Button size="sm" className="text-base" asChild>
                   <Link href="/signup">Sign Up</Link>
                 </Button>
               </>
@@ -134,7 +120,9 @@ function Header() {
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src="/avatar.png" alt={session.user?.name || "User avatar"} />
-                        <AvatarFallback><User className="h-4 w-4" /></AvatarFallback>
+                        <AvatarFallback>
+                          <User className="h-4 w-4" />
+                        </AvatarFallback>
                       </Avatar>
                     </Button>
                   </DropdownMenuTrigger>
@@ -145,9 +133,7 @@ function Header() {
                     <DropdownMenuItem asChild>
                       <Link href="/settings">Settings</Link>
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSignOut}>
-                      Sign out
-                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>
               </div>
@@ -157,11 +143,11 @@ function Header() {
         </div>
       </div>
     </header>
-  );
+  )
 }
 
 function ThemeToggle() {
-  const { setTheme, theme } = useTheme();
+  const { setTheme, theme } = useTheme()
 
   return (
     <Button
@@ -174,44 +160,53 @@ function ThemeToggle() {
       <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
       <span className="sr-only">Toggle theme</span>
     </Button>
-  );
+  )
 }
 
 export default function RootLayout({
   children,
   session,
 }: Readonly<{
-  children: React.ReactNode;
-  session: any;
+  children: React.ReactNode
+  session: any
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
+      >
         <AuthProvider>
-          <ThemeProvider
-            attribute="class"
-            defaultTheme="system"
-            enableSystem
-            disableTransitionOnChange
-          >
+          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <Header />
             <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
-            <ToastContainer position="top-right" autoClose={5000} hideProgressBar={false} newestOnTop closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
-            <footer className="bg-white dark:bg-gray-800">
-              <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center md:justify-between lg:px-8">
+            <ToastContainer
+              position="top-right"
+              autoClose={5000}
+              hideProgressBar={false}
+              newestOnTop
+              closeOnClick
+              rtl={false}
+              pauseOnFocusLoss
+              draggable
+              pauseOnHover
+            />
+            <footer className="bg-secondary">
+              <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center lg:px-8">
                 <div className="flex justify-center space-x-6 md:order-2">
-                  <Link href="/about" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                  <Link href="/about" className="text-muted-foreground hover:text-foreground">
                     About
                   </Link>
-                  <Link href="/contact" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                  <Link href="/contact" className="text-muted-foreground hover:text-foreground">
                     Contact
                   </Link>
-                  <Link href="/privacy" className="text-gray-400 hover:text-gray-500 dark:hover:text-gray-300">
+                  <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
                     Privacy Policy
                   </Link>
                 </div>
                 <div className="mt-8 md:mt-0 md:order-1">
-                  <p className="text-center text-base text-gray-400">&copy; 2024 PhD Scholar Portal. All rights reserved.</p>
+                  <p className="text-center text-sm text-muted-foreground">
+                    &copy; 2024 PhD Scholar Portal. All rights reserved.
+                  </p>
                 </div>
               </div>
             </footer>
@@ -219,6 +214,6 @@ export default function RootLayout({
         </AuthProvider>
       </body>
     </html>
-  );
+  )
 }
 

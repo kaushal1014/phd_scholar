@@ -1,59 +1,70 @@
 export interface PhdScholar {
-  admissionDetails: {
-    department: string;
-    entranceExamination: string;
-    qualifyingExamination: string;
-    allotmentNumber: string;
-    admissionDate: Date | null;
-    usn: string;
-    srn: string;
-    modeOfProgram: string;
-  };
   personalDetails: {
     firstName: string;
-    middleName: string;
+    middleName?: string;
     lastName: string;
     dateOfBirth: Date | null;
     nationality: string;
     mobileNumber: string;
   };
-  researchDetails: {
-    researchSupervisor: string;
-    researchCoSupervisor: string;
-    doctoralCommitteeMembers: string[];
+  admissionDetails: {
+    entranceExamination: string;
+    qualifyingExamination: string;
+    allotmentNumber: string;
+    admissionDate: Date | null;
+    department: string;
+    usn: string;
+    srn: string;
+    modeOfProgram: string;
   };
-  courseworkDetails: {
-    courseWork1: {
-      subjectCode: string;
-      subjectName: string;
-      subjectGrade: string;
-      status: string;
-      eligibilityDate: Date | null;
-    };
-    courseWork2: {
-      subjectCode: string;
-      subjectName: string;
-      subjectGrade: string;
-      status: string;
-      eligibilityDate: Date | null;
-    };
-    courseWork3: {
-      subjectCode: string;
-      subjectName: string;
-      subjectGrade: string;
-      status: string;
-      eligibilityDate: Date | null;
-    };
-    courseWork4: {
-      subjectCode: string;
-      subjectName: string;
-      subjectGrade: string;
-      status: string;
-      eligibilityDate: Date | null;
-    };
+  researchSupervisor: string;
+  researchCoSupervisor?: string;
+  doctoralCommittee: {
+    members: {
+      name: string;
+    }[];
   };
-  dcMeetings: string[];
-  examDates: {
+  courseWork1: {
+    subjectCode: string;
+    subjectName: string;
+    subjectGrade: string;
+    status: string;
+    eligibilityDate: Date | null;
+  };
+  courseWork2: {
+    subjectCode: string;
+    subjectName: string;
+    subjectGrade: string;
+    status: string;
+    eligibilityDate: Date | null;
+  };
+  courseWork3: {
+    subjectCode: string;
+    subjectName: string;
+    subjectGrade: string;
+    status: string;
+    eligibilityDate: Date | null;
+  };
+  courseWork4: {
+    subjectCode: string;
+    subjectName: string;
+    subjectGrade: string;
+    status: string;
+    eligibilityDate: Date | null;
+  };
+  phdMilestones: {
+    courseworkCompletionDate: {
+      coursework1: Date | null;
+      coursework2: Date | null;
+      coursework3: Date | null;
+      coursework4: Date | null;
+    };
+    dcMeetings: {
+      DCM: {
+        scheduledDate: Date | null;
+        actualDate: Date | null;
+      }[];
+    };
     comprehensiveExamDate: Date | null;
     proposalDefenseDate: Date | null;
     openSeminarDate1: Date | null;
@@ -64,8 +75,20 @@ export interface PhdScholar {
     awardOfDegreeDate: Date | null;
   };
   publications: {
-    journals: { title: string; journalName: string }[];
-    conferences: { title: string; conferenceName: string }[];
+    journals: {
+      title: string;
+      journalName: string;
+      publicationYear: number;
+      volumeNumber: string;
+      issueNumber: string;
+      pageNumbers: string;
+      impactFactor: number;
+    }[];
+    conferences: {
+      title: string;
+      conferenceName: string;
+      publicationYear: number;
+    }[];
   };
 }
 
