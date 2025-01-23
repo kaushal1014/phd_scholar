@@ -5,7 +5,6 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from 'next/navigation'; 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Calendar } from '@/components/ui/calendar';
 import { GraduationCap, BookMarked, Mail, Shield, CheckCircle, LogIn, Loader2 } from 'lucide-react';
 import { User as UserType, PhdScholar } from '@/types';
 
