@@ -6,7 +6,7 @@ import * as React from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
-import { Moon, Sun, GraduationCap, User } from "lucide-react"
+import { Moon, Sun, GraduationCap, User, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { ThemeProvider } from "@/components/theme-provider"
 import { ToastContainer, toast } from "react-toastify"
@@ -57,19 +57,16 @@ function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
+    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
           <div className="flex items-center">
-            {/* <Image 
-              src="/download2.png" 
-              alt="logo" 
-              width={100} 
-              height={100} 
-            /> */}
-            <span className="text-2xl font-bold text-foreground">PhD Scholar Portal</span>
+            <div className="flex items-center gap-4">
+              <Image src="/logoPesu.png" alt="PES University Logo" width={50} height={50} className="h-12 w-auto" />
+              <span className="text-2xl font-bold text-foreground">PhD Scholar Portal</span>
+            </div>
           </div>
-          <nav className="hidden md:flex items-center space-x-8">
+          <nav className="hidden md:flex items-center space-x-10">
             <Link
               href="/"
               className={`text-lg font-medium transition-colors hover:text-primary ${
@@ -79,12 +76,12 @@ function Header() {
               Home
             </Link>
             <Link
-              href="/dashboard"
-              className={`text-lg font-medium transition-colors hover:text-primary ${
-                pathname === "/dashboard" ? "text-primary" : "text-foreground/60"
+              href="/programs"
+              className={`text-lg font-medium transition-colors hover:text-primary flex items-center ${
+                pathname.startsWith("/programs") ? "text-primary" : "text-foreground/60"
               }`}
             >
-              Dashboard
+              Programs
             </Link>
             <Link
               href="/milestones"
