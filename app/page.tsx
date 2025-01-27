@@ -16,10 +16,10 @@ import {
 
 export default function HomePage() {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-900">
-      <header className="bg-[#1B3668] shadow">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
+      <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">Ph.D. and M.Tech. by Research</h1>
+          <h1 className="text-3xl font-bold text-white">PES Ph.D. and M.Tech. by Research</h1>
         </div>
       </header>
 
@@ -28,16 +28,16 @@ export default function HomePage() {
           <h2 className="text-4xl font-bold text-[#1B3668] dark:text-white sm:text-5xl sm:tracking-tight lg:text-6xl">
             Welcome to Your PhD Journey
           </h2>
-          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-500 dark:text-gray-300">
+          <p className="mt-5 max-w-xl mx-auto text-xl text-gray-700 dark:text-gray-300">
             Track your progress, manage your research, and stay on top of your academic milestones all in one place.
           </p>
           <Button className="mt-8 bg-[#F7941D] hover:bg-[#F7941D]/90 text-white" size="lg">
-            <Link href="/dashboard">Go to Dashboard</Link>
+            <Link href="/programs">Explore Programs</Link>
           </Button>
         </div>
 
         <div className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16">
-          <Card className="border-t-4 border-t-[#1B3668]">
+          <Card className="border-t-4 border-t-[#1B3668] bg-gradient-to-br from-white to-orange-50 dark:from-gray-800 dark:to-gray-700">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <BookOpen className="h-6 w-6 text-[#1B3668] mr-2" />
@@ -45,7 +45,7 @@ export default function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
+              <CardDescription className="text-gray-700 dark:text-gray-300">
                 Get an overview of your research progress, publications, and upcoming deadlines.
               </CardDescription>
               <Button
@@ -59,7 +59,7 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-t-4 border-t-[#1B3668]">
+          <Card className="border-t-4 border-t-[#1B3668] bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Users className="h-6 w-6 text-[#1B3668] mr-2" />
@@ -67,7 +67,7 @@ export default function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
+              <CardDescription className="text-gray-700 dark:text-gray-300">
                 Connect with fellow researchers, join discussion groups, and find potential collaborators.
               </CardDescription>
               <Button
@@ -81,7 +81,7 @@ export default function HomePage() {
             </CardContent>
           </Card>
 
-          <Card className="border-t-4 border-t-[#1B3668]">
+          <Card className="border-t-4 border-t-[#1B3668] bg-gradient-to-br from-white to-orange-50 dark:from-gray-800 dark:to-gray-700">
             <CardHeader>
               <CardTitle className="flex items-center">
                 <Calendar className="h-6 w-6 text-[#1B3668] mr-2" />
@@ -89,7 +89,7 @@ export default function HomePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <CardDescription>
+              <CardDescription className="text-gray-700 dark:text-gray-300">
                 Keep track of your PhD milestones, set reminders, and celebrate your achievements.
               </CardDescription>
               <Button
@@ -104,14 +104,14 @@ export default function HomePage() {
           </Card>
         </div>
 
-        <div className="bg-gray-100 dark:bg-gray-800 rounded-lg overflow-hidden mb-16">
+        <div className="bg-gradient-to-br from-blue-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 rounded-lg overflow-hidden mb-16 shadow-lg">
           <div className="px-6 py-12 sm:px-12 lg:py-16 lg:pr-0 xl:py-20 xl:px-20">
             <div className="lg:self-center">
               <h2 className="text-3xl font-bold text-[#1B3668] dark:text-white sm:text-4xl">
                 <span className="block">Ready to dive in?</span>
                 <span className="block text-[#F7941D]">Start managing your PhD journey today.</span>
               </h2>
-              <p className="mt-4 text-lg leading-6 text-gray-500 dark:text-gray-300">
+              <p className="mt-4 text-lg leading-6 text-gray-700 dark:text-gray-300">
                 Sign up now to access all features and take control of your academic progress.
               </p>
               <Link
@@ -122,88 +122,6 @@ export default function HomePage() {
               </Link>
             </div>
           </div>
-        </div>
-
-        <div className="space-y-16">
-          <section id="overview" className="scroll-mt-16">
-            <h3 className="text-2xl font-bold text-[#1B3668] dark:text-white mb-6">PH.D. AND M.TECH. BY RESEARCH</h3>
-            <Card>
-              <CardContent className="pt-6">
-                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
-                  <li>Part-time opportunities also for teachers and industry professionals.</li>
-                  <li>Cutting-edge research areas in engineering, science, and management.</li>
-                  <li>Highly experienced Ph.D. faculty on campus: over 70</li>
-                  <li>TEQIP/World Bank funding including COE</li>
-                  <li>Crucible of Research and Innovation (CORI) – for multi-disciplinary research</li>
-                  <li>Several ongoing funded research projects</li>
-                  <li>Collaboration with reputed universities and industries</li>
-                  <li>Fellowship/Scholarship/Financial Assistance available</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </section>
-
-          <section id="programs" className="scroll-mt-16">
-            <h3 className="text-2xl font-bold text-[#1B3668] dark:text-white mb-6">AVAILABLE PROGRAMS</h3>
-            <Card>
-              <CardContent className="pt-6">
-                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
-                  <li>
-                    Ph.D. and M.Tech by Research in – Computer Science & Engineering, Electrical Engineering,
-                    Electronics and Communication Engineering, Mechanical Engineering, and Biotechnology.
-                  </li>
-                  <li>
-                    Ph.D in – Commerce & Management, Science (Maths, Physics & Chemistry), Computer Applications,
-                    Psychology, Nursing, and Pharmacy.
-                  </li>
-                  <li>
-                    Candidates wishing to pursue research careers in interdisciplinary areas are especially encouraged.
-                  </li>
-                </ul>
-              </CardContent>
-            </Card>
-          </section>
-
-          <section id="qualifications" className="scroll-mt-16">
-            <h3 className="text-2xl font-bold text-[#1B3668] dark:text-white mb-6">MINIMUM QUALIFICATION</h3>
-            <Card>
-              <CardContent className="pt-6">
-                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
-                  <li>
-                    Ph.D.: A post-graduate degree in a related field of study from a UGC recognized university, with a
-                    minimum of 60% aggregate marks (or equivalent grade point average)
-                  </li>
-                  <li>M.Tech. by Research: UG degree in engineering with at least 60% marks (or equivalent GPA).</li>
-                  <li>Reservation Categories (as notified by Govt. of Karnataka): 10% relaxation</li>
-                  <li>Distance Education Degrees: not recognized</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </section>
-
-          <section id="eligibility" className="scroll-mt-16">
-            <h3 className="text-2xl font-bold text-[#1B3668] dark:text-white mb-6">
-              ELIGIBILITY FOR THE AWARD OF PH.D./ M.TECH. BY RESEARCH DEGREE
-            </h3>
-            <Card>
-              <CardContent className="pt-6">
-                <ul className="list-disc list-inside space-y-2 text-gray-700 dark:text-gray-300">
-                  <li>Credit compliance for course work within the stipulated maximum time duration</li>
-                  <li>Successful Proposal Defense</li>
-                  <li>Credit compliance for Research work within the stipulated maximum time duration</li>
-                  <li>Compliance with publications requirement</li>
-                  <li>Open seminars</li>
-                  <li>Pre-Submission seminar of Synopsis</li>
-                  <li>Submission of Synopsis</li>
-                  <li>Submission of Thesis/Dissertation</li>
-                  <li>Successful defense of the Thesis/Dissertation in the open viva-voce</li>
-                  <li>Submission of final revised Thesis/Dissertation</li>
-                  <li>Minimum duration requirement of THREE for Ph.D. and TWO years for M.Tech by Research</li>
-                  <li>No pending disciplinary action; and no dues of any kind to the University</li>
-                </ul>
-              </CardContent>
-            </Card>
-          </section>
         </div>
       </main>
     </div>
