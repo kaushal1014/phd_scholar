@@ -50,7 +50,7 @@ export default function ProgramsPage() {
                     <Link href="/programs/phd">Learn More</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link href="/phd-portal">Ph.D. Portal</Link>
+                    <Link href="/login">Ph.D. Portal</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -82,7 +82,7 @@ export default function ProgramsPage() {
                     <Link href="/programs/mtech">Learn More</Link>
                   </Button>
                   <Button variant="outline" asChild>
-                    <Link href="/mtech-portal">M.Tech. Portal</Link>
+                    <Link href="/login">M.Tech. Portal</Link>
                   </Button>
                 </div>
               </CardContent>
