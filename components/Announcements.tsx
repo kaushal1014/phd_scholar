@@ -20,16 +20,18 @@ const announcements = [
 
 export function Announcements() {
   return (
-    <Card className="border-t-4 border-t-[#1B3668]">
+    <Card className="border-t-4 border-t-[#1B3668] bg-card text-card-foreground shadow-md">
       <CardHeader>
         <CardTitle className="text-[#1B3668]">Announcements</CardTitle>
       </CardHeader>
       <CardContent>
         <ul className="space-y-4">
           {announcements.map((announcement) => (
-            <li key={announcement.id} className="border-b pb-2 last:border-b-0">
-              <h4 className="font-semibold text-[#1B3668]">{announcement.title}</h4>
-              <p className="text-sm text-muted-foreground">{announcement.content}</p>
+            <li key={announcement.id} className="border-b pb-2 last:border-b-0 flex items-start">
+              <div>
+                <h4 className="font-semibold text-[#1B3668]">{announcement.title}</h4>
+                <p className="text-sm text-muted-foreground">{announcement.content}</p>
+              </div>
             </li>
           ))}
         </ul>
@@ -37,4 +39,3 @@ export function Announcements() {
     </Card>
   )
 }
-
