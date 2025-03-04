@@ -70,7 +70,9 @@ export default function Dashboard() {
           setPhdScholarData(data)
           setLoading(false)
           calculateJourneyProgress(data)
-          checkPastDCMeetings(data.phdMilestones.dcMeetings.DCM)
+          if (data.phdMilestones?.dcMeetings?.DCM) {
+            checkPastDCMeetings(data.phdMilestones.dcMeetings.DCM)
+          }
         })
         .catch((error) => {
           console.error("Error fetching data:", error)
