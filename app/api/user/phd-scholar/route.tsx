@@ -26,7 +26,6 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'PhD Scholar data not found' }, { status: 404 });
     }
 
-    console.log('PhD Scholar:', phdScholar);
     return NextResponse.json(phdScholar, { status: 200 });
   } catch (error) {
     console.error('Error fetching PhD Scholar data:', error);
