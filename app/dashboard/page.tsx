@@ -70,7 +70,9 @@ export default function Dashboard() {
           setPhdScholarData(data)
           setLoading(false)
           calculateJourneyProgress(data)
-          checkPastDCMeetings(data.phdMilestones.dcMeetings.DCM)
+          if (data.phdMilestones?.dcMeetings?.DCM) {
+            checkPastDCMeetings(data.phdMilestones.dcMeetings.DCM)
+          }
         })
         .catch((error) => {
           console.error("Error fetching data:", error)
@@ -97,47 +99,68 @@ export default function Dashboard() {
 
   const checkPastDCMeetings = (meetings: any[]) => {
     const now = new Date()
-    const pastMeeting = meetings.find((meeting: any) => new Date(meeting.scheduledDate) < now && !meeting.actualDate)
+    const pastMeeting = meetings.find((meeting: any) => meeting.scheduledDate && new Date(meeting.scheduledDate) < now && !meeting.happened)
+    console.log("past", pastMeeting)
     if (pastMeeting) {
       setCurrentDCMeeting(pastMeeting)
-      setShowDCMeetingPopup(true)
+      if (pastMeeting.scheduledDate) {
+        setShowDCMeetingPopup(true)
+      }
     }
   }
 
   const handleDCMeetingConfirmation = async (didHappen: boolean, newDate?: Date) => {
     if (!currentDCMeeting) return
-
+    console.log(didHappen)
     const updatedMeeting = {
       ...currentDCMeeting,
-      actualDate: didHappen ? currentDCMeeting.scheduledDate : null,
-      scheduledDate: didHappen ? currentDCMeeting.scheduledDate : newDate?.toISOString(),
     }
 
+    if (didHappen) {
+      console.log("hi")
+      updatedMeeting.actualDate = currentDCMeeting.scheduledDate
+      updatedMeeting.scheduledDate = currentDCMeeting.scheduledDate
+      updatedMeeting.happened = true
+    } else {
+      console.log("bye")
+      updatedMeeting.actualDate = null
+      updatedMeeting.scheduledDate = newDate?.toISOString()
+      updatedMeeting.happened = false
+    }
+  
+    // Ensure that scheduledDate is set correctly
+    if (!didHappen && newDate) {
+      updatedMeeting.scheduledDate = newDate.toISOString()
+    }
+  
+    console.log("updatedMeeting:", updatedMeeting)
+  
     try {
-      const response = await fetch(`/api/user/phd-scholar/dc-meeting/${currentDCMeeting.id}`, {
+      const response = await fetch(`/api/user/phd-scholar/dc-meeting/latest`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${session?.user?.id}`,
         },
         body: JSON.stringify(updatedMeeting),
       })
-
+  
       if (response.ok) {
         // Update the local state
         setPhdScholarData((prevData) => {
           if (!prevData || !currentDCMeeting) return prevData
-          return {
+            return {
             ...prevData,
             phdMilestones: {
               ...prevData.phdMilestones,
               dcMeetings: {
-                ...prevData.phdMilestones.dcMeetings,
-                DCM: prevData.phdMilestones.dcMeetings.DCM.map((meeting) =>
-                  meeting.scheduledDate === currentDCMeeting.scheduledDate ? updatedMeeting : meeting,
-                ),
+              ...prevData.phdMilestones.dcMeetings,
+              DCM: prevData.phdMilestones.dcMeetings.DCM.map((meeting) =>
+                meeting.scheduledDate === currentDCMeeting.scheduledDate ? updatedMeeting : meeting,
+              ),
               },
             },
-          }
+            }
         })
       } else {
         console.error("Failed to update DC meeting")
@@ -146,12 +169,11 @@ export default function Dashboard() {
       console.error("Error updating DC meeting:", error)
     }
   }
-
+  
   const nextDCMeeting =
     phdScholarData?.phdMilestones.dcMeetings.DCM.find(
       (meeting) => meeting.scheduledDate && new Date(meeting.scheduledDate) > new Date(),
-    ) ||
-    phdScholarData?.phdMilestones.dcMeetings.DCM[phdScholarData?.phdMilestones.dcMeetings.DCM.length - 1] ||
+    )||
     null
 
   interface Milestone {

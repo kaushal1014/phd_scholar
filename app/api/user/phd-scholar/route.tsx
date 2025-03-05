@@ -19,17 +19,13 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'PhD Scholar data not found' }, { status: 404 });
     }
 
-    console.log('User:', user);
     const phdScholarId = new ObjectId(user.phdScholar);
-    console.log('PhD Scholar ID:', phdScholarId);
-
+    console.log(phdScholarId)
     const phdScholar = await PhdScholar.findById(phdScholarId.toString());
     if (!phdScholar) {
-      console.log('PhD Scholar not found for ID:', phdScholarId);
       return NextResponse.json({ error: 'PhD Scholar data not found' }, { status: 404 });
     }
 
-    console.log('PhD Scholar:', phdScholar);
     return NextResponse.json(phdScholar, { status: 200 });
   } catch (error) {
     console.error('Error fetching PhD Scholar data:', error);
