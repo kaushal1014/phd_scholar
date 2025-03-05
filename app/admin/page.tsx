@@ -1,5 +1,6 @@
 'use client'
 import React, { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import {
   Table,
   TableBody,
@@ -14,6 +15,7 @@ import { User } from "@/types"
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
+  const router = useRouter()
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -41,11 +43,8 @@ export default function AdminUsers() {
     fetchUsers()
   }, [])
 
-  const isPastDeadline = (date: Date | null) => {
-    if (!date) return false
-    const deadline = new Date(date)
-    const today = new Date()
-    return deadline < today
+  const handleUserClick = (id: string) => {
+    router.push(`/admin/${id}`)
   }
 
   return (
@@ -63,29 +62,20 @@ export default function AdminUsers() {
               <TableHead>Last Name</TableHead>
               <TableHead>Email</TableHead>
               <TableHead>Role</TableHead>
-              <TableHead>Created At</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {users.map((user) => (
               <TableRow
                 key={user.id}
-                className={
-                  user.phdScholar && user.phdScholar.admissionDetails && user.phdScholar.admissionDetails.admissionDate && isPastDeadline(new Date(user.phdScholar.admissionDetails.admissionDate))
-                    ? 'bg-red-100'
-                    : ''
-                }
+                onClick={() => handleUserClick(user.id)}
+                className="cursor-pointer"
               >
                 <TableCell className="font-medium">{user.id}</TableCell>
                 <TableCell>{user.firstName}</TableCell>
                 <TableCell>{user.lastName}</TableCell>
                 <TableCell>{user.email}</TableCell>
                 <TableCell>{user.isAdmin ? "Admin" : "User"}</TableCell>
-                <TableCell>
-                  {user.phdScholar && user.phdScholar.admissionDetails && user.phdScholar.admissionDetails.admissionDate
-                    ? new Date(user.phdScholar.admissionDetails.admissionDate).toLocaleDateString()
-                    : 'N/A'}
-                </TableCell>
               </TableRow>
             ))}
           </TableBody>
