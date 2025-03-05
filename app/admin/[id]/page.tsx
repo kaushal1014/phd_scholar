@@ -9,7 +9,6 @@ import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useSession } from "next-auth/react"
 
-
 export default function UserDetail() {
   const [userData, setUserData] = useState<UserType | null>(null)
   const [phdScholarData, setPhdScholarData] = useState<PhdScholar | null>(null)
@@ -18,25 +17,46 @@ export default function UserDetail() {
   const { data: session, status } = useSession()
 
   useEffect(() => {
-    console.log(status)
-    if (status === "authenticated" && session?.user?.id) {
-      fetch(`/api/user/user`)
-        .then((response) => response.json())
-        .then((data) => {
-          setUserData(data)
-          return fetch(`/api/user/phd-scholar/`)
+    const fetchUser = async () => {
+      try {
+        console.log(`Fetching user data for ID: ${id}`)
+        const userResponse = await fetch(`/api/user/user/${id}`, {
+          headers: {
+            Authorization: `Bearer ${session?.user?.id}`,
+          },
         })
-        .then((response) => response.json())
-        .then((data) => {
-          setPhdScholarData(data)
-            setLoading(false)
-        })
-        .catch((error) => {
-          console.error("Error fetching data:", error)
-          setLoading(false)
-        })
+        if (!userResponse.ok) {
+          throw new Error(`Failed to fetch user data: ${userResponse.statusText}`)
+        }
+        const userData = await userResponse.json()
+        console.log('Fetched user data:', userData)
+        setUserData(userData.data)
+
+        if (userData.data.phdScholar) {
+          console.log(`Fetching PhD scholar data for ID: ${userData.data.phdScholar}`)
+          const phdResponse = await fetch(`/api/user/phd-scholar/${userData.data.phdScholar}`, {
+            headers: {
+              Authorization: `Bearer ${session?.user?.id}`,
+            },
+          })
+          if (!phdResponse.ok) {
+            throw new Error(`Failed to fetch PhD scholar data: ${phdResponse.statusText}`)
+          }
+          const phdData = await phdResponse.json()
+          console.log('Fetched PhD scholar data:', phdData)
+          setPhdScholarData(phdData.data)
+        }
+        setLoading(false)
+      } catch (error) {
+        console.error('Error fetching user data:', error)
+        setLoading(false)
+      }
     }
-  }, [status, session])
+
+    if (id && status === "authenticated") {
+      fetchUser()
+    }
+  }, [id, status, session])
 
   if (loading) {
     return (
@@ -257,12 +277,16 @@ export default function UserDetail() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    {phdScholarData.doctoralCommittee?.members?.map((member, index) => (
-                      <div key={index}>
-                        <p className="text-sm text-muted-foreground">Member {index + 1}</p>
-                        <p className="font-medium">{member.name}</p>
-                      </div>
-                    )) || <p className="text-muted-foreground italic">No doctoral committee members recorded.</p>}
+                    {phdScholarData.doctoralCommittee?.members?.length > 0 ? (
+                      phdScholarData.doctoralCommittee.members.map((member, index) => (
+                        <div key={index}>
+                          <p className="text-sm text-muted-foreground">Member {index + 1}</p>
+                          <p className="font-medium">{member.name}</p>
+                        </div>
+                      ))
+                    ) : (
+                      <p className="text-muted-foreground italic">No doctoral committee members recorded.</p>
+                    )}
                   </div>
                 </CardContent>
               </Card>
