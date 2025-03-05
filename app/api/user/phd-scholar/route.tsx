@@ -20,7 +20,7 @@ export async function GET(req: NextRequest) {
     }
 
     const phdScholarId = new ObjectId(user.phdScholar);
-
+    console.log(phdScholarId)
     const phdScholar = await PhdScholar.findById(phdScholarId.toString());
     if (!phdScholar) {
       return NextResponse.json({ error: 'PhD Scholar data not found' }, { status: 404 });
