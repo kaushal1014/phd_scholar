@@ -12,20 +12,24 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
 
-    const { scheduledDate, actualDate, happened } = await req.json()
-    console.log('Received data:', { scheduledDate, actualDate, happened })
+    const body = await req.json()
+    const { scheduledDate, actualDate, happened, _id } = body
+    console.log('Received data:', { scheduledDate, actualDate, happened, _id })
+
+    if (!body || !_id) {
+      return NextResponse.json({ error: 'Invalid request body' }, { status: 400 })
+    }
 
     const phdScholar = await PhdScholar.findOneAndUpdate(
-      { 'phdMilestones.dcMeetings.DCM': { $exists: true, $ne: [] } },
+      { 'phdMilestones.dcMeetings.DCM._id': _id },
       {
         $set: {
-          'phdMilestones.dcMeetings.DCM.$[elem].scheduledDate': scheduledDate,
-          'phdMilestones.dcMeetings.DCM.$[elem].actualDate': actualDate,
-          'phdMilestones.dcMeetings.DCM.$[elem].happened': happened,
+          'phdMilestones.dcMeetings.DCM.$.scheduledDate': scheduledDate,
+          'phdMilestones.dcMeetings.DCM.$.actualDate': actualDate,
+          'phdMilestones.dcMeetings.DCM.$.happened': happened,
         },
       },
       {
-        arrayFilters: [{ 'elem.scheduledDate': { $lte: new Date() } }],
         new: true,
       }
     )
