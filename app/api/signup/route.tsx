@@ -11,8 +11,6 @@ export async function POST(req: Request) {
   try {
     const data = await req.json();
 
-    console.log("Received data:", data);
-
     // Check if the user already exists
     const existingUser = await User.findOne({ email: data?.email });
 
