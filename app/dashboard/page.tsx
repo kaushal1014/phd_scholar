@@ -99,7 +99,7 @@ export default function Dashboard() {
 
   const checkPastDCMeetings = (meetings: any[]) => {
     const now = new Date()
-    const pastMeeting = meetings.find((meeting: any) => new Date(meeting.scheduledDate) < now && !meeting.actualDate)
+    const pastMeeting = meetings.find((meeting: any) => new Date(meeting.scheduledDate) < now && !meeting.happened)
     if (pastMeeting) {
       setCurrentDCMeeting(pastMeeting)
       setShowDCMeetingPopup(true)
@@ -108,22 +108,23 @@ export default function Dashboard() {
 
   const handleDCMeetingConfirmation = async (didHappen: boolean, newDate?: Date) => {
     if (!currentDCMeeting) return
-
+  
     const updatedMeeting = {
       ...currentDCMeeting,
       actualDate: didHappen ? currentDCMeeting.scheduledDate : null,
       scheduledDate: didHappen ? currentDCMeeting.scheduledDate : newDate?.toISOString(),
+      happened: didHappen, // Update the happened field
     }
-
+  
     try {
-      const response = await fetch(`/api/user/phd-scholar/dc-meeting/${currentDCMeeting.id}`, {
+      const response = await fetch(`/api/user/phd-scholar/dc-meeting/latest`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify(updatedMeeting),
       })
-
+  
       if (response.ok) {
         // Update the local state
         setPhdScholarData((prevData) => {
@@ -152,8 +153,7 @@ export default function Dashboard() {
   const nextDCMeeting =
     phdScholarData?.phdMilestones.dcMeetings.DCM.find(
       (meeting) => meeting.scheduledDate && new Date(meeting.scheduledDate) > new Date(),
-    ) ||
-    phdScholarData?.phdMilestones.dcMeetings.DCM[phdScholarData?.phdMilestones.dcMeetings.DCM.length - 1] ||
+    )||
     null
 
   interface Milestone {
