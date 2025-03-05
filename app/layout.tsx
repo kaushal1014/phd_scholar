@@ -8,7 +8,6 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { Moon, Sun, GraduationCap, User, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ThemeProvider } from "@/components/theme-provider"
 import { ToastContainer, toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import { useTheme } from "next-themes"
@@ -135,7 +134,6 @@ function Header() {
                 </DropdownMenu>
               </div>
             )}
-            <ThemeToggle />
           </div>
         </div>
       </div>
@@ -143,22 +141,6 @@ function Header() {
   )
 }
 
-function ThemeToggle() {
-  const { setTheme, theme } = useTheme()
-
-  return (
-    <Button
-      variant="ghost"
-      size="icon"
-      onClick={() => setTheme(theme === "light" ? "dark" : "light")}
-      className="rounded-full"
-    >
-      <Sun className="h-6 w-6 rotate-0 scale-100 transition-all dark:-rotate-90 dark:scale-0" />
-      <Moon className="absolute h-6 w-6 rotate-90 scale-0 transition-all dark:rotate-0 dark:scale-100" />
-      <span className="sr-only">Toggle theme</span>
-    </Button>
-  )
-}
 
 export default function RootLayout({
   children,
@@ -173,7 +155,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
         <AuthProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
             <Header />
             <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
             <ToastContainer
@@ -207,7 +188,6 @@ export default function RootLayout({
                 </div>
               </div>
             </footer>
-          </ThemeProvider>
         </AuthProvider>
       </body>
     </html>
