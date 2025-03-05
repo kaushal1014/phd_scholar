@@ -7,18 +7,20 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
+import { useSession } from "next-auth/react"
+
 
 export default function UserDetail() {
   const [userData, setUserData] = useState<UserType | null>(null)
   const [phdScholarData, setPhdScholarData] = useState<PhdScholar | null>(null)
   const [loading, setLoading] = useState(true)
-  const router = useRouter()
   const { id } = useParams()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        fetch(`/api/user/user`)
+    console.log(status)
+    if (status === "authenticated" && session?.user?.id) {
+      fetch(`/api/user/user`)
         .then((response) => response.json())
         .then((data) => {
           setUserData(data)
@@ -27,18 +29,14 @@ export default function UserDetail() {
         .then((response) => response.json())
         .then((data) => {
           setPhdScholarData(data)
+            setLoading(false)
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error)
           setLoading(false)
         })
-      } catch (error) {
-        console.error('Error fetching user:', error)
-        setLoading(false)
-      }
     }
-
-    if (id) {
-      fetchUser()
-    }
-  }, [id])
+  }, [status, session])
 
   if (loading) {
     return (
@@ -47,6 +45,18 @@ export default function UserDetail() {
           <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
           <p className="text-muted-foreground">Loading user data...</p>
         </div>
+      </div>
+    )
+  }
+
+  if (status === "unauthenticated") {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
+        <Card className="w-full max-w-md">
+          <CardHeader className="text-center">
+            <CardTitle className="text-2xl font-bold">PhD Research Dashboard</CardTitle>
+          </CardHeader>
+        </Card>
       </div>
     )
   }
@@ -159,44 +169,44 @@ export default function UserDetail() {
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Department</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.department}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.department}</p>
                   </div>
                   
                   <div>
                     <p className="text-sm text-muted-foreground">Admission Date</p>
-                    <p className="font-medium">{formatDate(phdScholarData.admissionDetails.admissionDate)}</p>
+                    <p className="font-medium">{formatDate(phdScholarData.admissionDetails?.admissionDate)}</p>
                   </div>
                   
                   <div>
                     <p className="text-sm text-muted-foreground">Entrance Examination</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.entranceExamination}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.entranceExamination}</p>
                   </div>
                   
                   <div>
                     <p className="text-sm text-muted-foreground">Qualifying Examination</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.qualifyingExamination}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.qualifyingExamination}</p>
                   </div>
                 </div>
                 
                 <div className="space-y-4">
                   <div>
                     <p className="text-sm text-muted-foreground">Allotment Number</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.allotmentNumber}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.allotmentNumber}</p>
                   </div>
                   
                   <div>
                     <p className="text-sm text-muted-foreground">USN</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.usn}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.usn}</p>
                   </div>
                   
                   <div>
                     <p className="text-sm text-muted-foreground">SRN</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.srn}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.srn}</p>
                   </div>
                   
                   <div>
                     <p className="text-sm text-muted-foreground">Mode of Program</p>
-                    <p className="font-medium">{phdScholarData.admissionDetails.modeOfProgram}</p>
+                    <p className="font-medium">{phdScholarData.admissionDetails?.modeOfProgram}</p>
                   </div>
                 </div>
               </div>
@@ -247,12 +257,12 @@ export default function UserDetail() {
                 </CardHeader>
                 <CardContent className="pt-6">
                   <div className="space-y-4">
-                    {phdScholarData.doctoralCommittee.members.map((member, index) => (
+                    {phdScholarData.doctoralCommittee?.members?.map((member, index) => (
                       <div key={index}>
                         <p className="text-sm text-muted-foreground">Member {index + 1}</p>
                         <p className="font-medium">{member.name}</p>
                       </div>
-                    ))}
+                    )) || <p className="text-muted-foreground italic">No doctoral committee members recorded.</p>}
                   </div>
                 </CardContent>
               </Card>
@@ -272,17 +282,17 @@ export default function UserDetail() {
                   <Card className="border shadow-sm">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">Course Work 1</CardTitle>
-                      <CardDescription>{phdScholarData.courseWork1.subjectCode}</CardDescription>
+                      <CardDescription>{phdScholarData.courseWork1?.subjectCode}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
                         <div>
                           <p className="text-sm text-muted-foreground">Subject Name</p>
-                          <p className="font-medium">{phdScholarData.courseWork1.subjectName}</p>
+                          <p className="font-medium">{phdScholarData.courseWork1?.subjectName}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Grade</p>
-                          <Badge className="mt-1">{phdScholarData.courseWork1.subjectGrade}</Badge>
+                          <Badge className="mt-1">{phdScholarData.courseWork1?.subjectGrade}</Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -291,17 +301,17 @@ export default function UserDetail() {
                   <Card className="border shadow-sm">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">Course Work 2</CardTitle>
-                      <CardDescription>{phdScholarData.courseWork2.subjectCode}</CardDescription>
+                      <CardDescription>{phdScholarData.courseWork2?.subjectCode}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
                         <div>
                           <p className="text-sm text-muted-foreground">Subject Name</p>
-                          <p className="font-medium">{phdScholarData.courseWork2.subjectName}</p>
+                          <p className="font-medium">{phdScholarData.courseWork2?.subjectName}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Grade</p>
-                          <Badge className="mt-1">{phdScholarData.courseWork2.subjectGrade}</Badge>
+                          <Badge className="mt-1">{phdScholarData.courseWork2?.subjectGrade}</Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -310,17 +320,17 @@ export default function UserDetail() {
                   <Card className="border shadow-sm">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">Course Work 3</CardTitle>
-                      <CardDescription>{phdScholarData.courseWork3.subjectCode}</CardDescription>
+                      <CardDescription>{phdScholarData.courseWork3?.subjectCode}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
                         <div>
                           <p className="text-sm text-muted-foreground">Subject Name</p>
-                          <p className="font-medium">{phdScholarData.courseWork3.subjectName}</p>
+                          <p className="font-medium">{phdScholarData.courseWork3?.subjectName}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Grade</p>
-                          <Badge className="mt-1">{phdScholarData.courseWork3.subjectGrade}</Badge>
+                          <Badge className="mt-1">{phdScholarData.courseWork3?.subjectGrade}</Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -329,17 +339,17 @@ export default function UserDetail() {
                   <Card className="border shadow-sm">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-base">Course Work 4</CardTitle>
-                      <CardDescription>{phdScholarData.courseWork4.subjectCode}</CardDescription>
+                      <CardDescription>{phdScholarData.courseWork4?.subjectCode}</CardDescription>
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-2">
                         <div>
                           <p className="text-sm text-muted-foreground">Subject Name</p>
-                          <p className="font-medium">{phdScholarData.courseWork4.subjectName}</p>
+                          <p className="font-medium">{phdScholarData.courseWork4?.subjectName}</p>
                         </div>
                         <div>
                           <p className="text-sm text-muted-foreground">Grade</p>
-                          <Badge className="mt-1">{phdScholarData.courseWork4.subjectGrade}</Badge>
+                          <Badge className="mt-1">{phdScholarData.courseWork4?.subjectGrade}</Badge>
                         </div>
                       </div>
                     </CardContent>
@@ -366,7 +376,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Comprehensive Exam</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.comprehensiveExamDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.comprehensiveExamDate)}</p>
                       </div>
                     </div>
                     
@@ -376,7 +386,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Proposal Defense</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.proposalDefenseDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.proposalDefenseDate)}</p>
                       </div>
                     </div>
                     
@@ -386,7 +396,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Open Seminar</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.openSeminarDate1)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.openSeminarDate1)}</p>
                       </div>
                     </div>
                     
@@ -396,7 +406,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Pre-Submission Seminar</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.preSubmissionSeminarDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.preSubmissionSeminarDate)}</p>
                       </div>
                     </div>
                   </div>
@@ -408,7 +418,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Synopsis Submission</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.synopsisSubmissionDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.synopsisSubmissionDate)}</p>
                       </div>
                     </div>
                     
@@ -418,7 +428,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Thesis Submission</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.thesisSubmissionDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.thesisSubmissionDate)}</p>
                       </div>
                     </div>
                     
@@ -428,7 +438,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Thesis Defense</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.thesisDefenseDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.thesisDefenseDate)}</p>
                       </div>
                     </div>
                     
@@ -438,7 +448,7 @@ export default function UserDetail() {
                       </div>
                       <div>
                         <p className="text-sm text-muted-foreground">Award of Degree</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones.awardOfDegreeDate)}</p>
+                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.awardOfDegreeDate)}</p>
                       </div>
                     </div>
                   </div>
@@ -457,7 +467,7 @@ export default function UserDetail() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  {phdScholarData.publications.journals.length > 0 ? (
+                  {phdScholarData.publications?.journals?.length > 0 ? (
                     <div className="space-y-6">
                       {phdScholarData.publications.journals.map((journal, index) => (
                         <div key={index} className="border rounded-lg p-4 bg-card">
@@ -501,7 +511,7 @@ export default function UserDetail() {
                   </CardTitle>
                 </CardHeader>
                 <CardContent className="pt-6">
-                  {phdScholarData.publications.conferences.length > 0 ? (
+                  {phdScholarData.publications?.conferences?.length > 0 ? (
                     <div className="space-y-6">
                       {phdScholarData.publications.conferences.map((conference, index) => (
                         <div key={index} className="border rounded-lg p-4 bg-card">
