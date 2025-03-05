@@ -65,6 +65,7 @@ interface PhdScholar extends Document {
       DCM: {
         scheduledDate: Date;
         actualDate: Date;
+        happened: boolean; 
       }[];
     };
     comprehensiveExamDate: Date;
@@ -162,6 +163,7 @@ const phdScholarSchema = new Schema<PhdScholar>({
         {
           scheduledDate: { type: Date, default: null },
           actualDate: { type: Date, default: null },
+          happened: { type: Boolean, default: false },
         },
       ],
     },

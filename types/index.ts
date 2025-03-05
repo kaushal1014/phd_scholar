@@ -3,7 +3,7 @@ export interface PhdScholar {
     firstName: string;
     middleName?: string;
     lastName: string;
-    dateOfBirth: Date | null;
+    dateOfBirth: Date;
     nationality: string;
     mobileNumber: string;
   };
@@ -11,7 +11,7 @@ export interface PhdScholar {
     entranceExamination: string;
     qualifyingExamination: string;
     allotmentNumber: string;
-    admissionDate: Date | null;
+    admissionDate: Date;
     department: string;
     usn: string;
     srn: string;
@@ -29,50 +29,51 @@ export interface PhdScholar {
     subjectName: string;
     subjectGrade: string;
     status: string;
-    eligibilityDate: Date | null;
+    eligibilityDate: Date;
   };
   courseWork2: {
     subjectCode: string;
     subjectName: string;
     subjectGrade: string;
     status: string;
-    eligibilityDate: Date | null;
+    eligibilityDate: Date;
   };
   courseWork3: {
     subjectCode: string;
     subjectName: string;
     subjectGrade: string;
     status: string;
-    eligibilityDate: Date | null;
+    eligibilityDate: Date;
   };
   courseWork4: {
     subjectCode: string;
     subjectName: string;
     subjectGrade: string;
     status: string;
-    eligibilityDate: Date | null;
+    eligibilityDate: Date;
   };
   phdMilestones: {
     courseworkCompletionDate: {
-      coursework1: Date | null;
-      coursework2: Date | null;
-      coursework3: Date | null;
-      coursework4: Date | null;
+      coursework1: Date;
+      coursework2: Date;
+      coursework3: Date;
+      coursework4: Date;
     };
     dcMeetings: {
       DCM: {
-        scheduledDate: Date | null;
-        actualDate: Date | null;
+        scheduledDate: Date;
+        actualDate: Date;
+        happened: boolean; 
       }[];
     };
-    comprehensiveExamDate: Date | null;
-    proposalDefenseDate: Date | null;
-    openSeminarDate1: Date | null;
-    preSubmissionSeminarDate: Date | null;
-    synopsisSubmissionDate: Date | null;
-    thesisSubmissionDate: Date | null;
-    thesisDefenseDate: Date | null;
-    awardOfDegreeDate: Date | null;
+    comprehensiveExamDate: Date;
+    proposalDefenseDate: Date;
+    openSeminarDate1: Date;
+    preSubmissionSeminarDate: Date;
+    synopsisSubmissionDate: Date;
+    thesisSubmissionDate: Date;
+    thesisDefenseDate: Date;
+    awardOfDegreeDate: Date;
   };
   publications: {
     journals: {
