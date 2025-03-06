@@ -62,6 +62,9 @@ export default function Dashboard() {
       fetch(`/api/user/user`)
         .then((response) => response.json())
         .then((data) => {
+          if (data.isAdmin) {
+            router.push("/admin")
+          }
           setUserData(data)
           return fetch(`/api/user/phd-scholar/`)
         })

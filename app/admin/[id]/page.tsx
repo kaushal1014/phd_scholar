@@ -15,7 +15,7 @@ export default function UserDetail() {
   const [loading, setLoading] = useState(true)
   const { id } = useParams()
   const { data: session, status } = useSession()
-
+  const router= useRouter()
   useEffect(() => {
     const fetchUser = async () => {
       try {
@@ -53,8 +53,11 @@ export default function UserDetail() {
       }
     }
 
-    if (id && status === "authenticated") {
-      fetchUser()
+    if (id && status === "authenticated" && session?.user?.isAdmin) {
+        fetchUser()
+    } else if (status === "unauthenticated" || !session?.user?.isAdmin) {
+      setLoading(false)
+      router.push("/unauthorized")
     }
   }, [id, status, session])
 
