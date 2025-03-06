@@ -11,11 +11,13 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { User } from "@/types"
+import { useSession } from "next-auth/react"
 
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
   const router = useRouter()
+  const { data: session, status } = useSession()
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -40,8 +42,20 @@ export default function AdminUsers() {
       }
     }
 
-    fetchUsers()
-  }, [])
+    if (status === "authenticated" && session?.user?.isAdmin) {
+      fetch(`/api/user/user/${session.user.id}`)
+        .then((response) => response.json())
+        .then((data) => {
+            fetchUsers()     
+        })
+        .catch((error) => {
+          console.error("Error fetching data:", error)
+        })
+    } else if (status === "unauthenticated" || !session?.user.isAdmin) {
+      setLoading(false)
+      router.push("/unauthorized")
+    }
+  }, [status, session, router])
 
   const handleUserClick = (id: string) => {
     router.push(`/admin/${id}`)
