@@ -5,9 +5,10 @@ import type React from "react"
 import { useState, useEffect } from "react"
 import { useSession } from "next-auth/react"
 import { useRouter } from "next/navigation"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
+import User from '@/server/models/userModel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   GraduationCap,
@@ -25,6 +26,7 @@ import {
   BookOpen,
   ChevronRight,
   AlertCircle,
+  Plus,
 } from "lucide-react"
 import type { User as UserType, PhdScholar } from "@/types"
 import { ConferenceSlideshow } from "@/components/ConferenceSlideshow"
@@ -32,20 +34,18 @@ import { Announcements } from "@/components/Announcements"
 import { DCMeetingPopup } from "@/components/DCMeetingPopup"
 import { motion } from "framer-motion"
 import {
-  AreaChart,
-  Area,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  ResponsiveContainer,
-  PieChart,
-  Pie,
-  Cell,
-  Legend,
-  BarChart,
-  Bar,
-} from "recharts"
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { useForm } from "react-hook-form"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -56,7 +56,51 @@ export default function Dashboard() {
   const [showDCMeetingPopup, setShowDCMeetingPopup] = useState(false)
   const [currentDCMeeting, setCurrentDCMeeting] = useState<any>(null)
   const [journeyProgress, setJourneyProgress] = useState(0)
+  const [showJournalModal, setShowJournalModal] = useState(false)
+  const [showConferenceModal, setShowConferenceModal] = useState(false)
+  const [isSubmitting, setIsSubmitting] = useState(false)
 
+  const journalSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+    journalName: z.string().min(1, "Journal name is required"),
+    publicationYear: z.number().min(1900, "Publication year is required"),
+    volumeNumber: z.string(),
+    issueNumber: z.string(),
+    pageNumbers: z.string(),
+    impactFactor: z.string(),
+  })
+
+  const conferenceSchema = z.object({
+    title: z.string().min(1, "Title is required"),
+    conferenceName: z.string().min(1, "Conference name is required"),
+    publicationYear: z.number().min(1900, "Publication year is required"),
+    location: z.string().optional(),
+  })
+
+  const journalForm = useForm<z.infer<typeof journalSchema>>({
+    resolver: zodResolver(journalSchema),
+    defaultValues: {
+      title: "",
+      journalName: "",
+      publicationYear: new Date().getFullYear(),
+      volumeNumber: "",
+      issueNumber: "",
+      pageNumbers: "",
+      impactFactor: "",
+    },
+  })
+
+  const conferenceForm = useForm<z.infer<typeof conferenceSchema>>({
+    resolver: zodResolver(conferenceSchema),
+    defaultValues: {
+      title: "",
+      conferenceName: "",
+      publicationYear: new Date().getFullYear(),
+      location: "",
+    },
+  })
+
+  
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
       fetch(`/api/user/user`)
@@ -102,13 +146,98 @@ export default function Dashboard() {
 
   const checkPastDCMeetings = (meetings: any[]) => {
     const now = new Date()
-    const pastMeeting = meetings.find((meeting: any) => meeting.scheduledDate && new Date(meeting.scheduledDate) < now && !meeting.happened)
+    const pastMeeting = meetings.find(
+      (meeting: any) => meeting.scheduledDate && new Date(meeting.scheduledDate) < now && !meeting.happened,
+    )
     console.log("past", pastMeeting)
     if (pastMeeting) {
       setCurrentDCMeeting(pastMeeting)
       if (pastMeeting.scheduledDate) {
         setShowDCMeetingPopup(true)
       }
+    }
+  }
+
+  const handleAddJournal = async (data: z.infer<typeof journalSchema>) => {
+    if (!session?.user?.id) return
+  
+    setIsSubmitting(true)
+  
+    try {
+      // Ensure impactFactor is a number
+      const journalData = {
+        ...data,
+        impactFactor: Number(data.impactFactor),
+      }
+  
+      const response = await fetch(`/api/user/phd-scholar/publications/journals`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.user.id}`,
+        },
+        body: JSON.stringify({ phdId: Object(userData?.phdScholar), journal: journalData }), // Use phdId instead of userId
+      })
+  
+      if (response.ok) {
+        // Update local state
+        setPhdScholarData((prev) => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            publications: {
+              ...prev.publications,
+              journals: [...(prev.publications?.journals || []), journalData],
+            },
+          }
+        })
+  
+        journalForm.reset()
+        setShowJournalModal(false)
+      }
+    } catch (error) {
+      console.error("Error adding journal:", error)
+    } finally {
+      setIsSubmitting(false)
+    }
+  }
+  
+  const handleAddConference = async (data: z.infer<typeof conferenceSchema>) => {
+    if (!session?.user?.id) return
+  
+    setIsSubmitting(true)
+  
+    try {
+      const response = await fetch(`/api/user/phd-scholar/publications/conferences`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${session.user.id}`,
+        },
+        body: JSON.stringify({ phdId: Object(userData?.phdScholar), conference: data }), // Use phdId instead of userId
+      })
+  
+      if (response.ok) {
+        // Update local state
+        const updatedData = await response.json()
+        setPhdScholarData((prev) => {
+          if (!prev) return prev
+          return {
+            ...prev,
+            publications: {
+              ...prev.publications,
+              conferences: [...(prev.publications?.conferences || []), data],
+            },
+          }
+        })
+  
+        conferenceForm.reset()
+        setShowConferenceModal(false)
+      }
+    } catch (error) {
+      console.error("Error adding conference:", error)
+    } finally {
+      setIsSubmitting(false)
     }
   }
 
@@ -130,14 +259,14 @@ export default function Dashboard() {
       updatedMeeting.scheduledDate = newDate?.toISOString()
       updatedMeeting.happened = false
     }
-  
+
     // Ensure that scheduledDate is set correctly
     if (!didHappen && newDate) {
       updatedMeeting.scheduledDate = newDate.toISOString()
     }
-  
+
     console.log("updatedMeeting:", updatedMeeting)
-  
+
     try {
       const response = await fetch(`/api/user/phd-scholar/dc-meeting/latest`, {
         method: "PUT",
@@ -147,23 +276,23 @@ export default function Dashboard() {
         },
         body: JSON.stringify(updatedMeeting),
       })
-  
+
       if (response.ok) {
         // Update the local state
         setPhdScholarData((prevData) => {
           if (!prevData || !currentDCMeeting) return prevData
-            return {
+          return {
             ...prevData,
             phdMilestones: {
               ...prevData.phdMilestones,
               dcMeetings: {
-              ...prevData.phdMilestones.dcMeetings,
-              DCM: prevData.phdMilestones.dcMeetings.DCM.map((meeting) =>
-                meeting.scheduledDate === currentDCMeeting.scheduledDate ? updatedMeeting : meeting,
-              ),
+                ...prevData.phdMilestones.dcMeetings,
+                DCM: prevData.phdMilestones.dcMeetings.DCM.map((meeting) =>
+                  meeting.scheduledDate === currentDCMeeting.scheduledDate ? updatedMeeting : meeting,
+                ),
               },
             },
-            }
+          }
         })
       } else {
         console.error("Failed to update DC meeting")
@@ -172,12 +301,11 @@ export default function Dashboard() {
       console.error("Error updating DC meeting:", error)
     }
   }
-  
+
   const nextDCMeeting =
     phdScholarData?.phdMilestones.dcMeetings.DCM.find(
       (meeting) => meeting.scheduledDate && new Date(meeting.scheduledDate) > new Date(),
-    )||
-    null
+    ) || null
 
   interface Milestone {
     label: string
@@ -236,15 +364,15 @@ export default function Dashboard() {
 
   const ClimbingAnimation = ({ milestones }: { milestones: Milestone[] }) => {
     const currentDate = new Date()
-  
+
     return (
       <div className="relative flex flex-col items-start">
         {/* Dynamic vertical line */}
         <div className="absolute left-2 top-0 bottom-0 w-0.5 bg-[#1B3668]" style={{ height: `calc(100% - 1rem)` }} />
-  
+
         {milestones.map((milestone: Milestone, index: number) => {
           const isCompleted = milestone.date ? new Date(milestone.date) <= currentDate : false
-  
+
           return (
             <motion.div
               key={index}
@@ -266,7 +394,7 @@ export default function Dashboard() {
                   {isCompleted && <CheckCircle className="text-white w-3 h-3" />}
                 </motion.div>
               </div>
-  
+
               {/* Milestone Details */}
               <div className="ml-6 flex items-center">
                 <div className={`mr-2 ${isCompleted ? "text-[#1B3668]" : "text-gray-400"}`}>{milestone.icon}</div>
@@ -285,16 +413,19 @@ export default function Dashboard() {
       </div>
     )
   }
-  
 
   // Generate publication data for charts
-  const getPublicationData = () => {
-    const journals = phdScholarData?.publications?.journals || []
-    const conferences = phdScholarData?.publications?.conferences || []
-
+const getPublicationData = () => {
+    const journals = (phdScholarData?.publications?.journals || []).filter(
+      (journal) => journal.title && journal.journalName && journal.publicationYear
+    )
+    const conferences = (phdScholarData?.publications?.conferences || []).filter(
+      (conference) => conference.title && conference.conferenceName && conference.publicationYear
+    )
+  
     // Publications by year
     const publicationsByYear: Record<string, { journals: number; conferences: number }> = {}
-
+  
     // Process journals
     journals.forEach((journal) => {
       const year = journal.publicationYear.toString()
@@ -303,7 +434,7 @@ export default function Dashboard() {
       }
       publicationsByYear[year].journals++
     })
-
+  
     // Process conferences
     conferences.forEach((conference) => {
       const year = conference.publicationYear.toString()
@@ -312,7 +443,7 @@ export default function Dashboard() {
       }
       publicationsByYear[year].conferences++
     })
-
+  
     // Convert to array for charts
     const yearlyData = Object.keys(publicationsByYear)
       .map((year) => ({
@@ -322,13 +453,13 @@ export default function Dashboard() {
         total: publicationsByYear[year].journals + publicationsByYear[year].conferences,
       }))
       .sort((a, b) => Number.parseInt(a.year) - Number.parseInt(b.year))
-
+  
     // Publication types pie chart data
     const publicationTypes = [
       { name: "Journals", value: journals.length, color: "#1B3668" },
       { name: "Conferences", value: conferences.length, color: "#F7941D" },
     ]
-
+  
     return {
       yearlyData,
       publicationTypes,
@@ -454,11 +585,15 @@ export default function Dashboard() {
                   <BookMarked className="h-6 w-6 text-[#F7941D]" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Publications</p>
-                  <p className="text-2xl font-bold text-[#F7941D]">
-                    {(phdScholarData.publications?.journals?.length || 0) +
-                      (phdScholarData.publications?.conferences?.length || 0)}
-                  </p>
+                <p className="text-sm text-muted-foreground">Publications</p>
+                <p className="text-2xl font-bold text-[#F7941D]">
+                  {((phdScholarData.publications?.journals || []).filter(
+                    (journal) => journal.title && journal.journalName && journal.publicationYear
+                  ).length) +
+                  ((phdScholarData.publications?.conferences || []).filter(
+                    (conference) => conference.title && conference.conferenceName && conference.publicationYear
+                  ).length)}
+                </p>
                 </div>
               </CardContent>
             </Card>
@@ -513,20 +648,18 @@ export default function Dashboard() {
                   <ClimbingAnimation milestones={getMilestones()} />
                 </CardContent>
               </Card>
-              
+
               {/* Announcements */}
-              <CardHeader className="pb-2 border-b">
-                </CardHeader>
-                <CardContent className="p-0">
-                  <Announcements />
-                </CardContent>
-                
-                {/* Conferences */}
-                <CardHeader className="pb-2 border-b">
-                </CardHeader>
-                <CardContent className="p-0">
-                  <ConferenceSlideshow />
-                </CardContent>
+              <CardHeader className="pb-2 border-b"></CardHeader>
+              <CardContent className="p-0">
+                <Announcements />
+              </CardContent>
+
+              {/* Conferences */}
+              <CardHeader className="pb-2 border-b"></CardHeader>
+              <CardContent className="p-0">
+                <ConferenceSlideshow />
+              </CardContent>
             </div>
 
             {/* Middle Columns - Main Content */}
@@ -567,73 +700,117 @@ export default function Dashboard() {
                           </div>
                         </div>
 
-                        {/* Publication Summary */}
+                        {/* Research Tools */}
                         <div>
                           <h2 className="text-lg font-bold mb-4 text-[#1B3668] flex items-center">
-                            <FileText className="h-5 w-5 mr-2" /> Publication Summary
+                            <FileText className="h-5 w-5 mr-2" /> Research Tools
                           </h2>
-                          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Card className="bg-white shadow-sm border-t-2 border-t-[#1B3668]">
-                              <CardHeader className="pb-2">
-                                <CardTitle className="text-md">Journal Articles</CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="flex items-center justify-between">
-                                  <span className="text-3xl font-bold text-[#1B3668]">
-                                    {phdScholarData.publications?.journals?.length || 0}
-                                  </span>
-                                  <BookOpen className="h-8 w-8 text-[#1B3668]/20" />
-                                </div>
-                              </CardContent>
-                            </Card>
+                          <p className="text-sm text-muted-foreground mb-4">
+                            Helpful tools to enhance your research workflow
+                          </p>
 
-                            <Card className="bg-white shadow-sm border-t-2 border-t-[#F7941D]">
-                              <CardHeader className="pb-2">
-                                <CardTitle className="text-md">Conference Papers</CardTitle>
-                              </CardHeader>
-                              <CardContent>
-                                <div className="flex items-center justify-between">
-                                  <span className="text-3xl font-bold text-[#F7941D]">
-                                    {phdScholarData.publications?.conferences?.length || 0}
-                                  </span>
-                                  <Users className="h-8 w-8 text-[#F7941D]/20" />
-                                </div>
-                              </CardContent>
-                            </Card>
-                          </div>
-                        </div>
-
-                        {/* Publication Trend */}
-                        <div>
-                          <h2 className="text-lg font-bold mb-4 text-[#1B3668]">Publication Trend</h2>
-                          <div className="h-64 w-full">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <AreaChart
-                                data={publicationData.yearlyData}
-                                margin={{ top: 10, right: 30, left: 0, bottom: 0 }}
+                          {/* Finding & Analyzing Papers */}
+                          <div className="mb-4">
+                            <h3 className="text-md font-semibold mb-2 text-[#1B3668]">Finding & Analyzing Papers</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <a
+                                href="https://scholar.google.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
                               >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="year" />
-                                <YAxis />
-                                <Tooltip />
-                                <Area
-                                  type="monotone"
-                                  dataKey="journals"
-                                  stackId="1"
-                                  stroke="#1B3668"
-                                  fill="#1B3668"
-                                  name="Journals"
-                                />
-                                <Area
-                                  type="monotone"
-                                  dataKey="conferences"
-                                  stackId="1"
-                                  stroke="#F7941D"
-                                  fill="#F7941D"
-                                  name="Conferences"
-                                />
-                              </AreaChart>
-                            </ResponsiveContainer>
+                                <div className="bg-[#1B3668]/10 p-2 rounded-full mr-3">
+                                  <BookMarked className="h-4 w-4 text-[#1B3668]" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-[#1B3668]">Google Scholar</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Academic search engine for scholarly articles
+                                  </p>
+                                </div>
+                                <ChevronRight className="ml-auto h-5 w-5 text-muted-foreground" />
+                              </a>
+
+                              <a
+                                href="https://scispace.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                <div className="bg-[#1B3668]/10 p-2 rounded-full mr-3">
+                                  <FileText className="h-4 w-4 text-[#1B3668]" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-[#1B3668]">SciSpace</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    AI-powered research assistant for papers
+                                  </p>
+                                </div>
+                                <ChevronRight className="ml-auto h-5 w-5 text-muted-foreground" />
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Writing & Managing References */}
+                          <div className="mb-4">
+                            <h3 className="text-md font-semibold mb-2 text-[#F7941D]">Writing & Managing References</h3>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+                              <a
+                                href="https://www.zotero.org/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                <div className="bg-[#F7941D]/10 p-2 rounded-full mr-3">
+                                  <BookOpen className="h-4 w-4 text-[#F7941D]" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-[#F7941D]">Zotero</p>
+                                  <p className="text-xs text-muted-foreground">Open-source reference management tool</p>
+                                </div>
+                                <ChevronRight className="ml-auto h-5 w-5 text-muted-foreground" />
+                              </a>
+
+                              <a
+                                href="https://www.mendeley.com/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                <div className="bg-[#F7941D]/10 p-2 rounded-full mr-3">
+                                  <BookOpen className="h-4 w-4 text-[#F7941D]" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-[#F7941D]">Mendeley</p>
+                                  <p className="text-xs text-muted-foreground">Reference manager with PDF annotation</p>
+                                </div>
+                                <ChevronRight className="ml-auto h-5 w-5 text-muted-foreground" />
+                              </a>
+                            </div>
+                          </div>
+
+                          {/* Assessment & Feedback */}
+                          <div>
+                            <h3 className="text-md font-semibold mb-2 text-[#1B3668]">Assessment & Feedback</h3>
+                            <div className="grid grid-cols-1 gap-3">
+                              <a
+                                href="https://www.reviewmypaper.org/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="flex items-center p-3 bg-gray-50 hover:bg-gray-100 rounded-lg transition-colors"
+                              >
+                                <div className="bg-[#1B3668]/10 p-2 rounded-full mr-3">
+                                  <FileText className="h-4 w-4 text-[#1B3668]" />
+                                </div>
+                                <div>
+                                  <p className="font-medium text-[#1B3668]">Review My Paper</p>
+                                  <p className="text-xs text-muted-foreground">
+                                    Assessment & feedback for academic papers
+                                  </p>
+                                </div>
+                                <ChevronRight className="ml-auto h-5 w-5 text-muted-foreground" />
+                              </a>
+                            </div>
                           </div>
                         </div>
 
@@ -676,60 +853,31 @@ export default function Dashboard() {
                 <TabsContent value="publications" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
-                      <CardTitle className="text-lg text-[#1B3668] flex items-center">
-                        <BookMarked className="h-5 w-5 mr-2" /> Publications Analysis
-                      </CardTitle>
+                      <div className="flex justify-between items-center">
+                        <CardTitle className="text-lg text-[#1B3668] flex items-center">
+                          <BookMarked className="h-5 w-5 mr-2" /> Publications Analysis
+                        </CardTitle>
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => setShowJournalModal(true)}
+                            className="bg-[#1B3668] hover:bg-[#1B3668]/90"
+                          >
+                            <Plus className="h-4 w-4 mr-1" /> Add Journal
+                          </Button>
+                          <Button
+                            size="sm"
+                            onClick={() => setShowConferenceModal(true)}
+                            className="bg-[#F7941D] hover:bg-[#F7941D]/90"
+                          >
+                            <Plus className="h-4 w-4 mr-1" /> Add Conference
+                          </Button>
+                        </div>
+                      </div>
                       <CardDescription>Track your research output and impact</CardDescription>
                     </CardHeader>
                     <CardContent className="p-6 overflow-auto h-auto">
                       <div className="space-y-8">
-                        {/* Publication Stats */}
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                          <div>
-                            <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Publication Types</h3>
-                            <div className="h-64">
-                              <ResponsiveContainer width="100%" height="100%">
-                                <PieChart>
-                                  <Pie
-                                    data={publicationData.publicationTypes}
-                                    cx="50%"
-                                    cy="50%"
-                                    labelLine={false}
-                                    outerRadius={80}
-                                    fill="#8884d8"
-                                    dataKey="value"
-                                    nameKey="name"
-                                    label={({ name, percent }) => `${name}: ${(percent * 100).toFixed(0)}%`}
-                                  >
-                                    {publicationData.publicationTypes.map((entry, index) => (
-                                      <Cell key={`cell-${index}`} fill={entry.color} />
-                                    ))}
-                                  </Pie>
-                                  <Tooltip />
-                                  <Legend />
-                                </PieChart>
-                              </ResponsiveContainer>
-                            </div>
-                          </div>
-
-                          <div>
-                            <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Publications by Year</h3>
-                            <div className="h-64">
-                              <ResponsiveContainer width="100%" height="100%">
-                                <BarChart data={publicationData.yearlyData}>
-                                  <CartesianGrid strokeDasharray="3 3" />
-                                  <XAxis dataKey="year" />
-                                  <YAxis />
-                                  <Tooltip />
-                                  <Legend />
-                                  <Bar dataKey="journals" name="Journals" fill="#1B3668" />
-                                  <Bar dataKey="conferences" name="Conferences" fill="#F7941D" />
-                                </BarChart>
-                              </ResponsiveContainer>
-                            </div>
-                          </div>
-                        </div>
-
                         {/* Journal Publications */}
                         <div>
                           <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Journal Publications</h3>
@@ -814,29 +962,12 @@ export default function Dashboard() {
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
                       <CardTitle className="text-lg text-[#1B3668] flex items-center">
-                        <BookOpen className="h-5 w-5 mr-2" /> Coursework Analysis
+                        <BookOpen className="h-5 w-5 mr-2" /> My Coursework
                       </CardTitle>
                       <CardDescription>Track your academic performance</CardDescription>
                     </CardHeader>
                     <CardContent className="p-6 overflow-auto h-auto">
                       <div className="space-y-8">
-                        {/* Grade Distribution */}
-                        <div>
-                          <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Grade Distribution</h3>
-                          <div className="h-64">
-                            <ResponsiveContainer width="100%" height="100%">
-                              <BarChart data={courseWorkData}>
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis dataKey="name" />
-                                <YAxis domain={[0, 10]} />
-                                <Tooltip />
-                                <Legend />
-                                <Bar dataKey="gradeValue" name="Grade Value" fill="#1B3668" />
-                              </BarChart>
-                            </ResponsiveContainer>
-                          </div>
-                        </div>
-
                         {/* Coursework Details */}
                         <div>
                           <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Coursework Details</h3>
@@ -891,6 +1022,222 @@ export default function Dashboard() {
           onConfirm={handleDCMeetingConfirmation}
           scheduledDate={currentDCMeeting ? new Date(currentDCMeeting.scheduledDate) : new Date()}
         />
+        {/* Journal Modal */}
+        <Dialog open={showJournalModal} onOpenChange={setShowJournalModal}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle className="text-[#1B3668]">Add Journal Publication</DialogTitle>
+              <DialogDescription>Enter the details of your journal publication below.</DialogDescription>
+            </DialogHeader>
+            <Form {...journalForm}>
+              <form onSubmit={journalForm.handleSubmit(handleAddJournal)} className="space-y-4">
+                <FormField
+                  control={journalForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Publication title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={journalForm.control}
+                  name="journalName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Journal Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Name of the journal" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={journalForm.control}
+                  name="publicationYear"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Publication Year *</FormLabel>
+                      <FormControl>
+                        <Input type="number" placeholder="YYYY" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={journalForm.control}
+                    name="volumeNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Volume Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Volume" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={journalForm.control}
+                    name="issueNumber"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Issue Number</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Issue" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={journalForm.control}
+                    name="pageNumbers"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Page Numbers</FormLabel>
+                        <FormControl>
+                          <Input placeholder="e.g. 123-145" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={journalForm.control}
+                    name="impactFactor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Impact Factor</FormLabel>
+                        <FormControl>
+                          <Input step="0.01" placeholder="e.g. 3.5" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowJournalModal(false)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="bg-[#1B3668] hover:bg-[#1B3668]/90" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Journal"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        {/* Conference Modal */}
+        <Dialog open={showConferenceModal} onOpenChange={setShowConferenceModal}>
+          <DialogContent className="sm:max-w-[500px]">
+            <DialogHeader>
+              <DialogTitle className="text-[#F7941D]">Add Conference Publication</DialogTitle>
+              <DialogDescription>Enter the details of your conference publication below.</DialogDescription>
+            </DialogHeader>
+            <Form {...conferenceForm}>
+              <form onSubmit={conferenceForm.handleSubmit(handleAddConference)} className="space-y-4">
+                <FormField
+                  control={conferenceForm.control}
+                  name="title"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Title *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Publication title" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <FormField
+                  control={conferenceForm.control}
+                  name="conferenceName"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Conference Name *</FormLabel>
+                      <FormControl>
+                        <Input placeholder="Name of the conference" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={conferenceForm.control}
+                    name="publicationYear"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Publication Year *</FormLabel>
+                        <FormControl>
+                          <Input type="number" placeholder="YYYY" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={conferenceForm.control}
+                    name="location"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Location</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Conference location" {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </div>
+                <DialogFooter>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => setShowConferenceModal(false)}
+                    disabled={isSubmitting}
+                  >
+                    Cancel
+                  </Button>
+                  <Button type="submit" className="bg-[#F7941D] hover:bg-[#F7941D]/90" disabled={isSubmitting}>
+                    {isSubmitting ? (
+                      <>
+                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                        Saving...
+                      </>
+                    ) : (
+                      "Save Conference"
+                    )}
+                  </Button>
+                </DialogFooter>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
       </div>
     )
   }
