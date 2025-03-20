@@ -13,7 +13,7 @@ export async function PUT(req: NextRequest) {
     }
 
     const body = await req.json()
-    const { scheduledDate, actualDate, happened, _id } = body
+    const { scheduledDate, actualDate, happened, _id, summary } = body
     console.log('Received data:', { scheduledDate, actualDate, happened, _id })
 
     if (!body || !_id) {
@@ -27,6 +27,7 @@ export async function PUT(req: NextRequest) {
           'phdMilestones.dcMeetings.DCM.$.scheduledDate': scheduledDate,
           'phdMilestones.dcMeetings.DCM.$.actualDate': actualDate,
           'phdMilestones.dcMeetings.DCM.$.happened': happened,
+          'phdMilestones.dcMeetings.DCM.$.summary': summary,
         },
       },
       {
@@ -38,7 +39,6 @@ export async function PUT(req: NextRequest) {
       return NextResponse.json({ success: false, message: 'DC meeting not found' }, { status: 404 })
     }
 
-    console.log('Updated PhdScholar:', phdScholar.phdMilestones.dcMeetings.DCM)
     return NextResponse.json({ success: true, data: phdScholar }, { status: 200 })
   } catch (error) {
     const errorMessage = (error as Error).message

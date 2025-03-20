@@ -64,6 +64,7 @@ export interface PhdScholar {
         scheduledDate: Date;
         actualDate: Date;
         happened: boolean; 
+        summary: string
       }[];
     };
     comprehensiveExamDate: Date;
