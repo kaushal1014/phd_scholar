@@ -20,6 +20,12 @@ export default function AdminUsers() {
   const { data: session, status } = useSession()
 
   useEffect(() => {
+    // Ensure session is loaded before proceeding
+    if (status === "loading") {
+      // If the session is loading, we simply return and don't perform any action
+      return;
+    }
+  
     const fetchUsers = async () => {
       try {
         const response = await fetch('/api/allUsers')
@@ -41,17 +47,18 @@ export default function AdminUsers() {
         setLoading(false)
       }
     }
-
+  
+    console.log("checking")
     if (status === "authenticated" && session?.user?.isAdmin) {
       fetch(`/api/user/user/${session.user.id}`)
         .then((response) => response.json())
         .then((data) => {
-            fetchUsers()     
+          fetchUsers()
         })
         .catch((error) => {
           console.error("Error fetching data:", error)
         })
-    } else if (status === "unauthenticated" || !session?.user.isAdmin) {
+    } else if (status === "unauthenticated" || !(session?.user?.isAdmin)) {
       setLoading(false)
       router.push("/unauthorized")
     }
