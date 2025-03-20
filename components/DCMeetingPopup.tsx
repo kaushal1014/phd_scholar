@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import {
   Dialog,
   DialogContent,
@@ -14,17 +14,23 @@ import { format } from "date-fns"
 interface DCMeetingPopupProps {
   isOpen: boolean
   onClose: () => void
-  onConfirm: (didHappen: boolean, newDate?: Date) => void
+  onConfirm: (didHappen: boolean, newDate?: Date, summary?: string) => void
   scheduledDate: Date
+  summary: string
 }
 
-export function DCMeetingPopup({ isOpen, onClose, onConfirm, scheduledDate }: DCMeetingPopupProps) {
+export function DCMeetingPopup({ isOpen, onClose, onConfirm, scheduledDate, summary: initialSummary }: DCMeetingPopupProps) {
   const [didHappen, setDidHappen] = useState<boolean | null>(null)
   const [newDate, setNewDate] = useState<string>("")
+  const [summary, setSummary] = useState<string>(initialSummary || "")
+
+  useEffect(() => {
+    setSummary(initialSummary || "")
+  }, [initialSummary])
 
   const handleConfirm = () => {
     if (didHappen === null) return
-    onConfirm(didHappen, didHappen ? scheduledDate : new Date(newDate))
+    onConfirm(didHappen, didHappen ? scheduledDate : new Date(newDate), didHappen ? summary : "hi")
     onClose()
   }
 
@@ -54,6 +60,17 @@ export function DCMeetingPopup({ isOpen, onClose, onConfirm, scheduledDate }: DC
               No, it didn't happen
             </Button>
           </div>
+          {didHappen === true && (
+            <div>
+              <p className="text-sm text-muted-foreground mb-2">Please provide a summary of the meeting:</p>
+              <Input
+                type="text"
+                value={summary}
+                onChange={(e) => setSummary(e.target.value)}
+                className="w-full border-[#1B3668] focus:ring-[#1B3668]"
+              />
+            </div>
+          )}
           {didHappen === false && (
             <div>
               <p className="text-sm text-muted-foreground mb-2">Please select the new date:</p>
@@ -73,7 +90,7 @@ export function DCMeetingPopup({ isOpen, onClose, onConfirm, scheduledDate }: DC
           </Button>
           <Button
             onClick={handleConfirm}
-            disabled={didHappen === null || (didHappen === false && !newDate)}
+            disabled={didHappen === null || (didHappen === false && !newDate) || (didHappen === true && !summary)}
             className="bg-[#F7941D] text-white hover:bg-[#F7941D]/90"
           >
             Confirm
@@ -83,4 +100,3 @@ export function DCMeetingPopup({ isOpen, onClose, onConfirm, scheduledDate }: DC
     </Dialog>
   )
 }
-

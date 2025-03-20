@@ -149,7 +149,6 @@ export default function Dashboard() {
     const pastMeeting = meetings.find(
       (meeting: any) => meeting.scheduledDate && new Date(meeting.scheduledDate) < now && !meeting.happened,
     )
-    console.log("past", pastMeeting)
     if (pastMeeting) {
       setCurrentDCMeeting(pastMeeting)
       if (pastMeeting.scheduledDate) {
@@ -266,20 +265,18 @@ export default function Dashboard() {
   const filteredJournals = filterNonEmptyPublications(phdScholarData?.publications?.journals || [])
   const filteredConferences = filterNonEmptyConferences(phdScholarData?.publications?.conferences || [])
 
-  const handleDCMeetingConfirmation = async (didHappen: boolean, newDate?: Date) => {
+  const handleDCMeetingConfirmation = async (didHappen: boolean, newDate?: Date, summary?: string) => {
     if (!currentDCMeeting) return
-    console.log(didHappen)
     const updatedMeeting = {
       ...currentDCMeeting,
     }
 
     if (didHappen) {
-      console.log("hi")
       updatedMeeting.actualDate = currentDCMeeting.scheduledDate
       updatedMeeting.scheduledDate = currentDCMeeting.scheduledDate
       updatedMeeting.happened = true
+      updatedMeeting.summary = summary
     } else {
-      console.log("bye")
       updatedMeeting.actualDate = null
       updatedMeeting.scheduledDate = newDate?.toISOString()
       updatedMeeting.happened = false
@@ -289,8 +286,6 @@ export default function Dashboard() {
     if (!didHappen && newDate) {
       updatedMeeting.scheduledDate = newDate.toISOString()
     }
-
-    console.log("updatedMeeting:", updatedMeeting)
 
     try {
       const response = await fetch(`/api/user/phd-scholar/dc-meeting/latest`, {
@@ -1046,6 +1041,7 @@ const getPublicationData = () => {
           onClose={() => setShowDCMeetingPopup(false)}
           onConfirm={handleDCMeetingConfirmation}
           scheduledDate={currentDCMeeting ? new Date(currentDCMeeting.scheduledDate) : new Date()}
+          summary={currentDCMeeting ? currentDCMeeting.summary : ""}
         />
         {/* Journal Modal */}
         <Dialog open={showJournalModal} onOpenChange={setShowJournalModal}>

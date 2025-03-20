@@ -180,10 +180,10 @@ export default function UserDetail() {
                   <GraduationCap className="h-5 w-5 text-[#003b7a]" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">PhD Scholar Status</p>
+                  <p className="text-sm text-muted-foreground">User Role</p>
                   <div className="flex items-center gap-2">
-                    <Badge variant={userData.phdScholar ? "default" : "secondary"} className="mt-1">
-                      {userData.phdScholar ? "PhD Scholar" : "Not a PhD Scholar"}
+                    <Badge variant={userData.isAdmin ? "destructive" : "default"} className="mt-1">
+                      {userData.isAdmin ? "Administrator" : "PhD Scholar"}
                     </Badge>
                   </div>
                 </div>

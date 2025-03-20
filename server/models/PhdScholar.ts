@@ -1,4 +1,5 @@
 import mongoose, { Schema, Document, Model } from 'mongoose';
+import { string } from 'zod';
 
 interface PhdScholar extends Document {
   personalDetails: {
@@ -163,6 +164,7 @@ const phdScholarSchema = new Schema<PhdScholar>({
         {
           scheduledDate: { type: Date, default: null },
           actualDate: { type: Date, default: null },
+          summary: { type: String, default: null},
           happened: { type: Boolean, default: false },
         },
       ],
