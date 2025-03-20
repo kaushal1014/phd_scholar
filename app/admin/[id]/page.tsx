@@ -16,24 +16,30 @@ export default function UserDetail() {
   const { id } = useParams()
   const { data: session, status } = useSession()
   const router= useRouter()
+
   useEffect(() => {
     const fetchUser = async () => {
       try {
-        console.log(`Fetching user data for ID: ${id}`)
+ 
+        // Make sure session is available before proceeding
+        if (!session?.user?.id) {
+          return;
+        }
+  
         const userResponse = await fetch(`/api/user/user/${id}`, {
           headers: {
             Authorization: `Bearer ${session?.user?.id}`,
           },
         })
+  
         if (!userResponse.ok) {
           throw new Error(`Failed to fetch user data: ${userResponse.statusText}`)
         }
+  
         const userData = await userResponse.json()
-        console.log('Fetched user data:', userData)
         setUserData(userData.data)
-
+  
         if (userData.data.phdScholar) {
-          console.log(`Fetching PhD scholar data for ID: ${userData.data.phdScholar}`)
           const phdResponse = await fetch(`/api/user/phd-scholar/${userData.data.phdScholar}`, {
             headers: {
               Authorization: `Bearer ${session?.user?.id}`,
@@ -43,7 +49,6 @@ export default function UserDetail() {
             throw new Error(`Failed to fetch PhD scholar data: ${phdResponse.statusText}`)
           }
           const phdData = await phdResponse.json()
-          console.log('Fetched PhD scholar data:', phdData)
           setPhdScholarData(phdData.data)
         }
         setLoading(false)
@@ -52,14 +57,22 @@ export default function UserDetail() {
         setLoading(false)
       }
     }
-
-    if (id && status === "authenticated" && session?.user?.isAdmin) {
-        fetchUser()
+  
+    // Check if session is loading or unavailable
+    if (status === "loading") {
+      return; // Wait for the session to load
+    }
+  
+    // Only proceed with fetching user data if authenticated and the user is an admin
+    if (status === "authenticated" && session?.user?.isAdmin && id) {
+      fetchUser()
     } else if (status === "unauthenticated" || !session?.user?.isAdmin) {
+      console.log("Redirecting to unauthorized page...");
       setLoading(false)
       router.push("/unauthorized")
     }
-  }, [id, status, session])
+  }, [id, status, session, router])
+  
 
   if (loading) {
     return (
