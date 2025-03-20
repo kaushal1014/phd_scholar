@@ -11,7 +11,6 @@ export async function PUT(req: NextRequest) {
     if (!token) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
     }
-
     const body = await req.json()
     const { scheduledDate, actualDate, happened, _id, summary } = body
     console.log('Received data:', { scheduledDate, actualDate, happened, _id })
