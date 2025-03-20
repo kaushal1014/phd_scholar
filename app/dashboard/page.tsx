@@ -241,6 +241,31 @@ export default function Dashboard() {
     }
   }
 
+  const filterNonEmptyPublications = (publications: PhdScholar['publications']['journals']) => {
+    return publications.filter(
+      (publication: PhdScholar['publications']['journals'][0]) =>
+        publication.title &&
+        publication.journalName &&
+        publication.publicationYear &&
+        publication.volumeNumber &&
+        publication.issueNumber &&
+        publication.pageNumbers &&
+        publication.impactFactor
+    )
+  }
+  
+  const filterNonEmptyConferences = (conferences: PhdScholar['publications']['conferences']) => {
+    return conferences.filter(
+      (conference: PhdScholar['publications']['conferences'][0]) =>
+        conference.title &&
+        conference.conferenceName &&
+        conference.publicationYear
+    )
+  }
+  
+  const filteredJournals = filterNonEmptyPublications(phdScholarData?.publications?.journals || [])
+  const filteredConferences = filterNonEmptyConferences(phdScholarData?.publications?.conferences || [])
+
   const handleDCMeetingConfirmation = async (didHappen: boolean, newDate?: Date) => {
     if (!currentDCMeeting) return
     console.log(didHappen)
@@ -882,7 +907,7 @@ const getPublicationData = () => {
                         <div>
                           <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Journal Publications</h3>
                           <div className="space-y-4">
-                            {phdScholarData.publications?.journals?.map((journal, i) => (
+                            {filteredJournals.map((journal: any, i: number) => (
                               <Card key={i} className="bg-white shadow-sm border-l-4 border-l-[#1B3668]">
                                 <CardContent className="p-4">
                                   <h4 className="font-medium text-[#1B3668] mb-2">{journal.title}</h4>
@@ -930,7 +955,7 @@ const getPublicationData = () => {
                         <div>
                           <h3 className="text-md font-semibold mb-3 text-[#F7941D]">Conference Publications</h3>
                           <div className="space-y-4">
-                            {phdScholarData.publications?.conferences?.map((conference, i) => (
+                            {filterNonEmptyConferences(phdScholarData?.publications?.conferences || []).map((conference: { title: string; conferenceName: string; publicationYear: number }, i: number) => (
                               <Card key={i} className="bg-white shadow-sm border-l-4 border-l-[#F7941D]">
                                 <CardContent className="p-4">
                                   <h4 className="font-medium text-[#F7941D] mb-2">{conference.title}</h4>
