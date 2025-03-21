@@ -188,6 +188,7 @@ const phdScholarSchema = new Schema<PhdScholar>({
         issueNumber: { type: String, default: "" },
         pageNumbers: { type: String, default: "" },
         impactFactor: { type: Number, default: 0 },
+        doi: { type: String, default: "" }, // Add DOI field
       },
     ],
     conferences: [
