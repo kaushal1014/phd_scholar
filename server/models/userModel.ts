@@ -32,6 +32,23 @@ const userSchema = new mongoose.Schema({
   },
 });
 
+userSchema.pre("save", async function (next) {
+  if (this.isModified("firstName") || this.isModified("lastName") || this.isModified("email")) {
+    await mongoose.model("PhdScholar").updateOne(
+      { _id: this.phdScholar }, // Find linked PhdScholar
+      { 
+        $set: { 
+          "personalDetails.firstName": this.firstName,
+          "personalDetails.lastName": this.lastName,
+        }
+      }
+    );
+  }
+  next();
+});
+
+
+
 const User = mongoose.models.User || mongoose.model("User", userSchema);
 
 export default User;

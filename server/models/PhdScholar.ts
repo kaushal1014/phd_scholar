@@ -2,6 +2,7 @@ import mongoose, { Schema, Document, Model } from 'mongoose';
 import { string } from 'zod';
 
 interface PhdScholar extends Document {
+  user?: mongoose.Schema.Types.ObjectId;
   personalDetails: {
     firstName: string;
     middleName?: string;
@@ -97,6 +98,10 @@ interface PhdScholar extends Document {
 }
 
 const phdScholarSchema = new Schema<PhdScholar>({
+  user: { // 👈 Add this field
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+  },
   personalDetails: {
     firstName: { type: String, default: "" },
     middleName: { type: String },
@@ -200,6 +205,23 @@ const phdScholarSchema = new Schema<PhdScholar>({
     ],
   },
 });
+
+phdScholarSchema.pre("save", async function (next) {
+  if (this.isModified("personalDetails.firstName") || this.isModified("personalDetails.lastName") || this.isModified("personalDetails.email")) {
+    await mongoose.model("User").updateOne(
+      { phdScholar: this._id }, // Find linked User
+      { 
+        $set: { 
+          firstName: this.personalDetails.firstName,
+          lastName: this.personalDetails.lastName,
+        }
+      }
+    );
+  }
+  next();
+});
+
+
 
 const PhdScholar = mongoose.models.PhdScholar || mongoose.model('PhdScholar', phdScholarSchema);
 
