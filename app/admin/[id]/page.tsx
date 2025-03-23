@@ -24,6 +24,8 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useSession } from "next-auth/react"
+import AdminEditForm from "./update/page"
+import { Button } from "@/components/ui/button"
 
 export default function UserDetail() {
   const [userData, setUserData] = useState<UserType | null>(null)
@@ -32,6 +34,14 @@ export default function UserDetail() {
   const { id } = useParams()
   const { data: session, status } = useSession()
   const router = useRouter()
+  const [isEditing, setIsEditing] = useState(false)
+
+  useEffect(() => {
+    if (!isEditing) {
+      console.log("Refreshing data after edit...");
+      router.refresh(); // ✅ Ensures fresh data
+    }
+  }, [isEditing]);
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -140,9 +150,24 @@ export default function UserDetail() {
     <div className="container mx-auto p-6 max-w-7xl">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-[#003b7a]">User Profile</h1>
-        <Badge variant="outline" className="px-3 py-1 text-sm bg-[#003b7a] text-white">
-          {userData.isAdmin ? "Administrator" : "Regular User"}
-        </Badge>
+        <div className="flex items-center gap-2">
+          {userData.isAdmin ? (
+            <Badge variant="outline" className="px-3 py-1 text-sm bg-[#003b7a] text-white">
+              Administrator
+            </Badge>
+          ) : (
+            <>
+              <Badge variant="outline" className="px-3 py-1 text-sm bg-[#003b7a] text-white">
+                PhD Scholar
+              </Badge>
+              {session?.user?.isAdmin && (
+                <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="ml-2">
+                  Edit Profile
+                </Button>
+              )}
+            </>
+          )}
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
@@ -693,6 +718,17 @@ export default function UserDetail() {
             </div>
           </TabsContent>
         </Tabs>
+      )}
+      {isEditing && phdScholarData && (
+        <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-background rounded-lg w-full max-w-6xl max-h-[90vh] overflow-y-auto">
+            <AdminEditForm userData={userData} phdScholarData={phdScholarData} onCancel={() => {
+          window.location.reload()
+          setIsEditing(false);
+          
+          }} />
+          </div>
+        </div>
       )}
     </div>
   )
