@@ -24,7 +24,7 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useSession } from "next-auth/react"
-import AdminEditForm from "./update/page"
+import AdminEditForm from "./update/AdminEditForm"
 import { Button } from "@/components/ui/button"
 
 export default function UserDetail() {
