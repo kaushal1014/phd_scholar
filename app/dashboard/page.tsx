@@ -68,7 +68,8 @@ export default function Dashboard() {
     issueNumber: z.string(),
     pageNumbers: z.string(),
     impactFactor: z.string(),
-  })
+    doi: z.string().url("DOI must be a valid URL"), // Add DOI field
+  });
 
   const conferenceSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -932,6 +933,14 @@ const getPublicationData = () => {
                                         <span className="font-medium text-gray-700">Impact Factor:</span>{" "}
                                         {journal.impactFactor}
                                       </p>
+                                      <a
+                                        href={journal.doi}
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="font-medium text-blue-700 underline"
+                                      >
+                                        DOI
+                                      </a>
                                     </div>
                                   </div>
                                 </CardContent>
@@ -1147,6 +1156,19 @@ const getPublicationData = () => {
                     )}
                   />
                 </div>
+                <FormField
+                  control={journalForm.control}
+                  name="doi"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>DOI</FormLabel>
+                      <FormControl>
+                        <Input placeholder="DOI URL" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
                 <DialogFooter>
                   <Button
                     type="button"
