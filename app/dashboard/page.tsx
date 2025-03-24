@@ -8,7 +8,6 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
-import User from '@/server/models/userModel';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import {
   GraduationCap,
@@ -46,6 +45,9 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
+// Add this to the imports at the top of the file
+import { CourseCertificateUpload } from "@/components/course-certificate-upload"
+import { CourseCertificateViewer } from "@/components/course-certificate-viewer"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -69,7 +71,7 @@ export default function Dashboard() {
     pageNumbers: z.string(),
     impactFactor: z.string(),
     doi: z.string().url("DOI must be a valid URL"), // Add DOI field
-  });
+  })
 
   const conferenceSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -101,7 +103,6 @@ export default function Dashboard() {
     },
   })
 
-  
   useEffect(() => {
     if (status === "authenticated" && session?.user?.id) {
       fetch(`/api/user/user`)
@@ -160,16 +161,16 @@ export default function Dashboard() {
 
   const handleAddJournal = async (data: z.infer<typeof journalSchema>) => {
     if (!session?.user?.id) return
-  
+
     setIsSubmitting(true)
-  
+
     try {
       // Ensure impactFactor is a number
       const journalData = {
         ...data,
         impactFactor: Number(data.impactFactor),
       }
-  
+
       const response = await fetch(`/api/user/phd-scholar/publications/journals`, {
         method: "PUT",
         headers: {
@@ -178,7 +179,7 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ phdId: Object(userData?.phdScholar), journal: journalData }), // Use phdId instead of userId
       })
-  
+
       if (response.ok) {
         // Update local state
         setPhdScholarData((prev) => {
@@ -191,7 +192,7 @@ export default function Dashboard() {
             },
           }
         })
-  
+
         journalForm.reset()
         setShowJournalModal(false)
       }
@@ -201,12 +202,12 @@ export default function Dashboard() {
       setIsSubmitting(false)
     }
   }
-  
+
   const handleAddConference = async (data: z.infer<typeof conferenceSchema>) => {
     if (!session?.user?.id) return
-  
+
     setIsSubmitting(true)
-  
+
     try {
       const response = await fetch(`/api/user/phd-scholar/publications/conferences`, {
         method: "PUT",
@@ -216,7 +217,7 @@ export default function Dashboard() {
         },
         body: JSON.stringify({ phdId: Object(userData?.phdScholar), conference: data }), // Use phdId instead of userId
       })
-  
+
       if (response.ok) {
         // Update local state
         const updatedData = await response.json()
@@ -230,7 +231,7 @@ export default function Dashboard() {
             },
           }
         })
-  
+
         conferenceForm.reset()
         setShowConferenceModal(false)
       }
@@ -241,28 +242,26 @@ export default function Dashboard() {
     }
   }
 
-  const filterNonEmptyPublications = (publications: PhdScholar['publications']['journals']) => {
+  const filterNonEmptyPublications = (publications: PhdScholar["publications"]["journals"]) => {
     return publications.filter(
-      (publication: PhdScholar['publications']['journals'][0]) =>
+      (publication: PhdScholar["publications"]["journals"][0]) =>
         publication.title &&
         publication.journalName &&
         publication.publicationYear &&
         publication.volumeNumber &&
         publication.issueNumber &&
         publication.pageNumbers &&
-        publication.impactFactor
+        publication.impactFactor,
     )
   }
-  
-  const filterNonEmptyConferences = (conferences: PhdScholar['publications']['conferences']) => {
+
+  const filterNonEmptyConferences = (conferences: PhdScholar["publications"]["conferences"]) => {
     return conferences.filter(
-      (conference: PhdScholar['publications']['conferences'][0]) =>
-        conference.title &&
-        conference.conferenceName &&
-        conference.publicationYear
+      (conference: PhdScholar["publications"]["conferences"][0]) =>
+        conference.title && conference.conferenceName && conference.publicationYear,
     )
   }
-  
+
   const filteredJournals = filterNonEmptyPublications(phdScholarData?.publications?.journals || [])
   const filteredConferences = filterNonEmptyConferences(phdScholarData?.publications?.conferences || [])
 
@@ -436,17 +435,17 @@ export default function Dashboard() {
   }
 
   // Generate publication data for charts
-const getPublicationData = () => {
+  const getPublicationData = () => {
     const journals = (phdScholarData?.publications?.journals || []).filter(
-      (journal) => journal.title && journal.journalName && journal.publicationYear
+      (journal) => journal.title && journal.journalName && journal.publicationYear,
     )
     const conferences = (phdScholarData?.publications?.conferences || []).filter(
-      (conference) => conference.title && conference.conferenceName && conference.publicationYear
+      (conference) => conference.title && conference.conferenceName && conference.publicationYear,
     )
-  
+
     // Publications by year
     const publicationsByYear: Record<string, { journals: number; conferences: number }> = {}
-  
+
     // Process journals
     journals.forEach((journal) => {
       const year = journal.publicationYear.toString()
@@ -455,7 +454,7 @@ const getPublicationData = () => {
       }
       publicationsByYear[year].journals++
     })
-  
+
     // Process conferences
     conferences.forEach((conference) => {
       const year = conference.publicationYear.toString()
@@ -464,7 +463,7 @@ const getPublicationData = () => {
       }
       publicationsByYear[year].conferences++
     })
-  
+
     // Convert to array for charts
     const yearlyData = Object.keys(publicationsByYear)
       .map((year) => ({
@@ -474,13 +473,13 @@ const getPublicationData = () => {
         total: publicationsByYear[year].journals + publicationsByYear[year].conferences,
       }))
       .sort((a, b) => Number.parseInt(a.year) - Number.parseInt(b.year))
-  
+
     // Publication types pie chart data
     const publicationTypes = [
       { name: "Journals", value: journals.length, color: "#1B3668" },
       { name: "Conferences", value: conferences.length, color: "#F7941D" },
     ]
-  
+
     return {
       yearlyData,
       publicationTypes,
@@ -606,15 +605,15 @@ const getPublicationData = () => {
                   <BookMarked className="h-6 w-6 text-[#F7941D]" />
                 </div>
                 <div>
-                <p className="text-sm text-muted-foreground">Publications</p>
-                <p className="text-2xl font-bold text-[#F7941D]">
-                  {((phdScholarData.publications?.journals || []).filter(
-                    (journal) => journal.title && journal.journalName && journal.publicationYear
-                  ).length) +
-                  ((phdScholarData.publications?.conferences || []).filter(
-                    (conference) => conference.title && conference.conferenceName && conference.publicationYear
-                  ).length)}
-                </p>
+                  <p className="text-sm text-muted-foreground">Publications</p>
+                  <p className="text-2xl font-bold text-[#F7941D]">
+                    {(phdScholarData.publications?.journals || []).filter(
+                      (journal) => journal.title && journal.journalName && journal.publicationYear,
+                    ).length +
+                      (phdScholarData.publications?.conferences || []).filter(
+                        (conference) => conference.title && conference.conferenceName && conference.publicationYear,
+                      ).length}
+                  </p>
                 </div>
               </CardContent>
             </Card>
@@ -691,7 +690,6 @@ const getPublicationData = () => {
                   <TabsTrigger value="publications">Publications</TabsTrigger>
                   <TabsTrigger value="coursework">Coursework</TabsTrigger>
                 </TabsList>
-
                 <TabsContent value="overview" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
@@ -870,7 +868,6 @@ const getPublicationData = () => {
                     </CardContent>
                   </Card>
                 </TabsContent>
-
                 <TabsContent value="publications" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
@@ -959,21 +956,26 @@ const getPublicationData = () => {
                         <div>
                           <h3 className="text-md font-semibold mb-3 text-[#F7941D]">Conference Publications</h3>
                           <div className="space-y-4">
-                            {filterNonEmptyConferences(phdScholarData?.publications?.conferences || []).map((conference: { title: string; conferenceName: string; publicationYear: number }, i: number) => (
-                              <Card key={i} className="bg-white shadow-sm border-l-4 border-l-[#F7941D]">
-                                <CardContent className="p-4">
-                                  <h4 className="font-medium text-[#F7941D] mb-2">{conference.title}</h4>
-                                  <p className="text-sm text-muted-foreground">
-                                    <span className="font-medium text-gray-700">Conference:</span>{" "}
-                                    {conference.conferenceName}
-                                  </p>
-                                  <p className="text-sm text-muted-foreground">
-                                    <span className="font-medium text-gray-700">Year:</span>{" "}
-                                    {conference.publicationYear}
-                                  </p>
-                                </CardContent>
-                              </Card>
-                            ))}
+                            {filterNonEmptyConferences(phdScholarData?.publications?.conferences || []).map(
+                              (
+                                conference: { title: string; conferenceName: string; publicationYear: number },
+                                i: number,
+                              ) => (
+                                <Card key={i} className="bg-white shadow-sm border-l-4 border-l-[#F7941D]">
+                                  <CardContent className="p-4">
+                                    <h4 className="font-medium text-[#F7941D] mb-2">{conference.title}</h4>
+                                    <p className="text-sm text-muted-foreground">
+                                      <span className="font-medium text-gray-700">Conference:</span>{" "}
+                                      {conference.conferenceName}
+                                    </p>
+                                    <p className="text-sm text-muted-foreground">
+                                      <span className="font-medium text-gray-700">Year:</span>{" "}
+                                      {conference.publicationYear}
+                                    </p>
+                                  </CardContent>
+                                </Card>
+                              ),
+                            )}
                             {(!phdScholarData.publications?.conferences ||
                               phdScholarData.publications.conferences.length === 0) && (
                               <div className="p-4 bg-gray-50 rounded-lg text-center">
@@ -986,14 +988,15 @@ const getPublicationData = () => {
                     </CardContent>
                   </Card>
                 </TabsContent>
-
+                // Find the coursework tab in the existing code and update it with this content // This should replace
+                the existing coursework tab content
                 <TabsContent value="coursework" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
                       <CardTitle className="text-lg text-[#1B3668] flex items-center">
                         <BookOpen className="h-5 w-5 mr-2" /> My Coursework
                       </CardTitle>
-                      <CardDescription>Track your academic performance</CardDescription>
+                      <CardDescription>Track your academic performance and certificates</CardDescription>
                     </CardHeader>
                     <CardContent className="p-6 overflow-auto h-auto">
                       <div className="space-y-8">
@@ -1029,6 +1032,43 @@ const getPublicationData = () => {
                                           ? new Date(phdScholarData[course].eligibilityDate).toLocaleDateString()
                                           : "N/A"}
                                       </p>
+                                    </div>
+                                  </CardContent>
+                                </Card>
+                              ),
+                            )}
+                          </div>
+                        </div>
+
+                        {/* Course Completion Certificates */}
+                        <div>
+                          <h3 className="text-md font-semibold mb-3 text-[#1B3668]">Course Completion Certificates</h3>
+                          <div className="grid grid-cols-1 gap-4">
+                            {(["courseWork1", "courseWork2", "courseWork3", "courseWork4"] as const).map(
+                              (course, index) => (
+                                <Card key={index} className="bg-white shadow-sm">
+                                  <CardHeader className="pb-2 border-b">
+                                    <CardTitle className="text-md font-semibold text-[#1B3668]">
+                                      {phdScholarData[course]?.subjectName || `Course ${index + 1}`} Certificate
+                                    </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className="p-4">
+                                    <div className="space-y-4">
+                                      <CourseCertificateViewer
+                                        phdId={userData.phdScholar.toString()}
+                                        courseNumber={`courseWork${index + 1}`}
+                                      />
+                                      <CourseCertificateUpload
+                                        phdId={userData.phdScholar.toString()}
+                                        courseNumber={`courseWork${index + 1}`}
+                                        onUploadSuccess={() => {
+                                          // Force a refresh of the component
+                                          const event = new CustomEvent("certificate-uploaded", {
+                                            detail: { courseNumber: `courseWork${index + 1}` },
+                                          })
+                                          window.dispatchEvent(event)
+                                        }}
+                                      />
                                     </div>
                                   </CardContent>
                                 </Card>

@@ -95,6 +95,7 @@ interface PhdScholar extends Document {
       publicationYear: number;
     }[];
   };
+
 }
 
 const phdScholarSchema = new Schema<PhdScholar>({
@@ -203,6 +204,8 @@ const phdScholarSchema = new Schema<PhdScholar>({
         publicationYear: { type: Number, default: 0 },
       },
     ],
+    
+    
   },
 });
 

@@ -1,3 +1,4 @@
+import mongoose, { Schema, Document } from "mongoose";
 export interface PhdScholar {
   personalDetails: {
     firstName: string;
@@ -103,4 +104,16 @@ export interface User {
   isVerified: boolean;
   isAdmin: boolean;
   phdScholar: PhdScholar;
+}
+
+interface Certificate extends Document {
+  phdScholar: mongoose.Schema.Types.ObjectId;
+  courseNumber: string;
+  fileName: string;
+  fileUrl: string;
+  uploadDate: Date;
+  approvalStatus: "pending" | "approved" | "rejected";
+  approvedBy?: mongoose.Schema.Types.ObjectId | null;
+  approvalDate?: Date | null;
+  rejectionReason?: string;
 }

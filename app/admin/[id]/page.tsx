@@ -26,6 +26,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useSession } from "next-auth/react"
 import AdminEditForm from "./update/AdminEditForm"
 import { Button } from "@/components/ui/button"
+import { AdminCertificateApproval} from "@/components/admin-certificate-approval"
 
 export default function UserDetail() {
   const [userData, setUserData] = useState<UserType | null>(null)
@@ -526,8 +527,18 @@ export default function UserDetail() {
                         </div>
                       </div>
                     </CardContent>
+                    
                   </Card>
                 </div>
+                <Card>
+                  <CardContent>
+                    {/* Certificate*/}
+                    <div className="container mx-auto p-6">
+                        <h1 className="text-3xl font-bold mb-6 text-[#003b7a]">Certificate Management</h1>
+                        <AdminCertificateApproval phdId={userData.phdScholar.toString()} showAll={false}></AdminCertificateApproval>
+                      </div>
+                  </CardContent>
+                </Card>
               </CardContent>
             </Card>
           </TabsContent>
