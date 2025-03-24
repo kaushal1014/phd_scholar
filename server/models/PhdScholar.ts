@@ -95,6 +95,28 @@ interface PhdScholar extends Document {
       publicationYear: number;
     }[];
   };
+  certificates?: {
+    courseWork1: {
+      fileUrl: string
+      fileName: string
+      uploadDate: Date
+    }[]
+    courseWork2: {
+      fileUrl: string
+      fileName: string
+      uploadDate: Date
+    }[]
+    courseWork3: {
+      fileUrl: string
+      fileName: string
+      uploadDate: Date
+    }[]
+    courseWork4: {
+      fileUrl: string
+      fileName: string
+      uploadDate: Date
+    }[]
+  }
 }
 
 const phdScholarSchema = new Schema<PhdScholar>({
@@ -203,6 +225,28 @@ const phdScholarSchema = new Schema<PhdScholar>({
         publicationYear: { type: Number, default: 0 },
       },
     ],
+    
+    courseWork1: [{
+      fileUrl: { type: String },
+      fileName: { type: String },
+      uploadDate: { type: Date, default: Date.now }
+    }],
+    courseWork2: [{
+      fileUrl: { type: String },
+      fileName: { type: String },
+      uploadDate: { type: Date, default: Date.now }
+    }],
+    courseWork3: [{
+      fileUrl: { type: String },
+      fileName: { type: String },
+      uploadDate: { type: Date, default: Date.now }
+    }],
+    courseWork4: [{
+      fileUrl: { type: String },
+      fileName: { type: String },
+      uploadDate: { type: Date, default: Date.now }
+    }]
+    
   },
 });
 
