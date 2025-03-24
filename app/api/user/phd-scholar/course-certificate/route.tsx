@@ -34,10 +34,29 @@ const certificateSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  approvalStatus: {
+    type: String,
+    enum: ["pending", "approved", "rejected"],
+    default: "pending",
+  },
+  approvedBy: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "User",
+    default: null,
+  },
+  approvalDate: {
+    type: Date,
+    default: null,
+  },
+  rejectionReason: {
+    type: String,
+    default: "",
+  },
 })
 
 // Create or get the model
 const Certificate = mongoose.models.Certificate || mongoose.model("Certificate", certificateSchema)
+export default Certificate
 
 // Configure multer for file storage
 const upload = multer({
@@ -117,17 +136,20 @@ export async function POST(req: NextRequest) {
     await writeFile(filePath, Buffer.from(fileBuffer))
 
     // Create the file URL (relative to the public directory)
-    const fileUrl12 = `/uploads/certificates/${phdId}/${courseNumber}/${fileName}`
+    const fileUrl = `/uploads/certificates/${phdId}/${courseNumber}/${fileName}`
 
     // Create a new certificate record
     const certificate = new Certificate({
       phdScholar: phdId,
-      courseNumber:courseNumber,
-      fileName: fileName,
-      fileUrl:fileUrl12,
-      uploadDate: timestamp,
+      courseNumber,
+      fileName: file.name,
+      fileUrl,
+      approvalStatus: "pending",
+      approvedBy: null,
+      approvalDate: null,
+      rejectionReason: "",
     })
-    console.log(certificate)
+
     await certificate.save()
 
     return NextResponse.json(
@@ -138,6 +160,7 @@ export async function POST(req: NextRequest) {
           fileName: certificate.fileName,
           fileUrl: certificate.fileUrl,
           uploadDate: certificate.uploadDate,
+          approvalStatus: certificate.approvalStatus,
         },
       },
       { status: 201 },
@@ -170,7 +193,6 @@ export async function GET(req: NextRequest) {
       phdScholar: phdId,
       courseNumber,
     }).sort({ uploadDate: -1 })
-    console.log(certificates)
 
     return NextResponse.json({ certificates }, { status: 200 })
   } catch (error) {
