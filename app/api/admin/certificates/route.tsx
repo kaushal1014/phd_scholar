@@ -1,11 +1,10 @@
 import { NextResponse, type NextRequest } from "next/server"
-import { getToken } from "next-auth/jwt"
 import connectDB from "@/server/db"
-import Certificate from "@/server/models/certificate"
+import { getToken } from "next-auth/jwt"
+import Certificate from "@/server/models/certificate" // Ensure the correct path to the Certificate model
+
 // Connect to the database
 connectDB()
-
-// Get the Certificate model
 
 export async function GET(req: NextRequest) {
   try {
@@ -17,25 +16,17 @@ export async function GET(req: NextRequest) {
 
     // Check if user is admin
     if (!token.isAdmin) {
-      return NextResponse.json({ error: "Only administrators can access this endpoint" }, { status: 403 })
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 })
     }
 
     // Get query parameters
     const { searchParams } = new URL(req.url)
     const phdId = searchParams.get("phdId")
-    const status = searchParams.get("status")
 
-    // Build query
     const query: any = {}
-
-    if (phdId) {
-      query.phdScholar = phdId
-    }
-
-    if (status) {
-      query.approvalStatus = status
-    }
-
+    if(phdId) {
+        query.phdScholar = phdId
+      }
     // Fetch certificates
     const certificates = await Certificate.find(query)
       .sort({ uploadDate: -1 })
