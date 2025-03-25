@@ -68,6 +68,7 @@ interface PhdScholar extends Document {
         scheduledDate: Date;
         actualDate: Date;
         happened: boolean; 
+        summary: string;
       }[];
     };
     comprehensiveExamDate: Date;
@@ -95,11 +96,10 @@ interface PhdScholar extends Document {
       publicationYear: number;
     }[];
   };
-
 }
 
 const phdScholarSchema = new Schema<PhdScholar>({
-  user: { // 👈 Add this field
+  user: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
   },
@@ -204,8 +204,6 @@ const phdScholarSchema = new Schema<PhdScholar>({
         publicationYear: { type: Number, default: 0 },
       },
     ],
-    
-    
   },
 });
 
