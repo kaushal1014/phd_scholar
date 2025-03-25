@@ -1,7 +1,7 @@
 import { NextResponse, type NextRequest } from "next/server"
 import { getToken } from "next-auth/jwt"
 import connectDB from "@/server/db"
-import Certificate from "../../user/phd-scholar/course-certificate/route"
+import Certificate from "@/server/models/certificate"
 // Connect to the database
 connectDB()
 
