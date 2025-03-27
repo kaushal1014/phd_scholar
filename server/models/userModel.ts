@@ -1,4 +1,4 @@
-import mongoose, { Schema, Document } from 'mongoose';
+import mongoose from "mongoose"
 
 const userSchema = new mongoose.Schema({
   firstName: {
@@ -26,29 +26,33 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
-  phdScholar: { // Simulate a foreign key by referencing the PhD scholar
+  phdScholar: {
+    // Simulate a foreign key by referencing the PhD scholar
     type: mongoose.Schema.Types.ObjectId,
-    ref: 'PhdScholar',
+    ref: "PhdScholar",
   },
-});
+  notes: {
+    type: String,
+    default: "",
+  },
+})
 
 userSchema.pre("save", async function (next) {
   if (this.isModified("firstName") || this.isModified("lastName") || this.isModified("email")) {
     await mongoose.model("PhdScholar").updateOne(
       { _id: this.phdScholar }, // Find linked PhdScholar
-      { 
-        $set: { 
+      {
+        $set: {
           "personalDetails.firstName": this.firstName,
           "personalDetails.lastName": this.lastName,
-        }
-      }
-    );
+        },
+      },
+    )
   }
-  next();
-});
+  next()
+})
 
+const User = mongoose.models.User || mongoose.model("User", userSchema)
 
+export default User
 
-const User = mongoose.models.User || mongoose.model("User", userSchema);
-
-export default User;

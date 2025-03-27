@@ -96,13 +96,14 @@ export interface PhdScholar {
 }
 
 export interface User {
-  id: string;
+  _id: string;
   firstName: string;
   lastName: string;
   email: string;
   password: string;
   isVerified: boolean;
   isAdmin: boolean;
+  notes: string;
   phdScholar: PhdScholar;
 }
 
