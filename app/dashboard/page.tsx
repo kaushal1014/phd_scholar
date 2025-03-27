@@ -26,6 +26,9 @@ import {
   ChevronRight,
   AlertCircle,
   Plus,
+  Edit,
+  User,
+  Mail,
 } from "lucide-react"
 import type { User as UserType, PhdScholar } from "@/types"
 import { ConferenceSlideshow } from "@/components/ConferenceSlideshow"
@@ -48,6 +51,8 @@ import { useForm } from "react-hook-form"
 // Add this to the imports at the top of the file
 import { CourseCertificateUpload } from "@/components/course-certificate-upload"
 import { CourseCertificateViewer } from "@/components/course-certificate-viewer"
+import { Badge } from "@/components/ui/badge"
+import UserEditForm from "@/components/user-edit-form"
 
 export default function Dashboard() {
   const { data: session, status } = useSession()
@@ -61,6 +66,7 @@ export default function Dashboard() {
   const [showJournalModal, setShowJournalModal] = useState(false)
   const [showConferenceModal, setShowConferenceModal] = useState(false)
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const [isEditing, setIsEditing] = useState(false)
 
   const journalSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -382,6 +388,50 @@ export default function Dashboard() {
     })
   }
 
+  // First, let's add a function to get the next immediate milestone
+  // Add this function near the other milestone-related functions
+  // Add this function near the other milestone-related functions
+
+  const getNextMilestone = (): Milestone | null => {
+    const now = new Date()
+    return (
+      getMilestones()
+        .filter((milestone) => milestone.date && new Date(milestone.date) > now)
+        .sort((a, b) => {
+          const dateA = a.date ? new Date(a.date).getTime() : Number.POSITIVE_INFINITY
+          const dateB = b.date ? new Date(b.date).getTime() : Number.POSITIVE_INFINITY
+          return dateA - dateB
+        })[0] || null
+    )
+  }
+
+  const getStatus = () => {
+    if (phdScholarData) {
+      if (
+        phdScholarData.phdMilestones?.awardOfDegreeDate &&
+        new Date(phdScholarData.phdMilestones.awardOfDegreeDate) < new Date()
+      ) {
+        return `Completed on ${new Date(phdScholarData.phdMilestones.awardOfDegreeDate).toLocaleDateString()}`
+      } else {
+        // Check if admission date exists
+        if (phdScholarData.admissionDetails?.admissionDate) {
+          const admissionDate = new Date(phdScholarData.admissionDetails.admissionDate)
+          const now = new Date()
+          // Calculate years, ensuring we don't get unreasonable numbers
+          const yearDiff = Math.floor((now.getTime() - admissionDate.getTime()) / (1000 * 60 * 60 * 24 * 365))
+
+          // Validate the year difference is reasonable (between 0 and 15 years)
+          if (yearDiff >= 0 && yearDiff <= 15) {
+            return `${yearDiff} year${yearDiff !== 1 ? "s" : ""} in program`
+          }
+        }
+        // Default return if admission date is missing or calculation is unreasonable
+        return "In progress"
+      }
+    }
+    return "Status unavailable"
+  }
+
   const ClimbingAnimation = ({ milestones }: { milestones: Milestone[] }) => {
     const currentDate = new Date()
 
@@ -517,6 +567,16 @@ export default function Dashboard() {
     return courseData
   }
 
+  const formatDate = (date: string | Date | null | undefined) => {
+    if (!date) return "Not Available"
+    const dateObj = typeof date === "string" ? new Date(date) : date
+    return dateObj.toLocaleDateString("en-US", {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+    })
+  }
+
   if (status === "unauthenticated") {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -583,10 +643,11 @@ export default function Dashboard() {
         {/* Main Content */}
         <div className="max-w-[2000px] mx-auto p-4 lg:p-6">
           {/* Top Stats Row */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          {/* Replace the Top Stats Row with this updated version */}
+          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
             <Card className="border-l-4 border-l-[#1B3668]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <BarChart3 className="h-6 w-6 text-[#1B3668]" />
                 </div>
                 <div>
@@ -600,8 +661,8 @@ export default function Dashboard() {
             </Card>
 
             <Card className="border-l-4 border-l-[#F7941D]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <BookMarked className="h-6 w-6 text-[#F7941D]" />
                 </div>
                 <div>
@@ -619,8 +680,8 @@ export default function Dashboard() {
             </Card>
 
             <Card className="border-l-4 border-l-[#1B3668]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <Calendar className="h-6 w-6 text-[#1B3668]" />
                 </div>
                 <div>
@@ -634,21 +695,30 @@ export default function Dashboard() {
               </CardContent>
             </Card>
 
+            {/* New Card for Next Milestone */}
+            <Card className="border-l-4 border-l-[#4C1D95]">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#4C1D95]/10 p-3 rounded-full mr-4 flex-shrink-0">
+                  <Award className="h-6 w-6 text-[#4C1D95]" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Next Milestone</p>
+                  <p className="text-lg font-bold text-[#4C1D95]">{getNextMilestone()?.label || "None Scheduled"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {getNextMilestone()?.date ? new Date(getNextMilestone()?.date as string).toLocaleDateString() : ""}
+                  </p>
+                </div>
+              </CardContent>
+            </Card>
+
             <Card className="border-l-4 border-l-[#F7941D]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <Clock className="h-6 w-6 text-[#F7941D]" />
                 </div>
                 <div>
-                  <p className="text-sm text-muted-foreground">Time in Program</p>
-                  <p className="text-lg font-bold text-[#F7941D]">
-                    {phdScholarData.admissionDetails.admissionDate
-                      ? `${Math.floor(
-                          (new Date().getTime() - new Date(phdScholarData.admissionDetails.admissionDate).getTime()) /
-                            (1000 * 60 * 60 * 24 * 365),
-                        )} years`
-                      : "N/A"}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="text-lg font-bold text-[#F7941D]">{getStatus()}</p>
                 </div>
               </CardContent>
             </Card>
@@ -685,11 +755,16 @@ export default function Dashboard() {
             {/* Middle Columns - Main Content */}
             <div className="lg:col-span-3">
               <Tabs defaultValue="overview" className="h-full">
-                <TabsList className="grid grid-cols-3 mb-4">
+                {/* Update the TabsList for the main tabs (around line 650) */}
+                <TabsList className="grid grid-cols-5 mb-4 text-base font-medium">
                   <TabsTrigger value="overview">Overview</TabsTrigger>
+                  <TabsTrigger value="profile">Profile</TabsTrigger>
+                  <TabsTrigger value="supervision">Supervision</TabsTrigger>
                   <TabsTrigger value="publications">Publications</TabsTrigger>
                   <TabsTrigger value="coursework">Coursework</TabsTrigger>
                 </TabsList>
+
+                {/* Overview Tab */}
                 <TabsContent value="overview" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
@@ -717,6 +792,13 @@ export default function Dashboard() {
                                 : "N/A"}
                             </p>
                           </div>
+                          <Button
+                            onClick={() => setIsEditing(true)}
+                            className="ml-auto bg-[#1B3668] hover:bg-[#1B3668]/90"
+                            size="sm"
+                          >
+                            <Edit className="h-4 w-4 mr-2" /> Edit Profile
+                          </Button>
                         </div>
 
                         {/* Research Tools */}
@@ -847,9 +929,6 @@ export default function Dashboard() {
                                   <div className="bg-[#1B3668]/10 p-2 rounded-full mr-3">{milestone.icon}</div>
                                   <div>
                                     <p className="font-medium text-[#1B3668]">{milestone.label}</p>
-                                    <p className="text-xs text-muted-foreground">
-                                      {milestone.date ? new Date(milestone.date).toLocaleDateString() : "Not scheduled"}
-                                    </p>
                                   </div>
                                   <ChevronRight className="ml-auto h-5 w-5 text-muted-foreground" />
                                 </div>
@@ -868,6 +947,245 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 </TabsContent>
+
+                {/* Profile Tab */}
+                <TabsContent value="profile">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    <Card className="md:col-span-1">
+                      <CardHeader className="bg-[#003b7a]/5 border-b">
+                        <CardTitle className="text-[#003b7a] flex items-center gap-2">
+                          <User className="h-5 w-5" />
+                          Basic Information
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          <div className="flex items-center gap-2">
+                            <div className="bg-[#003b7a]/10 p-2 rounded-full">
+                              <User className="h-5 w-5 text-[#003b7a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">Full Name</p>
+                              <p className="font-medium">
+                                {userData.firstName} {userData.lastName}
+                              </p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="bg-[#003b7a]/10 p-2 rounded-full">
+                              <Mail className="h-5 w-5 text-[#003b7a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">Email Address</p>
+                              <p className="font-medium">{userData.email}</p>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="bg-[#003b7a]/10 p-2 rounded-full">
+                              <CheckCircle className="h-5 w-5 text-[#003b7a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">Verification Status</p>
+                              <div className="flex items-center gap-2">
+                                <Badge variant={userData.isVerified ? "default" : "destructive"} className="mt-1">
+                                  {userData.isVerified ? "Verified" : "Not Verified"}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+
+                          <div className="flex items-center gap-2">
+                            <div className="bg-[#003b7a]/10 p-2 rounded-full">
+                              <GraduationCap className="h-5 w-5 text-[#003b7a]" />
+                            </div>
+                            <div>
+                              <p className="text-sm text-muted-foreground">User Role</p>
+                              <div className="flex items-center gap-2">
+                                <Badge variant={userData.isAdmin ? "destructive" : "default"} className="mt-1">
+                                  {userData.isAdmin ? "Administrator" : "PhD Scholar"}
+                                </Badge>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card className="md:col-span-2">
+                      <CardHeader className="bg-[#003b7a]/5 border-b">
+                        <CardTitle className="text-[#003b7a] flex items-center gap-2">
+                          <GraduationCap className="h-5 w-5" />
+                          Admission Details
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-6">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                          <div className="space-y-4">
+                            <div>
+                              <p className="text-sm text-muted-foreground">Department</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.department}</p>
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-muted-foreground">Admission Date</p>
+                              <p className="font-medium">
+                                {formatDate(phdScholarData.admissionDetails?.admissionDate)}
+                              </p>
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-muted-foreground">Entrance Examination</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.entranceExamination}</p>
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-muted-foreground">Qualifying Examination</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.qualifyingExamination}</p>
+                            </div>
+                          </div>
+
+                          <div className="space-y-4">
+                            <div>
+                              <p className="text-sm text-muted-foreground">Allotment Number</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.allotmentNumber}</p>
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-muted-foreground">USN</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.usn}</p>
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-muted-foreground">SRN</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.srn}</p>
+                            </div>
+
+                            <div>
+                              <p className="text-sm text-muted-foreground">Mode of Program</p>
+                              <p className="font-medium">{phdScholarData.admissionDetails?.modeOfProgram}</p>
+                            </div>
+                          </div>
+                        </div>
+                        <div className="mt-6 flex justify-end">
+                          <Button onClick={() => setIsEditing(true)} className="bg-[#1B3668] hover:bg-[#1B3668]/90">
+                            <Edit className="h-4 w-4 mr-2" /> Edit Profile
+                          </Button>
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+                </TabsContent>
+
+                {/* Supervision Tab */}
+                <TabsContent value="supervision">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <Card>
+                      <CardHeader className="bg-[#003b7a]/5 border-b">
+                        <CardTitle className="text-[#003b7a] flex items-center gap-2">
+                          <Users className="h-5 w-5" />
+                          Research Supervision
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          <div>
+                            <p className="text-sm text-muted-foreground">Research Supervisor</p>
+                            <p className="font-medium">{phdScholarData.researchSupervisor}</p>
+                          </div>
+
+                          <div>
+                            <p className="text-sm text-muted-foreground">Research Co-Supervisor</p>
+                            <p className="font-medium">{phdScholarData.researchCoSupervisor || "Not Assigned"}</p>
+                          </div>
+                        </div>
+                      </CardContent>
+                    </Card>
+
+                    <Card>
+                      <CardHeader className="bg-[#003b7a]/5 border-b">
+                        <CardTitle className="text-[#003b7a] flex items-center gap-2">
+                          <Users className="h-5 w-5" />
+                          Doctoral Committee
+                        </CardTitle>
+                      </CardHeader>
+                      <CardContent className="pt-6">
+                        <div className="space-y-4">
+                          {phdScholarData.doctoralCommittee?.members?.length > 0 ? (
+                            phdScholarData.doctoralCommittee.members.map((member, index) => (
+                              <div key={index}>
+                                <p className="text-sm text-muted-foreground">Member {index + 1}</p>
+                                <p className="font-medium">{member.name}</p>
+                              </div>
+                            ))
+                          ) : (
+                            <p className="text-muted-foreground italic">No doctoral committee members recorded.</p>
+                          )}
+                        </div>
+                      </CardContent>
+                    </Card>
+                  </div>
+
+                  <Card className="mt-6">
+                    <CardHeader className="bg-[#003b7a]/5 border-b">
+                      <CardTitle className="text-[#003b7a] flex items-center gap-2">
+                        <Clock className="h-5 w-5" />
+                        Doctoral Committee Meetings
+                      </CardTitle>
+                    </CardHeader>
+                    <CardContent className="pt-6">
+                      {phdScholarData.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
+                        <div className="overflow-x-auto">
+                          <table className="w-full border-collapse">
+                            <thead>
+                              <tr className="border-b bg-[#003b7a]/5">
+                                <th className="px-4 py-3 text-left font-medium text-[#003b7a]">Meeting No.</th>
+                                <th className="px-4 py-3 text-left font-medium text-[#003b7a]">Scheduled Date</th>
+                                <th className="px-4 py-3 text-left font-medium text-[#003b7a]">Actual Date</th>
+                                <th className="px-4 py-3 text-left font-medium text-[#003b7a]">Status</th>
+                                <th className="px-4 py-3 text-left font-medium text-[#003b7a]">Summary</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              {phdScholarData.phdMilestones.dcMeetings.DCM.map((meeting, index) => (
+                                <tr key={index} className="border-b hover:bg-[#003b7a]/5 transition-colors">
+                                  <td className="px-4 py-3 font-medium">DC Meeting {index + 1}</td>
+                                  <td className="px-4 py-3">{formatDate(meeting.scheduledDate)}</td>
+                                  <td className="px-4 py-3">{formatDate(meeting.actualDate)}</td>
+                                  <td className="px-4 py-3">
+                                    <Badge variant={meeting.happened ? "default" : "outline"} className="bg-opacity-80">
+                                      {meeting.happened ? "Completed" : "Scheduled"}
+                                    </Badge>
+                                  </td>
+                                  <td className="px-4 py-3">
+                                    {meeting.summary ? (
+                                      <p className="line-clamp-2">{meeting.summary}</p>
+                                    ) : (
+                                      <span className="text-muted-foreground italic">No summary available</span>
+                                    )}
+                                  </td>
+                                </tr>
+                              ))}
+                            </tbody>
+                          </table>
+                        </div>
+                      ) : (
+                        <div className="text-center py-8">
+                          <div className="bg-[#003b7a]/10 p-3 rounded-full mx-auto w-fit mb-4">
+                            <Clock className="h-6 w-6 text-[#003b7a]" />
+                          </div>
+                          <h3 className="text-lg font-medium mb-2">No DC Meetings Recorded</h3>
+                          <p className="text-muted-foreground max-w-md mx-auto">
+                            There are no doctoral committee meetings recorded for this PhD scholar yet.
+                          </p>
+                        </div>
+                      )}
+                    </CardContent>
+                  </Card>
+                </TabsContent>
+
+                {/* Publications Tab */}
                 <TabsContent value="publications" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
@@ -988,8 +1306,8 @@ export default function Dashboard() {
                     </CardContent>
                   </Card>
                 </TabsContent>
-                // Find the coursework tab in the existing code and update it with this content // This should replace
-                the existing coursework tab content
+
+                {/* Coursework Tab */}
                 <TabsContent value="coursework" className="h-full">
                   <Card className="h-full">
                     <CardHeader className="pb-2 border-b">
@@ -1084,6 +1402,20 @@ export default function Dashboard() {
             </div>
           </div>
         </div>
+
+        {/* Edit Profile Modal */}
+        {isEditing && userData && phdScholarData && (
+          <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
+            <UserEditForm
+              userData={userData}
+              phdScholarData={phdScholarData}
+              onCancel={() => {
+                setIsEditing(false)
+                router.refresh()
+              }}
+            />
+          </div>
+        )}
 
         <DCMeetingPopup
           isOpen={showDCMeetingPopup}

@@ -22,7 +22,6 @@ export async function POST(req: Request) {
     const salt = await bcryptjs.genSalt(10);
     const hashedPassword = await bcryptjs.hash(data?.password || "default_password", salt);
 
-
     // Create a new user
     const newUser = new User({
       email: data?.email || "",
@@ -32,6 +31,11 @@ export async function POST(req: Request) {
     });
     const savedUser = await newUser.save();
 
+    // Helper function to validate and return a date or null
+    const validateDate = (date: any) => {
+      const parsedDate = new Date(date);
+      return isNaN(parsedDate.getTime()) ? null : parsedDate;
+    };
 
     // Create a new PhD Scholar linked to the new user
     const newScholar = new PhDScholar({
@@ -40,7 +44,7 @@ export async function POST(req: Request) {
         firstName: data?.firstName || "",
         middleName: data?.middleName || "",
         lastName: data?.lastName || "",
-        dateOfBirth: data?.dateOfBirth ? new Date(data.dateOfBirth) : null,
+        dateOfBirth: validateDate(data?.dateOfBirth),
         nationality: data?.nationality || "",
         mobileNumber: data?.mobileNumber || "",
       },
@@ -48,7 +52,7 @@ export async function POST(req: Request) {
         entranceExamination: data?.entranceExamination || "",
         qualifyingExamination: data?.qualifyingExamination || "",
         allotmentNumber: data?.allotmentNumber || "",
-        admissionDate: data?.admissionDate ? new Date(data.admissionDate) : null,
+        admissionDate: validateDate(data?.admissionDate),
         department: data?.department || "",
         usn: data?.usn || "",
         srn: data?.srn || "",
@@ -64,52 +68,52 @@ export async function POST(req: Request) {
         subjectName: data?.courseWork1SubjectName || "",
         subjectGrade: data?.courseWork1SubjectGrade || "",
         status: data?.courseWork1Status || "",
-        eligibilityDate: data?.courseWork1EligibilityDate ? new Date(data.courseWork1EligibilityDate) : null,
+        eligibilityDate: validateDate(data?.courseWork1EligibilityDate),
       },
       courseWork2: {
         subjectCode: data?.courseWork2SubjectCode || "",
         subjectName: data?.courseWork2SubjectName || "",
         subjectGrade: data?.courseWork2SubjectGrade || "",
         status: data?.courseWork2Status || "",
-        eligibilityDate: data?.courseWork2EligibilityDate ? new Date(data.courseWork2EligibilityDate) : null,
+        eligibilityDate: validateDate(data?.courseWork2EligibilityDate),
       },
       courseWork3: {
         subjectCode: data?.courseWork3SubjectCode || "",
         subjectName: data?.courseWork3SubjectName || "",
         subjectGrade: data?.courseWork3SubjectGrade || "",
         status: data?.courseWork3Status || "",
-        eligibilityDate: data?.courseWork3EligibilityDate ? new Date(data.courseWork3EligibilityDate) : null,
+        eligibilityDate: validateDate(data?.courseWork3EligibilityDate),
       },
       courseWork4: {
         subjectCode: data?.courseWork4SubjectCode || "",
         subjectName: data?.courseWork4SubjectName || "",
         subjectGrade: data?.courseWork4SubjectGrade || "",
         status: data?.courseWork4Status || "",
-        eligibilityDate: data?.courseWork4EligibilityDate ? new Date(data.courseWork4EligibilityDate) : null,
+        eligibilityDate: validateDate(data?.courseWork4EligibilityDate),
       },
       phdMilestones: {
         courseworkCompletionDate: {
-          coursework1: data?.courseworkCompletionDate1 ? new Date(data.courseworkCompletionDate1) : null,
-          coursework2: data?.courseworkCompletionDate2 ? new Date(data.courseworkCompletionDate2) : null,
-          coursework3: data?.courseworkCompletionDate3 ? new Date(data.courseworkCompletionDate3) : null,
-          coursework4: data?.courseworkCompletionDate4 ? new Date(data.courseworkCompletionDate4) : null,
+          coursework1: validateDate(data?.courseworkCompletionDate1),
+          coursework2: validateDate(data?.courseworkCompletionDate2),
+          coursework3: validateDate(data?.courseworkCompletionDate3),
+          coursework4: validateDate(data?.courseworkCompletionDate4),
         },
         dcMeetings: {
           DCM: Array.isArray(data?.dcMeetings)
             ? data.dcMeetings.map((meeting: any) => ({
-                scheduledDate: meeting?.scheduledDate ? new Date(meeting.scheduledDate) : null,
-                actualDate: meeting?.actualDate ? new Date(meeting.actualDate) : null,
+                scheduledDate: validateDate(meeting?.scheduledDate),
+                actualDate: validateDate(meeting?.actualDate),
               }))
             : [],
         },
-        comprehensiveExamDate: data?.comprehensiveExamDate ? new Date(data.comprehensiveExamDate) : null,
-        proposalDefenseDate: data?.proposalDefenseDate ? new Date(data.proposalDefenseDate) : null,
-        openSeminarDate1: data?.openSeminarDate1 ? new Date(data.openSeminarDate1) : null,
-        preSubmissionSeminarDate: data?.preSubmissionSeminarDate ? new Date(data.preSubmissionSeminarDate) : null,
-        synopsisSubmissionDate: data?.synopsisSubmissionDate ? new Date(data.synopsisSubmissionDate) : null,
-        thesisSubmissionDate: data?.thesisSubmissionDate ? new Date(data.thesisSubmissionDate) : null,
-        thesisDefenseDate: data?.thesisDefenseDate ? new Date(data.thesisDefenseDate) : null,
-        awardOfDegreeDate: data?.awardOfDegreeDate ? new Date(data.awardOfDegreeDate) : null,
+        comprehensiveExamDate: validateDate(data?.comprehensiveExamDate),
+        proposalDefenseDate: validateDate(data?.proposalDefenseDate),
+        openSeminarDate1: validateDate(data?.openSeminarDate1),
+        preSubmissionSeminarDate: validateDate(data?.preSubmissionSeminarDate),
+        synopsisSubmissionDate: validateDate(data?.synopsisSubmissionDate),
+        thesisSubmissionDate: validateDate(data?.thesisSubmissionDate),
+        thesisDefenseDate: validateDate(data?.thesisDefenseDate),
+        awardOfDegreeDate: validateDate(data?.awardOfDegreeDate),
       },
       publications: {
         journals: Array.isArray(data?.journals)
@@ -135,8 +139,6 @@ export async function POST(req: Request) {
 
     // Save the new PhD Scholar
     const savedScholar = await newScholar.save();
-
-
 
     // Link the user with the PhD Scholar
     savedUser.phdScholar = savedScholar._id;
