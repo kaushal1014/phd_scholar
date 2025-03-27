@@ -390,6 +390,7 @@ export default function Dashboard() {
 
   // First, let's add a function to get the next immediate milestone
   // Add this function near the other milestone-related functions
+  // Add this function near the other milestone-related functions
 
   const getNextMilestone = (): Milestone | null => {
     const now = new Date()
@@ -406,15 +407,29 @@ export default function Dashboard() {
 
   const getStatus = () => {
     if (phdScholarData) {
-      if (phdScholarData.phdMilestones.awardOfDegreeDate && new Date(phdScholarData.phdMilestones.awardOfDegreeDate) < new Date()) {
+      if (
+        phdScholarData.phdMilestones?.awardOfDegreeDate &&
+        new Date(phdScholarData.phdMilestones.awardOfDegreeDate) < new Date()
+      ) {
         return `Completed on ${new Date(phdScholarData.phdMilestones.awardOfDegreeDate).toLocaleDateString()}`
       } else {
-        const timeSpent = Math.floor((new Date().getTime() - new Date(phdScholarData.admissionDetails.admissionDate).getTime()) /
-                (1000 * 60 * 60 * 24 * 365))
+        // Check if admission date exists
+        if (phdScholarData.admissionDetails?.admissionDate) {
+          const admissionDate = new Date(phdScholarData.admissionDetails.admissionDate)
+          const now = new Date()
+          // Calculate years, ensuring we don't get unreasonable numbers
+          const yearDiff = Math.floor((now.getTime() - admissionDate.getTime()) / (1000 * 60 * 60 * 24 * 365))
 
-        return `${timeSpent} year(s)`
+          // Validate the year difference is reasonable (between 0 and 15 years)
+          if (yearDiff >= 0 && yearDiff <= 15) {
+            return `${yearDiff} year${yearDiff !== 1 ? "s" : ""} in program`
+          }
+        }
+        // Default return if admission date is missing or calculation is unreasonable
+        return "In progress"
       }
     }
+    return "Status unavailable"
   }
 
   const ClimbingAnimation = ({ milestones }: { milestones: Milestone[] }) => {
@@ -631,8 +646,8 @@ export default function Dashboard() {
           {/* Replace the Top Stats Row with this updated version */}
           <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
             <Card className="border-l-4 border-l-[#1B3668]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <BarChart3 className="h-6 w-6 text-[#1B3668]" />
                 </div>
                 <div>
@@ -646,8 +661,8 @@ export default function Dashboard() {
             </Card>
 
             <Card className="border-l-4 border-l-[#F7941D]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <BookMarked className="h-6 w-6 text-[#F7941D]" />
                 </div>
                 <div>
@@ -665,8 +680,8 @@ export default function Dashboard() {
             </Card>
 
             <Card className="border-l-4 border-l-[#1B3668]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <Calendar className="h-6 w-6 text-[#1B3668]" />
                 </div>
                 <div>
@@ -682,27 +697,28 @@ export default function Dashboard() {
 
             {/* New Card for Next Milestone */}
             <Card className="border-l-4 border-l-[#4C1D95]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#4C1D95]/10 p-3 rounded-full mr-4">
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#4C1D95]/10 p-3 rounded-full mr-4 flex-shrink-0">
                   <Award className="h-6 w-6 text-[#4C1D95]" />
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Next Milestone</p>
-                    <p className="text-md font-bold text-[#4C1D95]">{getNextMilestone()?.label || "None Scheduled"}</p>
+                  <p className="text-lg font-bold text-[#4C1D95]">{getNextMilestone()?.label || "None Scheduled"}</p>
+                  <p className="text-xs text-muted-foreground">
+                    {getNextMilestone()?.date ? new Date(getNextMilestone()?.date as string).toLocaleDateString() : ""}
+                  </p>
                 </div>
               </CardContent>
             </Card>
 
             <Card className="border-l-4 border-l-[#F7941D]">
-              <CardContent className="p-4 flex items-center">
-                <div className="bg-[#F7941D]/10 p-2 rounded-full mr-4">
-                  <Clock className="h-5 w-5 text-[#F7941D]" />
+              <CardContent className="p-4 flex items-center h-full">
+                <div className="bg-[#F7941D]/10 p-3 rounded-full mr-4 flex-shrink-0">
+                  <Clock className="h-6 w-6 text-[#F7941D]" />
                 </div>
                 <div>
-                  <p className="text-md text-muted-foreground">Status</p>
-                  <p className="text-lg font-bold text-[#F7941D]">
-                    {getStatus()}
-                  </p>
+                  <p className="text-sm text-muted-foreground">Status</p>
+                  <p className="text-lg font-bold text-[#F7941D]">{getStatus()}</p>
                 </div>
               </CardContent>
             </Card>
