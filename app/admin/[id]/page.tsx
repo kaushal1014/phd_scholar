@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
-import type { User as UserType, PhdScholar } from "@/types"
+import type {PhdScholar } from "@/types"
 import {
   Award,
   BookOpen,
@@ -28,6 +28,19 @@ import { Button } from "@/components/ui/button"
 import { AdminCertificateApproval } from "@/components/admin-certificate-approval"
 import { Textarea } from "@/components/ui/textarea"
 import {toast} from "react-toastify"
+
+export interface UserType {
+  id: string; // Added 'id' property
+  _id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  isVerified: boolean;
+  isAdmin: boolean;
+  notes: string;
+  phdScholar: PhdScholar;
+}
 
 export default function UserDetail() {
   const [userData, setUserData] = useState<UserType | null>(null)
