@@ -13,12 +13,11 @@ import {
   Users,
   CheckCircle,
   Clock,
-  Bookmark,
-  BookmarkCheck,
   FileCheck,
   FileSpreadsheet,
-  FileTextIcon as FileText2,
   School,
+  Shield,
+  Loader2,
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -26,7 +25,9 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useSession } from "next-auth/react"
 import AdminEditForm from "./update/AdminEditForm"
 import { Button } from "@/components/ui/button"
-import { AdminCertificateApproval} from "@/components/admin-certificate-approval"
+import { AdminCertificateApproval } from "@/components/admin-certificate-approval"
+import { Textarea } from "@/components/ui/textarea"
+import {toast} from "react-toastify"
 
 export default function UserDetail() {
   const [userData, setUserData] = useState<UserType | null>(null)
@@ -36,13 +37,17 @@ export default function UserDetail() {
   const { data: session, status } = useSession()
   const router = useRouter()
   const [isEditing, setIsEditing] = useState(false)
+  const notifyErr = (msg: string) => toast.error(msg);
+  const notifySucc = (msg: string) => toast.success(msg);
+  const notifyWarn = (msg: string) => toast.warn(msg);
+  const notifyInfo = (msg: string) => toast.info(msg);
 
   useEffect(() => {
     if (!isEditing) {
-      console.log("Refreshing data after edit...");
-      router.refresh(); // ✅ Ensures fresh data
+      console.log("Refreshing data after edit...")
+      router.refresh() // ✅ Ensures fresh data
     }
-  }, [isEditing]);
+  }, [isEditing])
 
   useEffect(() => {
     const fetchUser = async () => {
@@ -63,6 +68,7 @@ export default function UserDetail() {
         }
 
         const userData = await userResponse.json()
+        console.log(userData)
         setUserData(userData.data)
 
         if (userData.data.phdScholar) {
@@ -209,10 +215,20 @@ export default function UserDetail() {
                 </div>
                 <div>
                   <p className="text-sm text-muted-foreground">Verification Status</p>
-                  <div className="flex items-center gap-2">
-                    <Badge variant={userData.isVerified ? "default" : "destructive"} className="mt-1">
-                      {userData.isVerified ? "Verified" : "Not Verified"}
-                    </Badge>
+                  <div className="flex items-center gap-2 mt-1">
+                    {userData.isVerified ? (
+                      <Badge variant="destructive" className="bg-green-500 hover:bg-green-600">
+                        Verified
+                      </Badge>
+                    ) : (
+                      <VerifyUserButton
+                        userId={userData._id}
+                        onVerify={() => {
+                          notifySucc("User Verified Successfully")
+                          window.location.reload()
+                        }}
+                      />
+                    )}
                   </div>
                 </div>
               </div>
@@ -292,6 +308,17 @@ export default function UserDetail() {
           </Card>
         )}
       </div>
+      <Card className="md:col-span-3 mt-6">
+        <CardHeader className="bg-[#003b7a]/5 border-b">
+          <CardTitle className="text-[#003b7a] flex items-center gap-2">
+            <FileText className="h-5 w-5" />
+            Admin Notes
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="pt-6">
+          <AdminNotes userId={userData._id} />
+        </CardContent>
+      </Card>
 
       {phdScholarData && (
         <Tabs defaultValue="supervision" className="w-full">
@@ -527,16 +554,18 @@ export default function UserDetail() {
                         </div>
                       </div>
                     </CardContent>
-                    
                   </Card>
                 </div>
                 <Card>
                   <CardContent>
                     {/* Certificate*/}
                     <div className="container mx-auto p-6">
-                        <h1 className="text-3xl font-bold mb-6 text-[#003b7a]">Certificate Management</h1>
-                        <AdminCertificateApproval phdId={userData.phdScholar.toString()} showAll={false}></AdminCertificateApproval>
-                      </div>
+                      <h1 className="text-3xl font-bold mb-6 text-[#003b7a]">Certificate Management</h1>
+                      <AdminCertificateApproval
+                        phdId={userData.phdScholar.toString()}
+                        showAll={false}
+                      ></AdminCertificateApproval>
+                    </div>
                   </CardContent>
                 </Card>
               </CardContent>
@@ -551,95 +580,91 @@ export default function UserDetail() {
                   PhD Milestones
                 </CardTitle>
               </CardHeader>
-              <CardContent className="pt-6">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <BookmarkCheck className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Comprehensive Exam</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.comprehensiveExamDate)}</p>
-                      </div>
-                    </div>
+              <CardContent className="pt-6 overflow-x-auto">
+                <div className="flex flex-row items-start min-w-max pb-4">
+                  {[
+                    {
+                      label: "Comprehensive Exam",
+                      date: phdScholarData?.phdMilestones?.comprehensiveExamDate,
+                      icon: <BookOpen className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Proposal Defense",
+                      date: phdScholarData?.phdMilestones?.proposalDefenseDate,
+                      icon: <FileText className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Open Seminar",
+                      date: phdScholarData?.phdMilestones?.openSeminarDate1,
+                      icon: <Users className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Pre-Submission Seminar",
+                      date: phdScholarData?.phdMilestones?.preSubmissionSeminarDate,
+                      icon: <FileSpreadsheet className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Synopsis Submission",
+                      date: phdScholarData?.phdMilestones?.synopsisSubmissionDate,
+                      icon: <FileCheck className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Thesis Submission",
+                      date: phdScholarData?.phdMilestones?.thesisSubmissionDate,
+                      icon: <FileText className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Thesis Defense",
+                      date: phdScholarData?.phdMilestones?.thesisDefenseDate,
+                      icon: <Shield className="h-4 w-4" />,
+                    },
+                    {
+                      label: "Award of Degree",
+                      date: phdScholarData?.phdMilestones?.awardOfDegreeDate,
+                      icon: <Award className="h-4 w-4" />,
+                    },
+                  ].map((milestone, index, array) => {
+                    const isCompleted = milestone.date ? new Date(milestone.date) <= new Date() : false
+                    const isLast = index === array.length - 1
 
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <FileText className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Proposal Defense</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.proposalDefenseDate)}</p>
-                      </div>
-                    </div>
+                    return (
+                      <div key={index} className="flex flex-col items-center mx-4 relative">
+                        {/* Milestone Indicator */}
+                        <div className="relative flex items-center justify-center mb-2">
+                          <div
+                            className={`w-8 h-8 rounded-full flex items-center justify-center ${
+                              isCompleted ? "bg-[#003b7a]" : "bg-gray-300"
+                            }`}
+                          >
+                            {isCompleted && <CheckCircle className="text-white w-5 h-5" />}
+                          </div>
+                        </div>
 
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <FileText2 className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Open Seminar</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.openSeminarDate1)}</p>
-                      </div>
-                    </div>
+                        {/* Connecting line */}
+                        {!isLast && (
+                          <div
+                            className={`absolute top-4 left-[calc(100%_-_8px)] h-0.5 w-8 ${
+                              isCompleted ? "bg-[#003b7a]" : "bg-gray-300"
+                            }`}
+                          />
+                        )}
 
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <FileSpreadsheet className="h-5 w-5 text-[#003b7a]" />
+                        {/* Milestone Details */}
+                        <div className="flex flex-col items-center text-center w-32">
+                          <div className={`mb-1 ${isCompleted ? "text-[#003b7a]" : "text-gray-400"}`}>
+                            {milestone.icon}
+                          </div>
+                          <h3 className={`text-sm font-semibold ${isCompleted ? "text-[#003b7a]" : "text-gray-500"}`}>
+                            {milestone.label}
+                          </h3>
+                          <p className={`text-xs ${isCompleted ? "text-gray-600" : "text-gray-400"}`}>
+                            {milestone.date ? formatDate(milestone.date) : "Not scheduled"}
+                          </p>
+                          {isCompleted && <Badge className="mt-2 bg-green-500 hover:bg-green-600">Completed</Badge>}
+                        </div>
                       </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Pre-Submission Seminar</p>
-                        <p className="font-medium">
-                          {formatDate(phdScholarData.phdMilestones?.preSubmissionSeminarDate)}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-6">
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <FileCheck className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Synopsis Submission</p>
-                        <p className="font-medium">
-                          {formatDate(phdScholarData.phdMilestones?.synopsisSubmissionDate)}
-                        </p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <FileText className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Thesis Submission</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.thesisSubmissionDate)}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <Bookmark className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Thesis Defense</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.thesisDefenseDate)}</p>
-                      </div>
-                    </div>
-
-                    <div className="flex items-start gap-3">
-                      <div className="bg-[#003b7a]/10 p-2 rounded-full mt-1">
-                        <Award className="h-5 w-5 text-[#003b7a]" />
-                      </div>
-                      <div>
-                        <p className="text-sm text-muted-foreground">Award of Degree</p>
-                        <p className="font-medium">{formatDate(phdScholarData.phdMilestones?.awardOfDegreeDate)}</p>
-                      </div>
-                    </div>
-                  </div>
+                    )
+                  })}
                 </div>
               </CardContent>
             </Card>
@@ -733,14 +758,153 @@ export default function UserDetail() {
       {isEditing && phdScholarData && (
         <div className="fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-background rounded-lg w-full max-w-6xl max-h-[90vh] overflow-y-auto">
-            <AdminEditForm userData={userData} phdScholarData={phdScholarData} onCancel={() => {
-          window.location.reload()
-          setIsEditing(false);
-          
-          }} />
+            <AdminEditForm
+              userData={userData}
+              phdScholarData={phdScholarData}
+              onCancel={() => {
+                window.location.reload()
+                setIsEditing(false)
+              }}
+            />
           </div>
         </div>
       )}
+    </div>
+  )
+}
+
+// Verify User Button Component
+const VerifyUserButton = ({ userId, onVerify }: { userId: string; onVerify: () => void }) => {
+  const [isVerifying, setIsVerifying] = useState(false)
+  const notifyErr = (msg: string) => toast.error(msg);
+  const notifySucc = (msg: string) => toast.success(msg);
+  const notifyWarn = (msg: string) => toast.warn(msg);
+  const notifyInfo = (msg: string) => toast.info(msg);
+
+  const handleVerify = async () => {
+    try {
+      setIsVerifying(true)
+      console.log(userId)
+      const response = await fetch(`/api/user/verify/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to verify user")
+      }
+
+      onVerify()
+    } catch (error) {
+      console.error("Error verifying user:", error)
+      notifyErr("Verification failed")
+    } finally {
+      setIsVerifying(false)
+    }
+  }
+
+  return (
+    <Button variant="default" size="sm" onClick={handleVerify} disabled={isVerifying} className="bg-[#003b7a]">
+      {isVerifying ? (
+        <>
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          Verifying...
+        </>
+      ) : (
+        "Verify User"
+      )}
+    </Button>
+  )
+}
+
+// Admin Notes Component
+const AdminNotes = ({ userId }: { userId: string }) => {
+  const [notes, setNotes] = useState("")
+  const [originalNotes, setOriginalNotes] = useState("")
+  const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
+  const notifyErr = (msg: string) => toast.error(msg);
+  const notifySucc = (msg: string) => toast.success(msg);
+  const notifyWarn = (msg: string) => toast.warn(msg);
+  const notifyInfo = (msg: string) => toast.info(msg);
+
+  useEffect(() => {
+    const fetchNotes = async () => {
+      try {
+        const response = await fetch(`/api/user/notes/${userId}`)
+        if (!response.ok) {
+          throw new Error("Failed to fetch notes")
+        }
+        const data = await response.json()
+        setNotes(data.notes)
+        setOriginalNotes(data.notes)
+        setIsLoading(false)
+      } catch (error) {
+        console.error("Error fetching notes:", error)
+        setIsLoading(false)
+      }
+    }
+
+    fetchNotes()
+  }, [userId])
+
+  const handleSaveNotes = async () => {
+    try {
+      setIsSaving(true)
+      const response = await fetch(`/api/user/notes/${userId}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ notes }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to save notes")
+      }
+
+      setOriginalNotes(notes)
+      notifySucc("Notes saved")
+    } catch (error) {
+      console.error("Error saving notes:", error)
+      notifyErr("Failed to save notes")
+    } finally {
+      setIsSaving(false)
+    }
+  }
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center py-4">
+        <Loader2 className="h-6 w-6 animate-spin text-[#003b7a]" />
+      </div>
+    )
+  }
+
+  const hasChanges = notes !== originalNotes
+
+  return (
+    <div className="space-y-4">
+      <Textarea
+        placeholder="Add notes about this user here..."
+        className="min-h-[150px] resize-y"
+        value={notes}
+        onChange={(e) => setNotes(e.target.value)}
+      />
+      <div className="flex justify-end">
+        <Button variant="default" onClick={handleSaveNotes} disabled={isSaving || !hasChanges} className="bg-[#003b7a]">
+          {isSaving ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Saving...
+            </>
+          ) : (
+            "Save Notes"
+          )}
+        </Button>
+      </div>
     </div>
   )
 }

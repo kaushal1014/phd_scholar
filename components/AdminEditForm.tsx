@@ -8,6 +8,7 @@ import type { User as UserType, PhdScholar } from "@/types"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { CalendarIcon } from "lucide-react"
 import { cn } from "@/lib/utils"
@@ -325,14 +326,15 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
                     </Button>
                   </FormControl>
                 </PopoverTrigger>
-                <FormControl>
-                  <Input
-                  type="date"
-                  value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-                  onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : undefined)}
-                  className="w-[240px]"
+                <PopoverContent className="w-auto p-0" align="start">
+                  <Calendar
+                    mode="single"
+                    selected={field.value}
+                    onSelect={field.onChange}
+                    disabled={(date) => date > new Date() || date < new Date("1900-01-01")}
+                    initialFocus
                   />
-                </FormControl>
+                </PopoverContent>
               </Popover>
               <FormMessage />
             </FormItem>
