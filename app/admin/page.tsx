@@ -131,7 +131,7 @@ export default function AdminUsers() {
               {filteredUsers.map((user,index) => (
                 <TableRow
                   key={index}
-                  onClick={() => handleUserClick(user._id)}
+                  onClick={() => handleUserClick(user.id)}
                   className="cursor-pointer hover:bg-gray-50 transition-colors"
                 >
                   <TableCell className="font-medium text-[#1B3668]">{index+1}</TableCell>
