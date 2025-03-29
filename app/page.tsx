@@ -39,7 +39,7 @@ export default function HomePage() {
           transition={{ duration: 0.8, delay: 0.2 }}
         >
           <h2 className="text-4xl font-bold sm:text-5xl sm:tracking-tight lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-[#1B3668] via-[#2A4A8F] to-[#1B3668] dark:from-blue-300 dark:via-white dark:to-blue-300 [text-shadow:_0_1px_2px_rgb(0_0_0_/_5%)]">
-            Welcome to Your PhD Journey
+            Welcome to Your Research Journey at PESU
           </h2>
             <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
             Track your progress, manage your research, collaborate with your peers, and stay on top of your academic

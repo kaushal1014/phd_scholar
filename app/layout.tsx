@@ -83,7 +83,7 @@ function Header() {
               Programs
             </Link>
             <Link
-              href="/"
+              href="/#"
               className={`text-lg font-medium transition-colors hover:text-primary ${
                 pathname === "/milestones" ? "text-primary" : "text-foreground/60"
               }`}

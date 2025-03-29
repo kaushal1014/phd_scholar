@@ -23,10 +23,15 @@ const notifySucc = (msg: string) => toast.success(msg);
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isClient, setIsClient] = useState(false); // Track if the component is running on the client
   const router = useRouter();
   const { data: session, status } = useSession();
-  
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>();
+
+  useEffect(() => {
+    setIsClient(true); // Ensure the component is hydrated on the client
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -48,7 +53,7 @@ export default function LoginPage() {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  if (status === "loading") {
+  if (!isClient || status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/50">
         <div className="flex items-center space-x-3">
