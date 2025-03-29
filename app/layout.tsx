@@ -56,20 +56,20 @@ function Header() {
   }
 
   return (
-    <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+<header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 shadow-sm">
+<div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-20 items-center justify-between">
-          <div className="flex items-center">
-            <div className="flex items-center gap-4">
+            <div className="flex items-center justify-center md:justify-start">
+            <div className="flex items-center gap-10">
               <Image src="/logoPesu.png" alt="PES University Logo" width={50} height={50} className="h-12 w-auto" />
-              <span className="text-2xl font-bold text-foreground">PhD Scholar Portal</span>
+              <span className="text-3xl right-100 font-bold text-foreground">PhD Scholar Portal</span>
             </div>
-          </div>
-          <nav className="hidden md:flex items-center space-x-10">
+            </div>
+            <nav className="hidden md:flex items-center space-x-10">
             <Link
               href="/"
               className={`text-lg font-medium transition-colors hover:text-primary ${
-                pathname === "/" ? "text-primary" : "text-foreground/60"
+              pathname === "/" ? "text-primary" : "text-foreground/60"
               }`}
             >
               Home
@@ -83,12 +83,12 @@ function Header() {
               Programs
             </Link>
             <Link
-              href="/milestones"
+              href="/"
               className={`text-lg font-medium transition-colors hover:text-primary ${
                 pathname === "/milestones" ? "text-primary" : "text-foreground/60"
               }`}
             >
-              Milestones
+              Research Support
             </Link>
             <Link
               href="/resources"
@@ -98,15 +98,20 @@ function Header() {
             >
               Resources
             </Link>
+            <Link
+              href="/collaborations"
+              className={`text-lg font-medium transition-colors hover:text-primary ${
+                pathname === "/resources" ? "text-primary" : "text-foreground/60"
+              }`}
+            >
+              Events
+            </Link>
           </nav>
           <div className="flex items-center space-x-4">
             {!session ? (
               <>
-                <Button variant="ghost" size="sm" className="text-base hover:bg-primary/10" asChild>
+                <Button size="lg" className="text-base" asChild>
                   <Link href="/login">Login</Link>
-                </Button>
-                <Button size="sm" className="text-base" asChild>
-                  <Link href="/signup">Sign Up</Link>
                 </Button>
               </>
             ) : (
@@ -156,7 +161,7 @@ export default function RootLayout({
       >
         <AuthProvider>
             <Header />
-            <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8">{children}</main>
+            <main className="w-full px-4 sm:px-6 lg:px-8 py-8">{children}</main>
             <ToastContainer
               position="top-right"
               autoClose={5000}
@@ -168,26 +173,17 @@ export default function RootLayout({
               draggable
               pauseOnHover
             />
-            <footer className="bg-secondary">
-              <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 md:flex md:items-center lg:px-8">
-                <div className="flex justify-center space-x-6 md:order-2">
-                  <Link href="/about" className="text-muted-foreground hover:text-foreground">
-                    About
-                  </Link>
-                  <Link href="/contact" className="text-muted-foreground hover:text-foreground">
-                    Contact
-                  </Link>
-                  <Link href="/privacy" className="text-muted-foreground hover:text-foreground">
-                    Privacy Policy
-                  </Link>
-                </div>
-                <div className="mt-8 md:mt-0 md:order-1">
-                  <p className="text-center text-sm text-muted-foreground">
-                    &copy; 2024 PhD Scholar Portal. All rights reserved.
-                  </p>
-                </div>
-              </div>
-            </footer>
+<footer className="w-full bg-gradient-to-r from-[#1B3668] via-[#0A2240] to-[#1B3668] text-white py-16 mt-24 relative overflow-hidden">
+<div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c')] opacity-5 bg-cover bg-center mix-blend-overlay" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">
+          <p className="text-gray-200 text-lg font-medium">
+            © {new Date().getFullYear()} PES University Research Degree Program. All rights reserved.
+          </p>
+          <p className="text-gray-400 mt-2 font-light">
+            Nurturing Tomorrow's Researchers Today
+          </p>
+        </div>
+      </footer>
         </AuthProvider>
       </body>
     </html>
