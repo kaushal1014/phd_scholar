@@ -116,8 +116,6 @@ function Header() {
               </>
             ) : (
               <div className="flex items-center space-x-4">
-                <DropdownMenu>
-                  <DropdownMenuTrigger asChild>
                     <Button variant="ghost" className="relative h-8 w-8 rounded-full">
                       <Avatar className="h-12 w-12">
                         <AvatarImage src="/avatar.png" alt={session.user?.name || "User avatar"} />
@@ -126,17 +124,9 @@ function Header() {
                         </AvatarFallback>
                       </Avatar>
                     </Button>
-                  </DropdownMenuTrigger>
-                  <DropdownMenuContent align="end">
-                    <DropdownMenuItem asChild>
-                      <Link href={`/myprofile/`}>Profile</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/settings">Settings</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
-                  </DropdownMenuContent>
-                </DropdownMenu>
+                  <Button variant="destructive" onClick={handleSignOut} size="lg" className="text-base" asChild>
+                  <Link href="/login">Sign Out</Link>
+                </Button>
               </div>
             )}
           </div>
