@@ -10,8 +10,11 @@ connectDB()
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
+    
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token || !token.isAdmin) {
+    console.log(token?.isSupervisor)
+    if (!token || (!token.isAdmin && !token.isSupervisor)) {
+      
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
@@ -31,7 +34,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
 export async function PUT(req: NextRequest, { params }: { params: { id: string } }) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token || !token.isAdmin) {
+    if (!token || (!token.isAdmin && !token.isSupervisor)) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
