@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -10,6 +10,7 @@ import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { EyeIcon, EyeOffIcon } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import PhdScholar from '@/server/models/PhdScholar';
 
 type FormData = {
   email: string;
@@ -89,117 +90,117 @@ const MAX_DCMEMBERS=10;
 
 const PhDScholarForm: React.FC = () => {
   const [formData, setFormData] = useState<FormData>({
-  email: '',
-  password:'',
-  firstName: '',
-  middleName: '',
-  lastName: '',
-  dateOfBirth: '',
-  nationality: '',
-  mobileNumber: '',
-  entranceExamination: '',
-  qualifyingExamination: '',
-  allotmentNumber: '',
-  admissionDate: '',
-  department: '',
-  usn: '',
-  srn: '',
-  modeOfProgram: '',
-  researchSupervisor: '',
-  researchCoSupervisor: '',
-  doctoralCommitteeMembers: [{name : ''}],
-  courseWork1SubjectCode: '',
-  courseWork1SubjectName: '',
-  courseWork1SubjectGrade: '',
-  courseWork1Status: '',
-  courseWork1EligibilityDate: '',
-  courseWork2SubjectCode: '',
-  courseWork2SubjectName: '',
-  courseWork2SubjectGrade: '',
-  courseWork2Status: '',
-  courseWork2EligibilityDate: '',
-  courseWork3SubjectCode: '',
-  courseWork3SubjectName: '',
-  courseWork3SubjectGrade: '',
-  courseWork3Status: '',
-  courseWork3EligibilityDate: '',
-  courseWork4SubjectCode: '',
-  courseWork4SubjectName: '',
-  courseWork4SubjectGrade: '',
-  courseWork4Status: '',
-  courseWork4EligibilityDate: '',
-  courseworkCompletionDate1: '',
-  courseworkCompletionDate2: '',
-  courseworkCompletionDate3: '',
-  courseworkCompletionDate4: '',
-  dcMeetings: [{ scheduledDate: '', actualDate: '' }],
-  comprehensiveExamDate: '',
-  proposalDefenseDate: '',
-  openSeminarDate1: '',
-  preSubmissionSeminarDate: '',
-  synopsisSubmissionDate: '',
-  thesisSubmissionDate: '',
-  thesisDefenseDate: '',
-  awardOfDegreeDate: '',
-  journals: [{ title: '', journalName: '', publicationYear: '', volumeNumber: '', issueNumber: '', pageNumbers: '', impactFactor: '' }],
-  conferences: [{ title: '', conferenceName: '', publicationYear: '' }]
+  // email: '',
+  // password:'',
+  // firstName: '',
+  // middleName: '',
+  // lastName: '',
+  // dateOfBirth: '',
+  // nationality: '',
+  // mobileNumber: '',
+  // entranceExamination: '',
+  // qualifyingExamination: '',
+  // allotmentNumber: '',
+  // admissionDate: '',
+  // department: '',
+  // usn: '',
+  // srn: '',
+  // modeOfProgram: '',
+  // researchSupervisor: '',
+  // researchCoSupervisor: '',
+  // doctoralCommitteeMembers: [{name : ''}],
+  // courseWork1SubjectCode: '',
+  // courseWork1SubjectName: '',
+  // courseWork1SubjectGrade: '',
+  // courseWork1Status: '',
+  // courseWork1EligibilityDate: '',
+  // courseWork2SubjectCode: '',
+  // courseWork2SubjectName: '',
+  // courseWork2SubjectGrade: '',
+  // courseWork2Status: '',
+  // courseWork2EligibilityDate: '',
+  // courseWork3SubjectCode: '',
+  // courseWork3SubjectName: '',
+  // courseWork3SubjectGrade: '',
+  // courseWork3Status: '',
+  // courseWork3EligibilityDate: '',
+  // courseWork4SubjectCode: '',
+  // courseWork4SubjectName: '',
+  // courseWork4SubjectGrade: '',
+  // courseWork4Status: '',
+  // courseWork4EligibilityDate: '',
+  // courseworkCompletionDate1: '',
+  // courseworkCompletionDate2: '',
+  // courseworkCompletionDate3: '',
+  // courseworkCompletionDate4: '',
+  // dcMeetings: [{ scheduledDate: '', actualDate: '' }],
+  // comprehensiveExamDate: '',
+  // proposalDefenseDate: '',
+  // openSeminarDate1: '',
+  // preSubmissionSeminarDate: '',
+  // synopsisSubmissionDate: '',
+  // thesisSubmissionDate: '',
+  // thesisDefenseDate: '',
+  // awardOfDegreeDate: '',
+  // journals: [{ title: '', journalName: '', publicationYear: '', volumeNumber: '', issueNumber: '', pageNumbers: '', impactFactor: '' }],
+  // conferences: [{ title: '', conferenceName: '', publicationYear: '' }]
   
   
   //Testing purposes
-    // email: '',
-    // password:'',
-    // firstName: 'xZXzX',
-    // middleName: 'zXczxc',
-    // lastName: 'bdfbdf',
-    // dateOfBirth: '2024-03-04',
-    // nationality: 'dasdas',
-    // mobileNumber: '9886031975',
-    // entranceExamination: 'dasdas',
-    // qualifyingExamination: 'ddasdsa',
-    // allotmentNumber: 'dasdas',
-    // admissionDate: '2024-03-04',
-    // department: '4234',
-    // usn: '43324',
-    // srn: '4324',
-    // modeOfProgram: '423',
-    // researchSupervisor: '4324',
-    // researchCoSupervisor: '4324',
-    // doctoralCommitteeMembers: [{name : 'dsdsds'}],
-    // courseWork1SubjectCode: '423432',
-    // courseWork1SubjectName: '423432',
-    // courseWork1SubjectGrade: '234',
-    // courseWork1Status: 'Pending',
-    // courseWork1EligibilityDate: '2024-03-04',
-    // courseWork2SubjectCode: '6456',
-    // courseWork2SubjectName: '64564',
-    // courseWork2SubjectGrade: '4566',
-    // courseWork2Status: '645654',
-    // courseWork2EligibilityDate: '2024-03-04',
-    // courseWork3SubjectCode: '423426',
-    // courseWork3SubjectName: '423',
-    // courseWork3SubjectGrade: '42342',
-    // courseWork3Status: '42342',
-    // courseWork3EligibilityDate: '2024-03-04',
-    // courseWork4SubjectCode: '234234',
-    // courseWork4SubjectName: '4234',
-    // courseWork4SubjectGrade: '4234',
-    // courseWork4Status: '432432',
-    // courseWork4EligibilityDate: '2024-03-04',
-    // courseworkCompletionDate1: '2024-10-18',
-    // courseworkCompletionDate2: '2024-10-18',
-    // courseworkCompletionDate3: '2024-10-18',
-    // courseworkCompletionDate4: '2024-10-18',
-    // dcMeetings: [{ scheduledDate: '2024-03-04', actualDate: '2024-03-04' }],
-    // comprehensiveExamDate: '2024-03-04',
-    // proposalDefenseDate: '2024-03-04',
-    // openSeminarDate1: '2024-03-04',
-    // preSubmissionSeminarDate: '2024-03-04',
-    // synopsisSubmissionDate: '2024-03-04',
-    // thesisSubmissionDate: '2024-03-04',
-    // thesisDefenseDate: '2024-03-04',
-    // awardOfDegreeDate: '2024-03-04',
-    // journals: [{ title: '4234432', journalName: '4234', publicationYear: '4234', volumeNumber: '423', issueNumber: '4234', pageNumbers: '4234', impactFactor: '23423' }],
-    // conferences: [{ title: '4234', conferenceName: '324234', publicationYear: '234234' }]
+    email: '',
+    password:'',
+    firstName: 'xZXzX',
+    middleName: 'zXczxc',
+    lastName: 'bdfbdf',
+    dateOfBirth: '2024-03-04',
+    nationality: 'dasdas',
+    mobileNumber: '9886031975',
+    entranceExamination: 'dasdas',
+    qualifyingExamination: 'ddasdsa',
+    allotmentNumber: 'dasdas',
+    admissionDate: '2024-03-04',
+    department: '4234',
+    usn: '43324',
+    srn: '4324',
+    modeOfProgram: '423',
+    researchSupervisor: '4324',
+    researchCoSupervisor: '4324',
+    doctoralCommitteeMembers: [{name : 'dsdsds'}],
+    courseWork1SubjectCode: '423432',
+    courseWork1SubjectName: '423432',
+    courseWork1SubjectGrade: '234',
+    courseWork1Status: 'Pending',
+    courseWork1EligibilityDate: '2024-03-04',
+    courseWork2SubjectCode: '6456',
+    courseWork2SubjectName: '64564',
+    courseWork2SubjectGrade: '4566',
+    courseWork2Status: '645654',
+    courseWork2EligibilityDate: '2024-03-04',
+    courseWork3SubjectCode: '423426',
+    courseWork3SubjectName: '423',
+    courseWork3SubjectGrade: '42342',
+    courseWork3Status: '42342',
+    courseWork3EligibilityDate: '2024-03-04',
+    courseWork4SubjectCode: '234234',
+    courseWork4SubjectName: '4234',
+    courseWork4SubjectGrade: '4234',
+    courseWork4Status: '432432',
+    courseWork4EligibilityDate: '2024-03-04',
+    courseworkCompletionDate1: '2024-10-18',
+    courseworkCompletionDate2: '2024-10-18',
+    courseworkCompletionDate3: '2024-10-18',
+    courseworkCompletionDate4: '2024-10-18',
+    dcMeetings: [{ scheduledDate: '2024-03-04', actualDate: '2024-03-04' }],
+    comprehensiveExamDate: '2024-03-04',
+    proposalDefenseDate: '2024-03-04',
+    openSeminarDate1: '2024-03-04',
+    preSubmissionSeminarDate: '2024-03-04',
+    synopsisSubmissionDate: '2024-03-04',
+    thesisSubmissionDate: '2024-03-04',
+    thesisDefenseDate: '2024-03-04',
+    awardOfDegreeDate: '2024-03-04',
+    journals: [{ title: '4234432', journalName: '4234', publicationYear: '4234', volumeNumber: '423', issueNumber: '4234', pageNumbers: '4234', impactFactor: '23423' }],
+    conferences: [{ title: '4234', conferenceName: '324234', publicationYear: '234234' }]
     
   });
 
@@ -209,6 +210,23 @@ const PhDScholarForm: React.FC = () => {
   const notifyWarn = (msg: string) => toast.warn(msg);
   const notifyInfo = (msg: string) => toast.info(msg);
   const [showPassword, setShowPassword] = useState(false);
+  const [isInitialLoad, setIsInitialLoad] = useState(true);
+
+  useEffect(() => {
+    const savedFormData = localStorage.getItem('FormData');
+    if (savedFormData) {
+      setFormData(JSON.parse(savedFormData)); // Load saved data into the form
+    }
+    setIsInitialLoad(false);
+
+  }, []);
+  
+  useEffect(() => {
+    if (!isInitialLoad) {
+      localStorage.setItem('FormData', JSON.stringify(formData));
+    }
+  }, [formData, isInitialLoad]);
+
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
   const addNewJournal = () => {
     if (formData.journals.length < MAXJOURNALS) {
@@ -306,15 +324,16 @@ const PhDScholarForm: React.FC = () => {
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-
+  
     if (name.includes('[') && name.includes(']')) {
       const [field, index, subField] = name.split(/[\[\].]+/);
-      const updatedArray = [...formData[field as keyof FormData] as any[]];
+      const updatedArray = [...(formData[field as keyof FormData] as any[])];
       updatedArray[parseInt(index)][subField] = value;
       setFormData({ ...formData, [field]: updatedArray });
     } else {
       setFormData({ ...formData, [name]: value });
     }
+    console.log(formData)
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -324,6 +343,7 @@ const PhDScholarForm: React.FC = () => {
       const response = await axios.post('/api/signup', formData);
       if (response.status === 200) {
         notifySucc(response.data.message);
+        localStorage.clear();
         setTimeout(() => {
           router.push('login');  // Redirect after a brief delay
       }, 1500);
