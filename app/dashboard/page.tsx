@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GraduationCap, BookMarked, Shield, CheckCircle, LogIn, Loader2, Calendar, BarChart3, FileText, Award, Clock, Users, BookOpen, ChevronRight, AlertCircle, Plus, Edit, User, Mail } from 'lucide-react'
+import { GraduationCap, BookMarked, Shield, CheckCircle, LogIn, Loader2, Calendar, BarChart3, FileText, Award, Clock, Users, BookOpen, ChevronRight, AlertCircle, Plus, Edit, User, Mail,ContactRound } from 'lucide-react'
 import type { User as UserType, PhdScholar } from "@/types"
 import { ConferenceSlideshow } from "@/components/ConferenceSlideshow"
 import { Announcements } from "@/components/Announcements"
@@ -28,7 +28,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-// Add this to the imports at the top of the file
 import { CourseCertificateUpload } from "@/components/course-certificate-upload"
 import { CourseCertificateViewer } from "@/components/course-certificate-viewer"
 import { Badge } from "@/components/ui/badge"
@@ -321,6 +320,11 @@ export default function Dashboard() {
 
   const getMilestones = (): Milestone[] => {
     return [
+      {
+        label:"Admission Date",
+        date: phdScholarData?.admissionDetails.admissionDate.toString(),
+        icon: <ContactRound className="h-4 w-4" />
+      },
       {
         label: "Comprehensive Exam",
         date: phdScholarData?.phdMilestones?.comprehensiveExamDate?.toString(),
