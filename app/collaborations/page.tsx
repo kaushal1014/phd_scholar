@@ -6,18 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  Users,
-  MessageSquare,
-  Calendar,
-  Bell,
-  ChevronLeft,
-  UserPlus,
-  CalendarClock,
-  MessagesSquare,
-  Loader2,
-  ExternalLink,
-} from "lucide-react"
+import { Users, MessageSquare, Calendar, Bell, ChevronLeft, UserPlus, CalendarClock, MessagesSquare, Loader2, ExternalLink } from 'lucide-react'
 import {
   Dialog,
   DialogContent,
@@ -38,6 +27,8 @@ interface User {
   name: string
   email: string
   role: string
+  isAdmin?: boolean
+  isSupervisor?: boolean
 }
 
 interface Discussion {
@@ -235,6 +226,9 @@ export default function CollaborationsPage() {
     }
   }
 
+  // Check if user can create content (admin or supervisor)
+  const canCreateContent = user?.isAdmin || user?.isSupervisor
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -246,18 +240,25 @@ export default function CollaborationsPage() {
 
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
-      <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
-        <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">Collaborations</h1>
+      <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow-md relative overflow-hidden">
+        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
+        <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 relative">
+          <div className="flex items-center space-x-3">
+            <Users className="h-8 w-8 text-[#F59E0B]" />
+            <h1 className="text-3xl font-bold text-white">Collaborations</h1>
+          </div>
+          <p className="text-blue-100 mt-2 max-w-2xl">
+            Connect, collaborate, and stay updated with fellow researchers
+          </p>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <Card className="border-[#E5E7EB] bg-white shadow-sm mb-8">
-          <CardHeader className="border-b bg-[#F9FAFB] p-6">
+          <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-6">
             <div className="flex items-center space-x-4">
-              <div className="rounded-full bg-[#4C1D95]/10 p-3">
-                <Users className="h-8 w-8 text-[#4C1D95]" />
+              <div className="rounded-full bg-[#1B3668]/10 p-3 border border-[#1B3668]/20">
+                <Users className="h-8 w-8 text-[#1B3668]" />
               </div>
               <div>
                 <CardTitle className="text-2xl font-bold text-[#1F2937]">Research Collaborations</CardTitle>
@@ -273,23 +274,23 @@ export default function CollaborationsPage() {
               <TabsList className="grid w-full grid-cols-3 bg-[#F3F4F6]">
                 <TabsTrigger
                   value="discussion-forum"
-                  className="data-[state=active]:bg-[#4C1D95] data-[state=active]:text-white"
+                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
                 >
-                  <MessageSquare className="h-4 w-4 mr-2" />
+                  <MessageSquare className="h-5 w-5 mr-2" />
                   Discussion Forum
                 </TabsTrigger>
                 <TabsTrigger
                   value="monthly-meetings"
-                  className="data-[state=active]:bg-[#4C1D95] data-[state=active]:text-white"
+                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
                 >
-                  <Calendar className="h-4 w-4 mr-2" />
+                  <Calendar className="h-5 w-5 mr-2" />
                   Monthly Meetings
                 </TabsTrigger>
                 <TabsTrigger
                   value="event-updates"
-                  className="data-[state=active]:bg-[#4C1D95] data-[state=active]:text-white"
+                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
                 >
-                  <Bell className="h-4 w-4 mr-2" />
+                  <Bell className="h-5 w-5 mr-2" />
                   Event Updates
                 </TabsTrigger>
               </TabsList>
@@ -299,10 +300,14 @@ export default function CollaborationsPage() {
               <TabsContent value="discussion-forum" className="mt-0">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-[#1F2937]">Discussion Forum</h2>
+                    <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
+                      <MessageSquare className="h-5 w-5 mr-2 text-[#F59E0B]" />
+                      Discussion Forum
+                    </h2>
+                    {/* Show button for all users (including students) */}
                     <Dialog open={isDiscussionDialogOpen} onOpenChange={setIsDiscussionDialogOpen}>
                       <DialogTrigger asChild>
-                        <Button className="bg-[#4C1D95] hover:bg-[#3B0764]">
+                        <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
                           <MessagesSquare className="h-4 w-4 mr-2" />
                           New Discussion
                         </Button>
@@ -325,11 +330,13 @@ export default function CollaborationsPage() {
                           key={discussion._id}
                           className="block"
                         >
-                          <Card className="border-[#E5E7EB] hover:border-[#4C1D95] transition-colors">
+                          <Card
+                            className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200"
+                          >
                             <CardContent className="p-4">
                               <div className="flex items-start gap-4">
-                                <div className="rounded-full bg-[#4C1D95]/10 p-2 flex-shrink-0">
-                                  <MessageSquare className="h-5 w-5 text-[#4C1D95]" />
+                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                  <MessageSquare className="h-5 w-5 text-[#1B3668]" />
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
@@ -343,9 +350,9 @@ export default function CollaborationsPage() {
                                   </p>
                                   <div className="flex items-center text-xs text-[#6B7280]">
                                     <span className="font-medium">Started by: {discussion.author.firstName}</span>
-                                    <span className="mx-2">•</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>{discussion.replies.length} replies</span>
-                                    <span className="mx-2">•</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Last post: {formatDistanceToNow(new Date(discussion.updatedAt))} ago</span>
                                   </div>
                                 </div>
@@ -366,33 +373,43 @@ export default function CollaborationsPage() {
               <TabsContent value="monthly-meetings" className="mt-0">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-[#1F2937]">Monthly Meetings</h2>
-                    <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button className="bg-[#4C1D95] hover:bg-[#3B0764]">
-                          <CalendarClock className="h-4 w-4 mr-2" />
-                          Schedule Meeting
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[500px]">
-                        <DialogHeader>
-                          <DialogTitle>Schedule New Meeting</DialogTitle>
-                          <DialogDescription>Schedule a new meeting with your research colleagues</DialogDescription>
-                        </DialogHeader>
-                        <NewMeetingForm onSubmit={handleMeetingSubmit} />
-                      </DialogContent>
-                    </Dialog>
+                    <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
+                      <Calendar className="h-5 w-5 mr-2 text-[#F59E0B]" />
+                      Monthly Meetings
+                    </h2>
+                    {/* Only show for admin and supervisors */}
+                    {canCreateContent && (
+                      <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
+                            <CalendarClock className="h-4 w-4 mr-2" />
+                            Schedule Meeting
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader>
+                            <DialogTitle>Schedule New Meeting</DialogTitle>
+                            <DialogDescription>Schedule a new meeting with your research colleagues</DialogDescription>
+                          </DialogHeader>
+                          <NewMeetingForm onSubmit={handleMeetingSubmit} />
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
 
                   <div className="grid gap-4">
                     {meetings.length > 0 ? (
                       meetings.map((meeting) => (
-                        <Link href={`/collaborations/meetings/${meeting._id}`} key={meeting._id} className="block">
-                          <Card className="border-[#E5E7EB] hover:border-[#4C1D95] transition-colors">
+                        <Link
+                          href={`/collaborations/meetings/${meeting._id}`}
+                          key={meeting._id}
+                          className="block"
+                        >
+                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
                             <CardContent className="p-4">
                               <div className="flex items-start gap-4">
-                                <div className="rounded-full bg-[#4C1D95]/10 p-2 flex-shrink-0">
-                                  <Calendar className="h-5 w-5 text-[#4C1D95]" />
+                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                  <Calendar className="h-5 w-5 text-[#1B3668]" />
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
@@ -408,9 +425,9 @@ export default function CollaborationsPage() {
                                     <span className="font-medium">
                                       Date: {new Date(meeting.date).toLocaleDateString()}
                                     </span>
-                                    <span className="mx-2">•</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Time: {meeting.time}</span>
-                                    <span className="mx-2">•</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Location: {meeting.location}</span>
                                   </div>
                                   <div className="text-xs text-[#6B7280] mt-1">
@@ -424,7 +441,7 @@ export default function CollaborationsPage() {
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">
-                        No meetings scheduled yet. Schedule a new meeting!
+                        No meetings scheduled yet. {canCreateContent ? "Schedule a new meeting!" : ""}
                       </div>
                     )}
                   </div>
@@ -434,33 +451,43 @@ export default function CollaborationsPage() {
               <TabsContent value="event-updates" className="mt-0">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-[#1F2937]">Event Updates</h2>
-                    <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
-                      <DialogTrigger asChild>
-                        <Button className="bg-[#4C1D95] hover:bg-[#3B0764]">
-                          <UserPlus className="h-4 w-4 mr-2" />
-                          Add Event
-                        </Button>
-                      </DialogTrigger>
-                      <DialogContent className="sm:max-w-[500px]">
-                        <DialogHeader>
-                          <DialogTitle>Create New Event</DialogTitle>
-                          <DialogDescription>Add a new research event to the calendar</DialogDescription>
-                        </DialogHeader>
-                        <NewEventForm onSubmit={handleEventSubmit} />
-                      </DialogContent>
-                    </Dialog>
+                    <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
+                      <Bell className="h-5 w-5 mr-2 text-[#F59E0B]" />
+                      Event Updates
+                    </h2>
+                    {/* Only show for admin and supervisors */}
+                    {canCreateContent && (
+                      <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
+                        <DialogTrigger asChild>
+                          <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
+                            <UserPlus className="h-4 w-4 mr-2" />
+                            Add Event
+                          </Button>
+                        </DialogTrigger>
+                        <DialogContent className="sm:max-w-[500px]">
+                          <DialogHeader>
+                            <DialogTitle>Create New Event</DialogTitle>
+                            <DialogDescription>Add a new research event to the calendar</DialogDescription>
+                          </DialogHeader>
+                          <NewEventForm onSubmit={handleEventSubmit} />
+                        </DialogContent>
+                      </Dialog>
+                    )}
                   </div>
 
                   <div className="grid gap-4">
                     {events.length > 0 ? (
                       events.map((event) => (
-                        <Link href={`/collaborations/events/${event._id}`} key={event._id} className="block">
-                          <Card className="border-[#E5E7EB] hover:border-[#4C1D95] transition-colors">
+                        <Link
+                          href={`/collaborations/events/${event._id}`}
+                          key={event._id}
+                          className="block"
+                        >
+                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
                             <CardContent className="p-4">
                               <div className="flex items-start gap-4">
-                                <div className="rounded-full bg-[#4C1D95]/10 p-2 flex-shrink-0">
-                                  <Bell className="h-5 w-5 text-[#4C1D95]" />
+                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                  <Bell className="h-5 w-5 text-[#1B3668]" />
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
@@ -473,17 +500,13 @@ export default function CollaborationsPage() {
                                       : event.description}
                                   </p>
                                   <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">
-                                      Date: {new Date(event.date).toLocaleDateString()}
-                                    </span>
-                                    <span className="mx-2">•</span>
+                                    <span className="font-medium">Date: {new Date(event.date).toLocaleDateString()}</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Time: {event.time}</span>
-                                    <span className="mx-2">•</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Location: {event.location}</span>
                                   </div>
-                                  <div className="text-xs text-[#6B7280] mt-1">
-                                    Organized by: {event.organizer.firstName}
-                                  </div>
+                                  <div className="text-xs text-[#6B7280] mt-1">Organized by: {event.organizer.firstName}</div>
                                 </div>
                               </div>
                             </CardContent>
@@ -491,7 +514,9 @@ export default function CollaborationsPage() {
                         </Link>
                       ))
                     ) : (
-                      <div className="text-center py-8 text-gray-500">No events added yet. Add a new event!</div>
+                      <div className="text-center py-8 text-gray-500">
+                        No events added yet. {canCreateContent ? "Add a new event!" : ""}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -505,7 +530,7 @@ export default function CollaborationsPage() {
             asChild
             variant="outline"
             size="lg"
-            className="group rounded-full px-8 border-[#4C1D95] text-[#4C1D95] hover:bg-[#4C1D95] hover:text-white"
+            className="group rounded-full px-8 border-[#1B3668] text-[#1B3668] hover:bg-[#1B3668] hover:text-white transition-all duration-200"
           >
             <Link href="/">
               <ChevronLeft className="mr-2 h-5 w-5 transition-transform duration-200 group-hover:-translate-x-1" />
@@ -517,4 +542,3 @@ export default function CollaborationsPage() {
     </div>
   )
 }
-
