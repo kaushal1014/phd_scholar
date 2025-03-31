@@ -248,8 +248,7 @@ export default function DirectPhDPage() {
                   Purpose.
                 </li>
                 <li className="text-gray-700 dark:text-gray-300">
-                  <span className="font-medium">Entrance Exam:</span> Appear for the Research Entrance Test scheduled on
-                  22nd March 2025.
+                  <span className="font-medium">Entrance Exam:</span> Appear for the Research Entrance Test scheduled.
                 </li>
                 <li className="text-gray-700 dark:text-gray-300">
                   <span className="font-medium">Personal Interview:</span> Shortlisted candidates will be called for a

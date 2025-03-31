@@ -20,25 +20,12 @@ export default function PhDPrograms() {
             <li>Several ongoing funded research projects</li>
             <li>Collaboration with reputed universities and industries</li>
             <li>Fellowship/Scholarship/Financial Assistance available</li>
+            <li>Computer Science & Engineering</li>
+            <li>Electrical Engineering</li>
+            <li>Electronics and Communication Engineering</li>
+            <li>Mechanical Engineering</li>
+            <li>Biotechnology</li>
           </ul>
-        </CardContent>
-      </Card>
-
-      <Card className="mb-8 bg-gradient-to-br from-orange-50 to-blue-50">
-        <CardHeader>
-          <CardTitle className="text-2xl text-blue-800">Available Programs</CardTitle>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div>
-            <h3 className="font-semibold text-lg mb-2">Ph.D. by Research in:</h3>
-            <ul className="list-disc pl-5 space-y-1">
-              <li>Computer Science & Engineering</li>
-              <li>Electrical Engineering</li>
-              <li>Electronics and Communication Engineering</li>
-              <li>Mechanical Engineering</li>
-              <li>Biotechnology</li>
-            </ul>
-          </div>
           <div>
             <h3 className="font-semibold text-lg mb-2">Ph.D in:</h3>
             <ul className="list-disc pl-5 space-y-1">

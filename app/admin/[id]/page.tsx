@@ -178,7 +178,7 @@ export default function UserDetail() {
           ) : (
             <>
               <Badge variant="outline" className="px-3 py-1 text-sm bg-[#003b7a] text-white">
-                PhD Scholar
+                Scholar
               </Badge>
               {session?.user?.isAdmin && (
                 <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="ml-2">
@@ -254,7 +254,7 @@ export default function UserDetail() {
                   <p className="text-sm text-muted-foreground">User Role</p>
                   <div className="flex items-center gap-2">
                     <Badge variant={userData.isAdmin ? "destructive" : "default"} className="mt-1">
-                      {userData.isAdmin ? "Administrator" : "PhD Scholar"}
+                      {userData.isAdmin ? "Administrator" : "Scholar"}
                     </Badge>
                   </div>
                 </div>

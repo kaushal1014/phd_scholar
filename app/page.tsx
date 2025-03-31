@@ -54,7 +54,7 @@ export default function HomePage() {
                 <p className="mt-1 text-lg text-gray-700 dark:text-gray-300 leading-snug text-center">
                 Take control of your academic progress today.
                 </p>
-              <Link
+              <Link 
               href="/login"
               className="mt-4 inline-flex items-center px-6 py-3 text-lg font-medium rounded-md shadow-sm text-white bg-[#1B3668] hover:bg-[#1B3668]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B3668]"
               >
@@ -121,7 +121,7 @@ export default function HomePage() {
                   <Button
                     className="w-full bg-[#1B3668] text-white hover:bg-[#2A4A8F] transition-colors duration-300 group-hover:shadow-lg"
                   >
-                    <Link href={card.link} className="flex items-center justify-center w-full">
+                    <Link target="_blank" href={card.link} className="flex items-center justify-center w-full">
                       {card.linkText} <ChevronRight className="ml-2 h-4 w-4 transition-transform group-hover:translate-x-1" />
                     </Link>
                   </Button>

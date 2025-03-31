@@ -9,7 +9,7 @@ export default function ProgramsPage() {
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
       <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">Research Programs</h1>
+          <h1 className="text-3xl text-center font-bold text-white">Embark on a journey of advanced research and academic excellence with PES University Research programs.</h1>
         </div>
       </header>
 
@@ -37,7 +37,7 @@ export default function ProgramsPage() {
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild>
-                    <Link href="/programs/phd">Learn More</Link>
+                    <Link target="_blank" href="/programs/phd">Learn More</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -66,7 +66,7 @@ export default function ProgramsPage() {
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild>
-                    <Link href="/programs/mtech">Learn More</Link>
+                    <Link target="_blank" href="/programs/mtech">Learn More</Link>
                   </Button>
                 </div>
               </CardContent>

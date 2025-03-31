@@ -322,7 +322,7 @@ export default function Dashboard() {
     return [
       {
         label:"Admission Date",
-        date: phdScholarData?.admissionDetails.admissionDate.toString(),
+        date: phdScholarData?.admissionDetails?.admissionDate?.toString(),
         icon: <ContactRound className="h-4 w-4" />
       },
       {
@@ -988,7 +988,7 @@ export default function Dashboard() {
                               <p className="text-sm text-muted-foreground">User Role</p>
                               <div className="flex items-center gap-2">
                                 <Badge variant={userData.isAdmin ? "destructive" : "default"} className="mt-1">
-                                  {userData.isAdmin ? "Administrator" : "PhD Scholar"}
+                                  {userData.isAdmin ? "Administrator" : "Scholar"}
                                 </Badge>
                               </div>
                             </div>
