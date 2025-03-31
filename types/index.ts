@@ -103,6 +103,7 @@ export interface User {
   password: string;
   isVerified: boolean;
   isAdmin: boolean;
+  isSupervisor: boolean;
   notes: string;
   phdScholar: PhdScholar;
 }

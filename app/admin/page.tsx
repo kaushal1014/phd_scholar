@@ -11,6 +11,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 
+
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -48,7 +49,7 @@ export default function AdminUsers() {
     }
 
     console.log("checking")
-    if (status === "authenticated" && session?.user?.isAdmin) {
+    if (status === "authenticated" && (session?.user?.isAdmin || session.user.isSupervisor)) {
       fetch(`/api/user/user/${session.user.id}`)
         .then((response) => response.json())
         .then((data) => {
