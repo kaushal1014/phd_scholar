@@ -2,29 +2,19 @@ import React from "react"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import {
-  GraduationCap,
-  BookOpen,
-  Users,
-  Calendar,
-  ChevronRight,
-  FileText,
-  School,
-  Award,
-  ArrowRight,
-} from "lucide-react"
+import { GraduationCap, BookOpen, Users, Calendar, ChevronRight, FileText, School, Award, ArrowRight, Zap } from 'lucide-react'
 
 export default function ProgramsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
       <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
         <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">Research Programs</h1>
+          <h1 className="text-3xl text-center font-bold text-white">Embark on a journey of advanced research and academic excellence with PES University Research programs.</h1>
         </div>
       </header>
 
       <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {/* PhD Column */}
           <div>
             <Card className="bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 shadow-lg">
@@ -47,10 +37,7 @@ export default function ProgramsPage() {
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild>
-                    <Link href="/programs/phd">Learn More</Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link href="/login">Ph.D. Portal</Link>
+                    <Link target="_blank" href="/programs/phd">Learn More</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -79,10 +66,36 @@ export default function ProgramsPage() {
                 </ul>
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Button asChild>
-                    <Link href="/programs/mtech">Learn More</Link>
+                    <Link target="_blank" href="/programs/mtech">Learn More</Link>
                   </Button>
-                  <Button variant="outline" asChild>
-                    <Link href="/login">M.Tech. Portal</Link>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Direct PhD Column */}
+          <div>
+            <Card className="bg-gradient-to-br from-white to-green-50 dark:from-gray-800 dark:to-gray-700 shadow-lg">
+              <CardHeader>
+                <CardTitle className="text-2xl text-[#1B3668] dark:text-white flex items-center">
+                  <Zap className="mr-2 h-6 w-6" />
+                  Direct Ph.D. Program
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <CardDescription className="text-gray-700 dark:text-gray-300 mb-4">
+                  Accelerated research pathway for exceptional undergraduate students in their 6th & 8th semesters.
+                </CardDescription>
+                <ul className="list-disc pl-5 space-y-2 text-gray-700 dark:text-gray-300 mb-6">
+                  <li>Monthly stipend of ₹15,000 starting from 7th semester</li>
+                  <li>Full tuition fee waiver for the program</li>
+                  <li>Exposure to international research opportunities</li>
+                  <li>Eligible for ₹30,000+ monthly stipend after B.Tech completion</li>
+                  <li>Available in CS, ECE, EEE, Mechanical, and Biotechnology</li>
+                </ul>
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <Button asChild>
+                    <Link href="/programs/direct-phd" target="_blank">Learn More</Link>
                   </Button>
                 </div>
               </CardContent>
@@ -93,4 +106,3 @@ export default function ProgramsPage() {
     </div>
   )
 }
-

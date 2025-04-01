@@ -23,10 +23,15 @@ const notifySucc = (msg: string) => toast.success(msg);
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
+  const [isClient, setIsClient] = useState(false); // Track if the component is running on the client
   const router = useRouter();
   const { data: session, status } = useSession();
-  
+
   const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>();
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const onSubmit = async (data: FormData) => {
     try {
@@ -48,7 +53,7 @@ export default function LoginPage() {
 
   const togglePasswordVisibility = () => setShowPassword(!showPassword);
 
-  if (status === "loading") {
+  if (!isClient || status === "loading") {
     return (
       <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/50">
         <div className="flex items-center space-x-3">
@@ -60,8 +65,8 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/50 p-4">
-      <div className="w-full max-w-md animate-fade-in">
+    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/50 pt-100">
+      <div className="w-full max-w-md animate-fade-in pt--120">
         <Card className="shadow-lg border-[#E5E7EB] bg-white/95 backdrop-blur-sm hover:shadow-xl transition-shadow">
           <CardHeader className="space-y-2">
             <div className="flex justify-center mb-4">
@@ -158,21 +163,11 @@ export default function LoginPage() {
             </CardContent>
           </form>
           <CardFooter className="flex flex-col space-y-3 text-center text-sm mt-4">
-            <Link
-              href="/forgot-password"
-              className="text-sm text-[#6B7280] hover:text-[#4C1D95] transition-colors"
+            <p
+              className="text-sm text-[#6B7280] hover:text-[#4C1D95] transition-colors mb-4"
             >
-              Forgot your password?
-            </Link>
-            <div className="text-[#6B7280]">
-              Don't have an account?{' '}
-              <Link
-                href="/signup"
-                className="font-medium text-[#4C1D95] hover:underline"
-              >
-                Sign up
-              </Link>
-            </div>
+              Any issues kindly contact admin Contact Admin
+            </p>
           </CardFooter>
         </Card>
       </div>

@@ -9,27 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import {
-  GraduationCap,
-  BookMarked,
-  Shield,
-  CheckCircle,
-  LogIn,
-  Loader2,
-  Calendar,
-  BarChart3,
-  FileText,
-  Award,
-  Clock,
-  Users,
-  BookOpen,
-  ChevronRight,
-  AlertCircle,
-  Plus,
-  Edit,
-  User,
-  Mail,
-} from "lucide-react"
+import { GraduationCap, BookMarked, Shield, CheckCircle, LogIn, Loader2, Calendar, BarChart3, FileText, Award, Clock, Users, BookOpen, ChevronRight, AlertCircle, Plus, Edit, User, Mail,ContactRound } from 'lucide-react'
 import type { User as UserType, PhdScholar } from "@/types"
 import { ConferenceSlideshow } from "@/components/ConferenceSlideshow"
 import { Announcements } from "@/components/Announcements"
@@ -48,7 +28,6 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useForm } from "react-hook-form"
-// Add this to the imports at the top of the file
 import { CourseCertificateUpload } from "@/components/course-certificate-upload"
 import { CourseCertificateViewer } from "@/components/course-certificate-viewer"
 import { Badge } from "@/components/ui/badge"
@@ -114,7 +93,7 @@ export default function Dashboard() {
       fetch(`/api/user/user`)
         .then((response) => response.json())
         .then((data) => {
-          if (data.isAdmin) {
+          if (data.isAdmin || data.isSupervisor) {
             router.push("/admin")
           }
           setUserData(data)
@@ -341,6 +320,11 @@ export default function Dashboard() {
 
   const getMilestones = (): Milestone[] => {
     return [
+      {
+        label:"Admission Date",
+        date: phdScholarData?.admissionDetails?.admissionDate?.toString(),
+        icon: <ContactRound className="h-4 w-4" />
+      },
       {
         label: "Comprehensive Exam",
         date: phdScholarData?.phdMilestones?.comprehensiveExamDate?.toString(),
@@ -756,12 +740,12 @@ export default function Dashboard() {
             <div className="lg:col-span-3">
               <Tabs defaultValue="overview" className="h-full">
                 {/* Update the TabsList for the main tabs (around line 650) */}
-                <TabsList className="grid grid-cols-5 mb-4 text-base font-medium">
-                  <TabsTrigger value="overview">Overview</TabsTrigger>
-                  <TabsTrigger value="profile">Profile</TabsTrigger>
-                  <TabsTrigger value="supervision">Supervision</TabsTrigger>
-                  <TabsTrigger value="publications">Publications</TabsTrigger>
-                  <TabsTrigger value="coursework">Coursework</TabsTrigger>
+                <TabsList className="grid grid-cols-5 mb-4 p-1">
+                  <TabsTrigger value="overview" className="text-base py-3 font-medium">Overview</TabsTrigger>
+                  <TabsTrigger value="profile" className="text-base py-3 font-medium">Profile</TabsTrigger>
+                  <TabsTrigger value="supervision" className="text-base py-3 font-medium">Supervision</TabsTrigger>
+                  <TabsTrigger value="publications" className="text-base py-3 font-medium">Publications</TabsTrigger>
+                  <TabsTrigger value="coursework" className="text-base py-3 font-medium">Coursework</TabsTrigger>
                 </TabsList>
 
                 {/* Overview Tab */}
@@ -1004,7 +988,7 @@ export default function Dashboard() {
                               <p className="text-sm text-muted-foreground">User Role</p>
                               <div className="flex items-center gap-2">
                                 <Badge variant={userData.isAdmin ? "destructive" : "default"} className="mt-1">
-                                  {userData.isAdmin ? "Administrator" : "PhD Scholar"}
+                                  {userData.isAdmin ? "Administrator" : "Scholar"}
                                 </Badge>
                               </div>
                             </div>
@@ -1571,8 +1555,8 @@ export default function Dashboard() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle className="text-[#F7941D]">Add Conference Publication</DialogTitle>
-              <DialogDescription>Enter the details of your conference publication below.</DialogDescription>
-            </DialogHeader>
+</DialogHeader>
+            <DialogDescription>Enter the details of your conference publication below.</DialogDescription>
             <Form {...conferenceForm}>
               <form onSubmit={conferenceForm.handleSubmit(handleAddConference)} className="space-y-4">
                 <FormField
@@ -1659,4 +1643,3 @@ export default function Dashboard() {
 
   return null
 }
-

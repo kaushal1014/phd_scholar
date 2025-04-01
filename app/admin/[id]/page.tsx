@@ -38,6 +38,7 @@ export interface UserType {
   password: string;
   isVerified: boolean;
   isAdmin: boolean;
+  isSupervisor:boolean;
   notes: string;
   phdScholar: PhdScholar;
 }
@@ -58,7 +59,7 @@ export default function UserDetail() {
   useEffect(() => {
     if (!isEditing) {
       console.log("Refreshing data after edit...")
-      router.refresh() // ✅ Ensures fresh data
+      router.refresh() 
     }
   }, [isEditing])
 
@@ -108,8 +109,7 @@ export default function UserDetail() {
       return // Wait for the session to load
     }
 
-    // Only proceed with fetching user data if authenticated and the user is an admin
-    if (status === "authenticated" && session?.user?.isAdmin && id) {
+    if (status === "authenticated" && (session?.user?.isAdmin || session.user.isSupervisor) && id) {
       fetchUser()
     } else if (status === "unauthenticated" || !session?.user?.isAdmin) {
       console.log("Redirecting to unauthorized page...")
@@ -178,7 +178,7 @@ export default function UserDetail() {
           ) : (
             <>
               <Badge variant="outline" className="px-3 py-1 text-sm bg-[#003b7a] text-white">
-                PhD Scholar
+                Scholar
               </Badge>
               {session?.user?.isAdmin && (
                 <Button variant="outline" size="sm" onClick={() => setIsEditing(true)} className="ml-2">
@@ -254,7 +254,7 @@ export default function UserDetail() {
                   <p className="text-sm text-muted-foreground">User Role</p>
                   <div className="flex items-center gap-2">
                     <Badge variant={userData.isAdmin ? "destructive" : "default"} className="mt-1">
-                      {userData.isAdmin ? "Administrator" : "PhD Scholar"}
+                      {userData.isAdmin ? "Administrator" : "Scholar"}
                     </Badge>
                   </div>
                 </div>
@@ -921,4 +921,3 @@ const AdminNotes = ({ userId }: { userId: string }) => {
     </div>
   )
 }
-

@@ -26,6 +26,10 @@ const userSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  isSupervisor: {
+    type: Boolean,
+    default: false,
+  },
   phdScholar: {
     // Simulate a foreign key by referencing the PhD scholar
     type: mongoose.Schema.Types.ObjectId,
@@ -55,4 +59,3 @@ userSchema.pre("save", async function (next) {
 const User = mongoose.models.User || mongoose.model("User", userSchema)
 
 export default User
-

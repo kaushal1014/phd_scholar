@@ -4,7 +4,36 @@ import bcryptjs from "bcryptjs";
 import connectDB from "@/server/db";
 import User from "@/server/models/userModel";
 
+declare module "next-auth" {
+  interface User {
+    id: string;
+    email: string;
+    name: string;
+    isAdmin: boolean;
+    isVerified: boolean;
+    isSupervisor: boolean;
+  }
 
+  interface Session {
+    user: {
+      id: string;
+      email: string;
+      name: string;
+      isAdmin: boolean;
+      isVerified: boolean;
+      isSupervisor: boolean;
+    };
+  }
+
+  interface JWT {
+    id: string;
+    email: string;
+    name: string;
+    isAdmin: boolean;
+    isVerified: boolean;
+    isSupervisor: boolean;
+  }
+}
 // Connect to the database
 connectDB();
 
@@ -41,6 +70,7 @@ const authOptions = {
           email: user.email,
           name: `${user.firstName} ${user.lastName}`,
           isAdmin: user.isAdmin,
+          isSupervisor:user.isSupervisor,
           isVerified: user.isVerified,
         };
       },
@@ -48,7 +78,7 @@ const authOptions = {
   ],
   session: {
     // The session will expire after 20 minutes of inactivity
-    maxAge: 20 * 60, // 20 minutes in seconds
+    maxAge: 20 * 60 *20, // 20 minutes in seconds
     updateAge: 10 * 60,
   },
 
@@ -64,6 +94,7 @@ const authOptions = {
         token.name = user.name;
         token.isAdmin = user.isAdmin;
         token.isVerified = user.isVerified;
+        token.isSupervisor=user.isSupervisor;
       }
       return token;
     },
@@ -74,6 +105,7 @@ const authOptions = {
         session.user.email = token.email;
         session.user.name = token.name;
         session.user.isAdmin = token.isAdmin;
+        session.user.isSupervisor=token.isSupervisor;
         session.user.isVerified = token.isVerified;
       }
       return session;
