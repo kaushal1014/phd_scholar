@@ -85,11 +85,7 @@ export default function CollaborationsPage() {
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [discussions, setDiscussions] = useState<Discussion[]>([])
-  const [meetings, setMeetings] = useState<Meeting[]>([])
-  const [events, setEvents] = useState<Event[]>([])
   const [isDiscussionDialogOpen, setIsDiscussionDialogOpen] = useState(false)
-  const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false)
-  const [isEventDialogOpen, setIsEventDialogOpen] = useState(false)
   const router = useRouter()
 
   // Fetch user data
@@ -131,20 +127,6 @@ export default function CollaborationsPage() {
           const discussionsData = await discussionsRes.json()
           setDiscussions(discussionsData)
         }
-
-        // Fetch meetings
-        const meetingsRes = await fetch("/api/collaborations/meetings")
-        if (meetingsRes.ok) {
-          const meetingsData = await meetingsRes.json()
-          setMeetings(meetingsData)
-        }
-
-        // Fetch events
-        const eventsRes = await fetch("/api/collaborations/events")
-        if (eventsRes.ok) {
-          const eventsData = await eventsRes.json()
-          setEvents(eventsData)
-        }
       } catch (error) {
         console.error("Error fetching data:", error)
       }
@@ -175,54 +157,6 @@ export default function CollaborationsPage() {
     } catch (error) {
       console.error("Error creating discussion:", error)
       toast("Failed to create discussion")
-    }
-  }
-
-  const handleMeetingSubmit = async (data: any) => {
-    try {
-      const response = await fetch("/api/collaborations/meetings", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to schedule meeting")
-      }
-
-      const newMeeting = await response.json()
-      setMeetings([newMeeting, ...meetings])
-      setIsMeetingDialogOpen(false)
-      toast("Meeting scheduled successfully")
-    } catch (error) {
-      console.error("Error scheduling meeting:", error)
-      toast("Failed to schedule meeting")
-    }
-  }
-
-  const handleEventSubmit = async (data: any) => {
-    try {
-      const response = await fetch("/api/collaborations/events", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(data),
-      })
-
-      if (!response.ok) {
-        throw new Error("Failed to create event")
-      }
-
-      const newEvent = await response.json()
-      setEvents([newEvent, ...events])
-      setIsEventDialogOpen(false)
-      toast("Event created successfully")
-    } catch (error) {
-      console.error("Error creating event:", error)
-      toast("Failed to create event")
     }
   }
 
@@ -269,35 +203,7 @@ export default function CollaborationsPage() {
             </div>
           </CardHeader>
 
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <div className="border-b px-6 py-4">
-              <TabsList className="grid w-full grid-cols-3 bg-[#F3F4F6]">
-                <TabsTrigger
-                  value="discussion-forum"
-                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
-                >
-                  <MessageSquare className="h-5 w-5 mr-2" />
-                  Discussion Forum
-                </TabsTrigger>
-                <TabsTrigger
-                  value="monthly-meetings"
-                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
-                >
-                  <Calendar className="h-5 w-5 mr-2" />
-                  Monthly Meetings
-                </TabsTrigger>
-                <TabsTrigger
-                  value="event-updates"
-                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
-                >
-                  <Bell className="h-5 w-5 mr-2" />
-                  Event Updates
-                </TabsTrigger>
-              </TabsList>
-            </div>
-
             <CardContent className="p-6">
-              <TabsContent value="discussion-forum" className="mt-0">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
@@ -368,161 +274,7 @@ export default function CollaborationsPage() {
                     )}
                   </div>
                 </div>
-              </TabsContent>
-
-              <TabsContent value="monthly-meetings" className="mt-0">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
-                      <Calendar className="h-5 w-5 mr-2 text-[#F59E0B]" />
-                      Monthly Meetings
-                    </h2>
-                    {/* Only show for admin and supervisors */}
-                    {canCreateContent && (
-                      <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
-                            <CalendarClock className="h-4 w-4 mr-2" />
-                            Schedule Meeting
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[500px]">
-                          <DialogHeader>
-                            <DialogTitle>Schedule New Meeting</DialogTitle>
-                            <DialogDescription>Schedule a new meeting with your research colleagues</DialogDescription>
-                          </DialogHeader>
-                          <NewMeetingForm onSubmit={handleMeetingSubmit} />
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                  </div>
-
-                  <div className="grid gap-4">
-                    {meetings.length > 0 ? (
-                      meetings.map((meeting) => (
-                        <Link
-                          href={`/collaborations/meetings/${meeting._id}`}
-                          key={meeting._id}
-                          className="block"
-                        >
-                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-4">
-                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
-                                  <Calendar className="h-5 w-5 text-[#1B3668]" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <h3 className="font-medium text-[#1F2937] mb-1">{meeting.title}</h3>
-                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
-                                  </div>
-                                  <p className="text-sm text-[#6B7280] mb-2">
-                                    {meeting.description.length > 100
-                                      ? `${meeting.description.substring(0, 100)}...`
-                                      : meeting.description}
-                                  </p>
-                                  <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">
-                                      Date: {new Date(meeting.date).toLocaleDateString()}
-                                    </span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Time: {meeting.time}</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Location: {meeting.location}</span>
-                                  </div>
-                                  <div className="text-xs text-[#6B7280] mt-1">
-                                    Organized by: {meeting.organizer.firstName}
-                                  </div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-gray-500">
-                        No meetings scheduled yet. {canCreateContent ? "Schedule a new meeting!" : ""}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
-
-              <TabsContent value="event-updates" className="mt-0">
-                <div className="space-y-6">
-                  <div className="flex justify-between items-center">
-                    <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
-                      <Bell className="h-5 w-5 mr-2 text-[#F59E0B]" />
-                      Event Updates
-                    </h2>
-                    {/* Only show for admin and supervisors */}
-                    {canCreateContent && (
-                      <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
-                        <DialogTrigger asChild>
-                          <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
-                            <UserPlus className="h-4 w-4 mr-2" />
-                            Add Event
-                          </Button>
-                        </DialogTrigger>
-                        <DialogContent className="sm:max-w-[500px]">
-                          <DialogHeader>
-                            <DialogTitle>Create New Event</DialogTitle>
-                            <DialogDescription>Add a new research event to the calendar</DialogDescription>
-                          </DialogHeader>
-                          <NewEventForm onSubmit={handleEventSubmit} />
-                        </DialogContent>
-                      </Dialog>
-                    )}
-                  </div>
-
-                  <div className="grid gap-4">
-                    {events.length > 0 ? (
-                      events.map((event) => (
-                        <Link
-                          href={`/collaborations/events/${event._id}`}
-                          key={event._id}
-                          className="block"
-                        >
-                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-4">
-                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
-                                  <Bell className="h-5 w-5 text-[#1B3668]" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <h3 className="font-medium text-[#1F2937] mb-1">{event.title}</h3>
-                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
-                                  </div>
-                                  <p className="text-sm text-[#6B7280] mb-2">
-                                    {event.description.length > 100
-                                      ? `${event.description.substring(0, 100)}...`
-                                      : event.description}
-                                  </p>
-                                  <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">Date: {new Date(event.date).toLocaleDateString()}</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Time: {event.time}</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Location: {event.location}</span>
-                                  </div>
-                                  <div className="text-xs text-[#6B7280] mt-1">Organized by: {event.organizer.firstName}</div>
-                                </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      ))
-                    ) : (
-                      <div className="text-center py-8 text-gray-500">
-                        No events added yet. {canCreateContent ? "Add a new event!" : ""}
-                      </div>
-                    )}
-                  </div>
-                </div>
-              </TabsContent>
             </CardContent>
-          </Tabs>
         </Card>
 
         <div className="mt-8 text-center">
