@@ -1,25 +1,24 @@
-'use client'
+"use client"
 
-import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { signIn, useSession } from 'next-auth/react';
-import { useForm } from 'react-hook-form';
-import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Button } from '@/components/ui/button';
-import { EyeIcon, EyeOffIcon } from 'lucide-react';
-import Link from 'next/link';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
+import { signIn, useSession } from "next-auth/react"
+import { useForm } from "react-hook-form"
+import { Input } from "@/components/ui/input"
+import { Button } from "@/components/ui/button"
+import { EyeIcon, EyeOffIcon } from 'lucide-react'
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
+import Image from "next/image"
+import Link from "next/link"
 
 type FormData = {
   email: string;
   password: string;
 };
 
-const notifyErr = (msg: string) => toast.error(msg);
-const notifySucc = (msg: string) => toast.success(msg);
+const notifyErr = (msg: string) => toast.error(msg)
+const notifySucc = (msg: string) => toast.success(msg)
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
@@ -65,42 +64,25 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/50 pt-100">
-      <div className="w-full max-w-md animate-fade-in pt--120">
-        <Card className="shadow-lg border-[#E5E7EB] bg-white/95 backdrop-blur-sm hover:shadow-xl transition-shadow">
-          <CardHeader className="space-y-2">
-            <div className="flex justify-center mb-4">
-              <div className="rounded-full bg-[#4C1D95]/10 p-3">
-                <svg
-                  xmlns="http://www.w3.org/2000/svg"
-                  width="24"
-                  height="24"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  className="h-8 w-8 text-[#4C1D95]"
-                >
-                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
-                  <polyline points="10 17 15 12 10 7" />
-                  <line x1="15" y1="12" x2="3" y2="12" />
-                </svg>
-              </div>
-            </div>
-            <CardTitle className="text-2xl font-bold text-center text-[#1F2937]">
-              Welcome Back
-            </CardTitle>
-            <CardDescription className="text-center text-[#6B7280]">
-              Sign in to your account
-            </CardDescription>
-          </CardHeader>
+    <div className="flex min-h-screen">
+      {/* Left side - Login form */}
+      <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#f5f7fa]">
+        <div className="w-full max-w-md">
+          <div className="mb-12">
+            <Image
+              src="/logoPesu.png"
+              alt="PES University Logo"
+              width={240}
+              height={80}
+              className="mb-8"
+            />
+            <h1 className="text-4xl font-light text-gray-800">Sign in</h1>
+          </div>
+
           <form onSubmit={handleSubmit(onSubmit)}>
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <Label htmlFor="email" className="text-[#1F2937]">Email</Label>
-                <Input
+            <div className="space-y-6">
+              <div className="space-y-2">
+              <Input
                   id="email"
                   placeholder="m@example.com"
                   className="focus:ring-[#4C1D95] focus:border-[#4C1D95]"
@@ -116,19 +98,15 @@ export default function LoginPage() {
                 {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
               </div>
 
-              <div className="space-y-3">
-                <Label htmlFor="password" className="text-[#1F2937]">Password</Label>
+              <div className="space-y-2">
                 <div className="relative">
                   <Input
                     id="password"
-                    type={showPassword ? 'text' : 'password'}
-                    className="focus:ring-[#4C1D95] focus:border-[#4C1D95] pr-10"
-                    {...register('password', {
-                      required: 'Password is required',
-                      minLength: {
-                        value: 8,
-                        message: 'Password must be at least 8 characters long',
-                      }
+                    type={showPassword ? "text" : "password"}
+                    placeholder="Password"
+                    className="h-12 bg-white border-gray-200 rounded-md pr-10"
+                    {...register("password", {
+                      required: "Password is required",
                     })}
                     disabled={isSubmitting}
                   />
@@ -136,19 +114,19 @@ export default function LoginPage() {
                     type="button"
                     variant="ghost"
                     size="sm"
-                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-[#6B7280]"
+                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent text-gray-500"
                     onClick={togglePasswordVisibility}
                     disabled={isSubmitting}
                   >
                     {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                   </Button>
                 </div>
-                {errors.password && <p className="text-red-500 text-sm mt-1">{errors.password.message}</p>}
+                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
               </div>
 
               <Button
                 type="submit"
-                className="w-full bg-[#4C1D95] hover:bg-[#4C1D95]/90 transition-colors"
+                className="w-full h-12 bg-[#0a2158] hover:bg-[#0a2158]/90 transition-colors rounded-md"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -157,20 +135,93 @@ export default function LoginPage() {
                     <span>Signing In...</span>
                   </div>
                 ) : (
-                  'Sign In'
+                  "Sign In"
                 )}
               </Button>
-            </CardContent>
+
+              <div className="h-4"></div>
+
+              <div className="text-center mt-8">
+                <p className="text-[#2563eb]">
+                  Contact Admin for any issues.
+                </p>
+              </div>
+            </div>
           </form>
-          <CardFooter className="flex flex-col space-y-3 text-center text-sm mt-4">
-            <p
-              className="text-sm text-[#6B7280] hover:text-[#4C1D95] transition-colors mb-4"
-            >
-              Any issues kindly contact admin Contact Admin
-            </p>
-          </CardFooter>
-        </Card>
+
+          <div className="mt-12 text-center text-sm text-gray-500">
+            <p>Copyright © PES University, Bengaluru, India.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* Right side - PhD Benefits panel */}
+      <div className="hidden lg:block lg:w-1/2 bg-[#0a2158] text-white p-8">
+        <div className="h-full flex flex-col justify-center items-center">
+          <div className="w-full max-w-md space-y-8">
+            <div className="mb-6 text-center">
+              <h2 className="text-3xl font-semibold mb-2">PhD Research Portal</h2>
+              <p className="text-white/80">Access exclusive resources for doctoral researchers</p>
+            </div>
+            
+            <div className="bg-[#0a2158]/30 border border-[#ffffff20] rounded-lg p-6 hover:bg-[#0a2158]/40 transition-colors">
+              <div className="flex items-start gap-5">
+                <div className="bg-[#1a3a7a] p-3 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                    <rect width="18" height="18" x="3" y="3" rx="2" />
+                    <path d="M9 9h6" />
+                    <path d="M9 13h6" />
+                    <path d="M9 17h6" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-medium mb-1">Research Dashboard</h3>
+                  <p className="text-white/80">Track your publications, citations, and research progress in real-time</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-[#0a2158]/30 border border-[#ffffff20] rounded-lg p-6 hover:bg-[#0a2158]/40 transition-colors">
+              <div className="flex items-start gap-5">
+                <div className="bg-[#1a3a7a] p-3 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                    <path d="M17 12c0 2.2-1.8 4-4 4s-4-1.8-4-4 1.8-4 4-4 4 1.8 4 4Z" />
+                    <path d="M5 5a4 4 0 0 1 4 4" />
+                    <path d="M19 5a4 4 0 0 0-4 4" />
+                    <path d="M5 19a4 4 0 0 0 4-4" />
+                    <path d="M19 19a4 4 0 0 1-4-4" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-medium mb-1">Collaboration Hub</h3>
+                  <p className="text-white/80">Connect with peers, share resources, and participate in discussions</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="bg-[#0a2158]/30 border border-[#ffffff20] rounded-lg p-6 hover:bg-[#0a2158]/40 transition-colors">
+              <div className="flex items-start gap-5">
+                <div className="bg-[#1a3a7a] p-3 rounded-full">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                    <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
+                    <line x1="3" x2="21" y1="9" y2="9" />
+                    <line x1="9" x2="9" y1="21" y2="9" />
+                    <line x1="15" x2="15" y1="21" y2="9" />
+                  </svg>
+                </div>
+                <div>
+                  <h3 className="text-xl font-medium mb-1">Events & Meetings</h3>
+                  <p className="text-white/80">Stay updated with monthly seminars, conferences, and research meetings</p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="pt-8 text-center">
+              <p className="text-white/70">Part of PES University Research Excellence Initiative</p>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
-  );
+  )
 }

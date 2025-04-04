@@ -89,7 +89,7 @@ export default function HomePage() {
               icon: Users,
               title: "Collaboration Hub",
               description: "Connect with fellow researchers, join discussion groups, and find potential collaborators.",
-              link: "/collaboration",
+              link: "/collaborations",
               linkText: "Explore Collaborations"
             },
             {
