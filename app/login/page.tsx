@@ -321,7 +321,7 @@ export default function LoginPage() {
                 <Label htmlFor="reset-email">Email</Label>
                 <Input
                   id="reset-email"
-                  placeholder="m@example.com"
+                  placeholder="m@pesu.edu"
                   {...registerForgotPassword("email", {
                     required: "Email is required",
                     pattern: {
