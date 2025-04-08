@@ -6,61 +6,105 @@ import { signIn, useSession } from "next-auth/react"
 import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { EyeIcon, EyeOffIcon } from 'lucide-react'
+import { EyeIcon, EyeOffIcon } from "lucide-react"
 import { toast } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
+import axios from "axios"
 import Image from "next/image"
-import Link from "next/link"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog"
+import { Label } from "@/components/ui/label"
+import { response } from "express"
 
 type FormData = {
-  email: string;
-  password: string;
-};
+  email: string
+  password: string
+}
+
+type ForgotPasswordFormData = {
+  email: string
+}
 
 const notifyErr = (msg: string) => toast.error(msg)
 const notifySucc = (msg: string) => toast.success(msg)
 
 export default function LoginPage() {
-  const [showPassword, setShowPassword] = useState(false);
-  const [isClient, setIsClient] = useState(false); // Track if the component is running on the client
-  const router = useRouter();
-  const { data: session, status } = useSession();
+  const [showPassword, setShowPassword] = useState(false)
+  const [isClient, setIsClient] = useState(false)
+  const router = useRouter()
+  const [forgotPasswordOpen, setForgotPasswordOpen] = useState(false)
+  const [isResettingPassword, setIsResettingPassword] = useState(false)
+  const { data: session, status } = useSession()
 
-  const { register, handleSubmit, formState: { errors, isSubmitting } } = useForm<FormData>();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<FormData>()
+
+  const {
+    register: registerForgotPassword,
+    handleSubmit: handleSubmitForgotPassword,
+    formState: { errors: forgotPasswordErrors },
+    reset: resetForgotPasswordForm,
+  } = useForm<ForgotPasswordFormData>()
 
   useEffect(() => {
-    setIsClient(true);
-  }, []);
+    setIsClient(true)
+  }, [])
 
   const onSubmit = async (data: FormData) => {
     try {
-      const response = await signIn('credentials', {
+      const response = await signIn("credentials", {
         email: data.email,
         password: data.password,
         redirect: false,
-      });
+      })
       if (response?.ok) {
-        notifySucc('Login successful');
-        router.push('/dashboard');
+        notifySucc("Login successful")
+        router.push("/dashboard")
       } else {
-        notifyErr('Invalid credentials');
+        notifyErr("Invalid credentials")
       }
     } catch (err) {
-      notifyErr('Something went wrong');
+      notifyErr("Something went wrong")
     }
-  };
+  }
 
-  const togglePasswordVisibility = () => setShowPassword(!showPassword);
+  const handleForgotPassword = async (data: ForgotPasswordFormData) => {
+    try {
+      setIsResettingPassword(true)
+
+      // Simulate API call to send reset password email
+      const response = await axios.post('api/reset-password',{email : data.email})
+
+      notifySucc(`Password reset link sent to ${data.email}`)
+      setForgotPasswordOpen(false)
+      resetForgotPasswordForm()
+    } catch (error) {
+      notifyErr("Failed to send reset link. Please try again.")
+    } finally {
+      setIsResettingPassword(false)
+    }
+  }
+
+  const togglePasswordVisibility = () => setShowPassword(!showPassword)
 
   if (!isClient || status === "loading") {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-gradient-to-b from-background to-muted/50">
+      <div className="flex items-center justify-center min-h-screen bg-[#f5f7fa]">
         <div className="flex items-center space-x-3">
-          <div className="w-5 h-5 border-2 border-[#4C1D95] border-t-transparent rounded-full animate-spin" />
-          <span className="text-[#1F2937]">Loading...</span>
+          <div className="w-5 h-5 border-2 border-[#0a2158] border-t-transparent rounded-full animate-spin" />
+          <span className="text-[#0a2158]">Loading...</span>
         </div>
       </div>
-    );
+    )
   }
 
   return (
@@ -82,15 +126,15 @@ export default function LoginPage() {
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="space-y-6">
               <div className="space-y-2">
-              <Input
+                <Input
                   id="email"
-                  placeholder="m@example.com"
-                  className="focus:ring-[#4C1D95] focus:border-[#4C1D95]"
-                  {...register('email', {
-                    required: 'Email is required',
+                  placeholder="Email"
+                  className="h-12 bg-white border-gray-200 rounded-md"
+                  {...register("email", {
+                    required: "Email is required",
                     pattern: {
                       value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                      message: 'Invalid email format',
+                      message: "Invalid email format",
                     },
                   })}
                   disabled={isSubmitting}
@@ -139,12 +183,14 @@ export default function LoginPage() {
                 )}
               </Button>
 
-              <div className="h-4"></div>
-
               <div className="text-center mt-8">
-                <p className="text-[#2563eb]">
-                  Contact Admin for any issues.
-                </p>
+                <button
+                  type="button"
+                  onClick={() => setForgotPasswordOpen(true)}
+                  className="text-[#2563eb] hover:underline text-sm"
+                >
+                  Forgot your Password?
+                </button>
               </div>
             </div>
           </form>
@@ -163,11 +209,22 @@ export default function LoginPage() {
               <h2 className="text-3xl font-semibold mb-2">PhD Research Portal</h2>
               <p className="text-white/80">Access exclusive resources for doctoral researchers</p>
             </div>
-            
+
             <div className="bg-[#0a2158]/30 border border-[#ffffff20] rounded-lg p-6 hover:bg-[#0a2158]/40 transition-colors">
               <div className="flex items-start gap-5">
                 <div className="bg-[#1a3a7a] p-3 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-6 w-6"
+                  >
                     <rect width="18" height="18" x="3" y="3" rx="2" />
                     <path d="M9 9h6" />
                     <path d="M9 13h6" />
@@ -176,15 +233,28 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-medium mb-1">Research Dashboard</h3>
-                  <p className="text-white/80">Track your publications, citations, and research progress in real-time</p>
+                  <p className="text-white/80">
+                    Track your publications, citations, and research progress in real-time
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-[#0a2158]/30 border border-[#ffffff20] rounded-lg p-6 hover:bg-[#0a2158]/40 transition-colors">
               <div className="flex items-start gap-5">
                 <div className="bg-[#1a3a7a] p-3 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-6 w-6"
+                  >
                     <path d="M17 12c0 2.2-1.8 4-4 4s-4-1.8-4-4 1.8-4 4-4 4 1.8 4 4Z" />
                     <path d="M5 5a4 4 0 0 1 4 4" />
                     <path d="M19 5a4 4 0 0 0-4 4" />
@@ -198,11 +268,22 @@ export default function LoginPage() {
                 </div>
               </div>
             </div>
-            
+
             <div className="bg-[#0a2158]/30 border border-[#ffffff20] rounded-lg p-6 hover:bg-[#0a2158]/40 transition-colors">
               <div className="flex items-start gap-5">
                 <div className="bg-[#1a3a7a] p-3 rounded-full">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="h-6 w-6"
+                  >
                     <rect width="18" height="18" x="3" y="3" rx="2" ry="2" />
                     <line x1="3" x2="21" y1="9" y2="9" />
                     <line x1="9" x2="9" y1="21" y2="9" />
@@ -211,17 +292,73 @@ export default function LoginPage() {
                 </div>
                 <div>
                   <h3 className="text-xl font-medium mb-1">Events & Meetings</h3>
-                  <p className="text-white/80">Stay updated with monthly seminars, conferences, and research meetings</p>
+                  <p className="text-white/80">
+                    Stay updated with monthly seminars, conferences, and research meetings
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="pt-8 text-center">
               <p className="text-white/70">Part of PES University Research Excellence Initiative</p>
             </div>
           </div>
         </div>
       </div>
+
+      {/* Forgot Password Dialog */}
+      <Dialog open={forgotPasswordOpen} onOpenChange={setForgotPasswordOpen}>
+        <DialogContent className="sm:max-w-[425px]">
+          <DialogHeader>
+            <DialogTitle>Reset your password</DialogTitle>
+            <DialogDescription>
+              Enter your email address and we'll send you a link to reset your password.
+            </DialogDescription>
+          </DialogHeader>
+          <form onSubmit={handleSubmitForgotPassword(handleForgotPassword)}>
+            <div className="grid gap-4 py-4">
+              <div className="grid gap-2">
+                <Label htmlFor="reset-email">Email</Label>
+                <Input
+                  id="reset-email"
+                  placeholder="m@example.com"
+                  {...registerForgotPassword("email", {
+                    required: "Email is required",
+                    pattern: {
+                      value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                      message: "Invalid email format",
+                    },
+                  })}
+                  disabled={isResettingPassword}
+                />
+                {forgotPasswordErrors.email && (
+                  <p className="text-red-500 text-sm">{forgotPasswordErrors.email.message}</p>
+                )}
+              </div>
+            </div>
+            <DialogFooter>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setForgotPasswordOpen(false)}
+                disabled={isResettingPassword}
+              >
+                Cancel
+              </Button>
+              <Button type="submit" disabled={isResettingPassword} className="bg-[#0a2158] hover:bg-[#0a2158]/90">
+                {isResettingPassword ? (
+                  <div className="flex items-center space-x-2">
+                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    <span>Sending...</span>
+                  </div>
+                ) : (
+                  "Send Reset Link"
+                )}
+              </Button>
+            </DialogFooter>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   )
 }
