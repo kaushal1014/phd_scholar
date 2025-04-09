@@ -156,9 +156,9 @@ export default function MeetingDetailPage({ params }: { params: { id: string } }
       <div className="min-h-screen flex flex-col items-center justify-center">
         <h1 className="text-2xl font-bold mb-4">Meeting not found</h1>
         <Button asChild variant="outline">
-          <Link href="/collaborations">
+          <Link href="/events">
             <ChevronLeft className="mr-2 h-5 w-5" />
-            Back to Collaborations
+            Back to events
           </Link>
         </Button>
       </div>
@@ -188,9 +188,9 @@ export default function MeetingDetailPage({ params }: { params: { id: string } }
             variant="outline"
             className="group rounded-full px-4 border-[#1B3668] text-[#1B3668] hover:bg-[#1B3668] hover:text-white transition-all duration-200"
           >
-            <Link href="/collaborations">
+            <Link href="/events">
               <ChevronLeft className="mr-2 h-5 w-5 transition-transform duration-200 group-hover:-translate-x-1" />
-              Back to Collaborations
+              Back to events
             </Link>
           </Button>
         </div>

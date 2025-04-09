@@ -6,7 +6,7 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Users, MessageSquare, Calendar, Bell, ChevronLeft, UserPlus, CalendarClock, MessagesSquare, Loader2, ExternalLink } from 'lucide-react'
+import { Calendar, Bell, ChevronLeft, UserPlus, CalendarClock, Loader2, ExternalLink, Clock } from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -16,9 +16,6 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "react-toastify"
-import { formatDistanceToNow } from "date-fns"
-import NewDiscussionForm from "@/components/new-discussion-form"
-import NewMeetingForm from "@/components/new-meeting-form"
 import NewEventForm from "@/components/new-event-form"
 
 // Types
@@ -29,27 +26,6 @@ interface User {
   role: string
   isAdmin?: boolean
   isSupervisor?: boolean
-}
-
-interface Discussion {
-  _id: string
-  title: string
-  content: string
-  author: {
-    _id: string
-    firstName: string
-  }
-  replies: {
-    _id: string
-    content: string
-    author: {
-      _id: string
-      firstName: string
-    }
-    createdAt: string
-  }[]
-  createdAt: string
-  updatedAt: string
 }
 
 interface Meeting {
@@ -80,8 +56,8 @@ interface Event {
   createdAt: string
 }
 
-export default function CollaborationsPage() {
-  const [activeTab, setActiveTab] = useState("discussion-forum")
+export default function EventsPage() {
+  const [activeTab, setActiveTab] = useState("monthly-meetings")
   const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
   const [meetings, setMeetings] = useState<Meeting[]>([])
@@ -101,14 +77,14 @@ export default function CollaborationsPage() {
         const data = await response.json()
 
         if (!data.user) {
-          router.push("/login?callbackUrl=/collaborations")
+          router.push("/login?callbackUrl=/events")
           return
         }
 
         setUser(data.user)
       } catch (error) {
         console.error("Error fetching user:", error)
-        router.push("/login?callbackUrl=/collaborations")
+        router.push("/login?callbackUrl=/events")
       } finally {
         setLoading(false)
       }
@@ -117,7 +93,7 @@ export default function CollaborationsPage() {
     fetchUser()
   }, [router])
 
-  // Fetch discussions, meetings, and events
+  // Fetch meetings and events
   useEffect(() => {
     const fetchData = async () => {
       if (!user) return
@@ -143,7 +119,6 @@ export default function CollaborationsPage() {
 
     fetchData()
   }, [user])
-
 
   const handleMeetingSubmit = async (data: any) => {
     try {
@@ -193,8 +168,21 @@ export default function CollaborationsPage() {
     }
   }
 
-  // Check if user can create content (admin or supervisor)
-  const canCreateContent = user?.isAdmin || user?.isSupervisor
+  // Check if user is admin
+  const isAdmin = user?.isAdmin === true
+
+  // Filter events into past and upcoming
+  const currentDate = new Date()
+  const upcomingEvents = events
+    .filter((event) => new Date(event.date) >= currentDate)
+    .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
+
+  const pastEvents = events
+    .filter((event) => new Date(event.date) < currentDate)
+    .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
+
+  // Filter monthly meetings (assuming they are recurring monthly events)
+  const monthlyMeetings = meetings.sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime())
 
   if (loading) {
     return (
@@ -211,12 +199,10 @@ export default function CollaborationsPage() {
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
         <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 relative">
           <div className="flex items-center space-x-3">
-            <Users className="h-8 w-8 text-[#F59E0B]" />
-            <h1 className="text-3xl font-bold text-white">Collaborations</h1>
+            <Calendar className="h-8 w-8 text-[#F59E0B]" />
+            <h1 className="text-3xl font-bold text-white">Events</h1>
           </div>
-          <p className="text-blue-100 mt-2 max-w-2xl">
-            Connect, collaborate, and stay updated with fellow researchers
-          </p>
+          <p className="text-blue-100 mt-2 max-w-2xl">Stay updated with all research events and monthly meetings</p>
         </div>
       </header>
 
@@ -225,12 +211,12 @@ export default function CollaborationsPage() {
           <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-6">
             <div className="flex items-center space-x-4">
               <div className="rounded-full bg-[#1B3668]/10 p-3 border border-[#1B3668]/20">
-                <Users className="h-8 w-8 text-[#1B3668]" />
+                <Calendar className="h-8 w-8 text-[#1B3668]" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-[#1F2937]">Research Collaborations</CardTitle>
+                <CardTitle className="text-2xl font-bold text-[#1F2937]">Research Events</CardTitle>
                 <CardDescription className="text-base mt-1 text-[#6B7280]">
-                  Connect, collaborate, and stay updated with fellow researchers
+                  View monthly meetings, upcoming events, and past events
                 </CardDescription>
               </div>
             </div>
@@ -247,11 +233,18 @@ export default function CollaborationsPage() {
                   Monthly Meetings
                 </TabsTrigger>
                 <TabsTrigger
-                  value="event-updates"
+                  value="upcoming-events"
                   className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
                 >
                   <Bell className="h-5 w-5 mr-2" />
-                  Event Updates
+                  Upcoming Events
+                </TabsTrigger>
+                <TabsTrigger
+                  value="past-events"
+                  className="data-[state=active]:bg-[#1B3668] data-[state=active]:text-white transition-all duration-200 text-base py-3 font-medium"
+                >
+                  <Clock className="h-5 w-5 mr-2" />
+                  Past Events
                 </TabsTrigger>
               </TabsList>
             </div>
@@ -264,8 +257,8 @@ export default function CollaborationsPage() {
                       <Calendar className="h-5 w-5 mr-2 text-[#F59E0B]" />
                       Monthly Meetings
                     </h2>
-                    {/* Only show for admin and supervisors */}
-                    {canCreateContent && (
+                    {/* Only show for admin */}
+                    {isAdmin && (
                       <Dialog open={isMeetingDialogOpen} onOpenChange={setIsMeetingDialogOpen}>
                         <DialogTrigger asChild>
                           <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
@@ -276,22 +269,18 @@ export default function CollaborationsPage() {
                         <DialogContent className="sm:max-w-[500px]">
                           <DialogHeader>
                             <DialogTitle>Schedule New Meeting</DialogTitle>
-                            <DialogDescription>Schedule a new meeting with your research colleagues</DialogDescription>
+                            <DialogDescription>Schedule a new monthly meeting for researchers</DialogDescription>
                           </DialogHeader>
-                          <NewMeetingForm onSubmit={handleMeetingSubmit} />
+                          <NewEventForm onSubmit={handleMeetingSubmit} />
                         </DialogContent>
                       </Dialog>
                     )}
                   </div>
 
                   <div className="grid gap-4">
-                    {meetings.length > 0 ? (
-                      meetings.map((meeting) => (
-                        <Link
-                          href={`/collaborations/meetings/${meeting._id}`}
-                          key={meeting._id}
-                          className="block"
-                        >
+                    {monthlyMeetings.length > 0 ? (
+                      monthlyMeetings.map((meeting) => (
+                        <Link href={`/events/meetings/${meeting._id}`} key={meeting._id} className="block">
                           <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
                             <CardContent className="p-4">
                               <div className="flex items-start gap-4">
@@ -328,22 +317,22 @@ export default function CollaborationsPage() {
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">
-                        No meetings scheduled yet. {canCreateContent ? "Schedule a new meeting!" : ""}
+                        No monthly meetings scheduled yet. {isAdmin ? "Schedule a new meeting!" : ""}
                       </div>
                     )}
                   </div>
                 </div>
               </TabsContent>
 
-              <TabsContent value="event-updates" className="mt-0">
+              <TabsContent value="upcoming-events" className="mt-0">
                 <div className="space-y-6">
                   <div className="flex justify-between items-center">
                     <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
                       <Bell className="h-5 w-5 mr-2 text-[#F59E0B]" />
-                      Event Updates
+                      Upcoming Events
                     </h2>
-                    {/* Only show for admin and supervisors */}
-                    {canCreateContent && (
+                    {/* Only show for admin */}
+                    {isAdmin && (
                       <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
                         <DialogTrigger asChild>
                           <Button className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200">
@@ -363,13 +352,9 @@ export default function CollaborationsPage() {
                   </div>
 
                   <div className="grid gap-4">
-                    {events.length > 0 ? (
-                      events.map((event) => (
-                        <Link
-                          href={`/collaborations/events/${event._id}`}
-                          key={event._id}
-                          className="block"
-                        >
+                    {upcomingEvents.length > 0 ? (
+                      upcomingEvents.map((event) => (
+                        <Link href={`/events/events/${event._id}`} key={event._id} className="block">
                           <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
                             <CardContent className="p-4">
                               <div className="flex items-start gap-4">
@@ -387,13 +372,17 @@ export default function CollaborationsPage() {
                                       : event.description}
                                   </p>
                                   <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">Date: {new Date(event.date).toLocaleDateString()}</span>
+                                    <span className="font-medium">
+                                      Date: {new Date(event.date).toLocaleDateString()}
+                                    </span>
                                     <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Time: {event.time}</span>
                                     <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                                     <span>Location: {event.location}</span>
                                   </div>
-                                  <div className="text-xs text-[#6B7280] mt-1">Organized by: {event.organizer.firstName}</div>
+                                  <div className="text-xs text-[#6B7280] mt-1">
+                                    Organized by: {event.organizer.firstName}
+                                  </div>
                                 </div>
                               </div>
                             </CardContent>
@@ -402,8 +391,62 @@ export default function CollaborationsPage() {
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">
-                        No events added yet. {canCreateContent ? "Add a new event!" : ""}
+                        No upcoming events yet. {isAdmin ? "Add a new event!" : ""}
                       </div>
+                    )}
+                  </div>
+                </div>
+              </TabsContent>
+
+              <TabsContent value="past-events" className="mt-0">
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center">
+                    <h2 className="text-xl font-semibold text-[#1F2937] flex items-center">
+                      <Clock className="h-5 w-5 mr-2 text-[#F59E0B]" />
+                      Past Events
+                    </h2>
+                  </div>
+
+                  <div className="grid gap-4">
+                    {pastEvents.length > 0 ? (
+                      pastEvents.map((event) => (
+                        <Link href={`/events/events/${event._id}`} key={event._id} className="block">
+                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 bg-gray-50">
+                            <CardContent className="p-4">
+                              <div className="flex items-start gap-4">
+                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                  <Clock className="h-5 w-5 text-[#1B3668]" />
+                                </div>
+                                <div className="flex-1">
+                                  <div className="flex items-center justify-between">
+                                    <h3 className="font-medium text-[#1F2937] mb-1">{event.title}</h3>
+                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
+                                  </div>
+                                  <p className="text-sm text-[#6B7280] mb-2">
+                                    {event.description.length > 100
+                                      ? `${event.description.substring(0, 100)}...`
+                                      : event.description}
+                                  </p>
+                                  <div className="flex items-center text-xs text-[#6B7280]">
+                                    <span className="font-medium">
+                                      Date: {new Date(event.date).toLocaleDateString()}
+                                    </span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                    <span>Time: {event.time}</span>
+                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                    <span>Location: {event.location}</span>
+                                  </div>
+                                  <div className="text-xs text-[#6B7280] mt-1">
+                                    Organized by: {event.organizer.firstName}
+                                  </div>
+                                </div>
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
+                      ))
+                    ) : (
+                      <div className="text-center py-8 text-gray-500">No past events to display.</div>
                     )}
                   </div>
                 </div>
