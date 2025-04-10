@@ -6,7 +6,18 @@ import { useRouter } from "next/navigation"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Calendar, Bell, ChevronLeft, UserPlus, CalendarClock, Loader2, ExternalLink, Clock } from "lucide-react"
+import {
+  Calendar,
+  Bell,
+  ChevronLeft,
+  UserPlus,
+  CalendarClock,
+  Loader2,
+  ExternalLink,
+  Clock,
+  FileText,
+  Download,
+} from "lucide-react"
 import {
   Dialog,
   DialogContent,
@@ -16,6 +27,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog"
 import { toast } from "react-toastify"
+import { Badge } from "@/components/ui/badge"
+import Image from "next/image"
 import NewEventForm from "@/components/new-event-form"
 
 // Types
@@ -40,6 +53,8 @@ interface Meeting {
     firstName: string
   }
   createdAt: string
+  documentUrl?: string
+  documentType?: "pdf" | "image"
 }
 
 interface Event {
@@ -54,6 +69,8 @@ interface Event {
     firstName: string
   }
   createdAt: string
+  documentUrl?: string
+  documentType?: "pdf" | "image"
 }
 
 export default function EventsPage() {
@@ -277,6 +294,23 @@ export default function EventsPage() {
                     )}
                   </div>
 
+                  {/* Monthly Meeting Schedule Notice */}
+                  <Card className="border-[#E5E7EB] bg-[#F0F9FF] border-l-4 border-l-[#1B3668]">
+                    <CardContent className="p-4">
+                      <div className="flex items-start gap-4">
+                        <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                          <Calendar className="h-5 w-5 text-[#1B3668]" />
+                        </div>
+                        <div>
+                          <h3 className="font-medium text-[#1F2937] mb-1">Regular Monthly Meeting Schedule</h3>
+                          <p className="text-sm text-[#6B7280]">
+                            Last Saturday of every month at PESU RF conference room during 10am to 12pm.
+                          </p>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+
                   <div className="grid gap-4">
                     {monthlyMeetings.length > 0 ? (
                       monthlyMeetings.map((meeting) => (
@@ -351,20 +385,27 @@ export default function EventsPage() {
                     )}
                   </div>
 
-                  <div className="grid gap-4">
+                  <div className="grid gap-6">
                     {upcomingEvents.length > 0 ? (
                       upcomingEvents.map((event) => (
-                        <Link href={`/events/events/${event._id}`} key={event._id} className="block">
-                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-4">
+                        <Card
+                          key={event._id}
+                          className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200"
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex flex-col md:flex-row gap-6">
+                              <div className="flex items-start gap-4 flex-1">
                                 <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
                                   <Bell className="h-5 w-5 text-[#1B3668]" />
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
-                                    <h3 className="font-medium text-[#1F2937] mb-1">{event.title}</h3>
-                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
+                                    <Link href={`/events/events/${event._id}`}>
+                                      <h3 className="font-medium text-[#1F2937] mb-1 hover:text-[#1B3668] transition-colors">
+                                        {event.title}
+                                      </h3>
+                                    </Link>
+                                    <Badge className="bg-[#1B3668]">Upcoming</Badge>
                                   </div>
                                   <p className="text-sm text-[#6B7280] mb-2">
                                     {event.description.length > 100
@@ -385,9 +426,43 @@ export default function EventsPage() {
                                   </div>
                                 </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
+
+                              {/* Announcement Document Preview */}
+                              {event.documentUrl && (
+                                <div className="w-full md:w-64 flex-shrink-0 border rounded-md overflow-hidden bg-gray-50">
+                                  {event.documentType === "image" ? (
+                                    <div className="relative h-40 w-full">
+                                      <Image
+                                        src={event.documentUrl || "/placeholder.svg"}
+                                        alt={`Announcement for ${event.title}`}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="h-40 flex flex-col items-center justify-center p-4">
+                                      <FileText className="h-12 w-12 text-[#1B3668] mb-2" />
+                                      <span className="text-sm font-medium text-[#1F2937]">Announcement Document</span>
+                                    </div>
+                                  )}
+                                  <div className="p-2 bg-white border-t flex justify-between items-center">
+                                    <span className="text-xs text-[#6B7280] truncate">
+                                      {event.documentType === "image" ? "Announcement Image" : "Announcement PDF"}
+                                    </span>
+                                    <a
+                                      href={event.documentUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[#1B3668] hover:text-[#0A2240]"
+                                    >
+                                      <Download className="h-4 w-4" />
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">
@@ -407,20 +482,29 @@ export default function EventsPage() {
                     </h2>
                   </div>
 
-                  <div className="grid gap-4">
+                  <div className="grid gap-6">
                     {pastEvents.length > 0 ? (
                       pastEvents.map((event) => (
-                        <Link href={`/events/events/${event._id}`} key={event._id} className="block">
-                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 bg-gray-50">
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-4">
+                        <Card
+                          key={event._id}
+                          className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 bg-gray-50"
+                        >
+                          <CardContent className="p-4">
+                            <div className="flex flex-col md:flex-row gap-6">
+                              <div className="flex items-start gap-4 flex-1">
                                 <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
                                   <Clock className="h-5 w-5 text-[#1B3668]" />
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
-                                    <h3 className="font-medium text-[#1F2937] mb-1">{event.title}</h3>
-                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
+                                    <Link href={`/collaborations/events/${event._id}`}>
+                                      <h3 className="font-medium text-[#1F2937] mb-1 hover:text-[#1B3668] transition-colors">
+                                        {event.title}
+                                      </h3>
+                                    </Link>
+                                    <Badge variant="outline" className="text-[#6B7280] border-[#6B7280]">
+                                      Past
+                                    </Badge>
                                   </div>
                                   <p className="text-sm text-[#6B7280] mb-2">
                                     {event.description.length > 100
@@ -441,9 +525,31 @@ export default function EventsPage() {
                                   </div>
                                 </div>
                               </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
+
+                              {/* Event Content Document */}
+                              {event.documentUrl && (
+                                <div className="w-full md:w-64 flex-shrink-0 border rounded-md overflow-hidden bg-white">
+                                  <div className="h-40 flex flex-col items-center justify-center p-4">
+                                    <FileText className="h-12 w-12 text-[#1B3668] mb-2" />
+                                    <span className="text-sm font-medium text-[#1F2937]">Event Materials</span>
+                                    <span className="text-xs text-[#6B7280] mt-1">PDF Document</span>
+                                  </div>
+                                  <div className="p-2 bg-[#F3F4F6] border-t flex justify-between items-center">
+                                    <span className="text-xs text-[#6B7280] truncate">Download materials</span>
+                                    <a
+                                      href={event.documentUrl}
+                                      target="_blank"
+                                      rel="noopener noreferrer"
+                                      className="text-[#1B3668] hover:text-[#0A2240]"
+                                    >
+                                      <Download className="h-4 w-4" />
+                                    </a>
+                                  </div>
+                                </div>
+                              )}
+                            </div>
+                          </CardContent>
+                        </Card>
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">No past events to display.</div>

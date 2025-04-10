@@ -42,6 +42,14 @@ const eventSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
+    documentType:{
+      type: String,
+      required: true,
+    },
+    documentUrl:{
+      type : String,
+      required: false,
+    },
     comments: [commentSchema],
   },
   { timestamps: true },
