@@ -1,12 +1,12 @@
 'use client';
 
 import { useState } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter} from "next/navigation";
 
-export default function ResetPasswordPage() {
+export default function ResetPasswordPage({ params }: { params: { token: string } }) {
+  const token = params.token;
+  // Use `token` in your logic
   const router = useRouter(); // Use useRouter from next/navigation
-  const searchParams = useSearchParams(); // Use useSearchParams to get query parameters
-  const token = searchParams.get("token"); // Extract the token from the query string
   const [newPassword, setNewPassword] = useState("");
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
