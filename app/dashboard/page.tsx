@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { GraduationCap, BookMarked, Shield, CheckCircle, LogIn, Loader2, Calendar, BarChart3, FileText, Award, Clock, Users, BookOpen, ChevronRight, AlertCircle, Plus, Edit, User, Mail,ContactRound } from 'lucide-react'
+import { GraduationCap, BookMarked, Shield, CheckCircle, LogIn, Loader2, Calendar, BarChart3, FileText, Award, Clock, Users, BookOpen, ChevronRight, AlertCircle, Plus, Edit, User, Mail,ContactRound, CalendarCheck } from 'lucide-react'
 import type { User as UserType, PhdScholar } from "@/types"
 import { ConferenceSlideshow } from "@/components/ConferenceSlideshow"
 import { Announcements } from "@/components/Announcements"
@@ -57,6 +57,7 @@ export default function Dashboard() {
     impactFactor: z.string(),
     doi: z.string().url("DOI must be a valid URL"), // Add DOI field
   })
+  
 
   const conferenceSchema = z.object({
     title: z.string().min(1, "Title is required"),
@@ -365,6 +366,26 @@ export default function Dashboard() {
         date: phdScholarData?.phdMilestones?.awardOfDegreeDate?.toString(),
         icon: <Award className="h-4 w-4" />,
       },
+      {
+        label: "Coursework 1 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework1?.toString(),
+        icon:<CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Coursework 2 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework2?.toString(),
+        icon:<CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Coursework 3 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework3?.toString(),
+        icon:<CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Coursework 4 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework4?.toString(),
+        icon:<CalendarCheck className="h-4 w-4"/>
+      }
     ].sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : Number.POSITIVE_INFINITY
       const dateB = b.date ? new Date(b.date).getTime() : Number.POSITIVE_INFINITY
