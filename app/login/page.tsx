@@ -20,7 +20,6 @@ import {
   DialogTitle,
 } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
-import { response } from "express"
 
 type FormData = {
   email: string
@@ -82,7 +81,7 @@ export default function LoginPage() {
       setIsResettingPassword(true)
 
       // Simulate API call to send reset password email
-      const response = await axios.post('api/reset-password',{email : data.email})
+      const response = await axios.post("api/reset-password", { email: data.email })
 
       notifySucc(`Password reset link sent to ${data.email}`)
       setForgotPasswordOpen(false)
@@ -113,13 +112,7 @@ export default function LoginPage() {
       <div className="w-full lg:w-1/2 flex items-center justify-center p-8 bg-[#f5f7fa]">
         <div className="w-full max-w-md">
           <div className="mb-12">
-            <Image
-              src="/logoPesu.png"
-              alt="PES University Logo"
-              width={240}
-              height={80}
-              className="mb-8"
-            />
+            <Image src="/logoPesu.png" alt="PES University Logo" width={240} height={80} className="mb-8" />
             <h1 className="text-4xl font-light text-gray-800">Sign in</h1>
           </div>
 
@@ -231,11 +224,17 @@ export default function LoginPage() {
                     <path d="M9 17h6" />
                   </svg>
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="text-xl font-medium mb-1">Research Dashboard</h3>
-                  <p className="text-white/80">
+                  <p className="text-white/80 mb-3">
                     Track your publications, citations, and research progress in real-time
                   </p>
+                  <Button
+                    onClick={() => router.push("/dashboard")}
+                    className="mt-2 bg-[#1a3a7a] hover:bg-[#1a3a7a]/80 text-white border border-[#ffffff30]"
+                  >
+                    Go to Dashboard
+                  </Button>
                 </div>
               </div>
             </div>
@@ -262,9 +261,17 @@ export default function LoginPage() {
                     <path d="M19 19a4 4 0 0 1-4-4" />
                   </svg>
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="text-xl font-medium mb-1">Collaboration Hub</h3>
-                  <p className="text-white/80">Connect with peers, share resources, and participate in discussions</p>
+                  <p className="text-white/80 mb-3">
+                    Connect with peers, share resources, and participate in discussions
+                  </p>
+                  <Button
+                    onClick={() => router.push("/collaborations")}
+                    className="mt-2 bg-[#1a3a7a] hover:bg-[#1a3a7a]/80 text-white border border-[#ffffff30]"
+                  >
+                    View Collaborations
+                  </Button>
                 </div>
               </div>
             </div>
@@ -290,11 +297,17 @@ export default function LoginPage() {
                     <line x1="15" x2="15" y1="21" y2="9" />
                   </svg>
                 </div>
-                <div>
+                <div className="flex-1">
                   <h3 className="text-xl font-medium mb-1">Events & Meetings</h3>
-                  <p className="text-white/80">
+                  <p className="text-white/80 mb-3">
                     Stay updated with monthly seminars, conferences, and research meetings
                   </p>
+                  <Button
+                    onClick={() => router.push("/events")}
+                    className="mt-2 bg-[#1a3a7a] hover:bg-[#1a3a7a]/80 text-white border border-[#ffffff30]"
+                  >
+                    View Events
+                  </Button>
                 </div>
               </div>
             </div>
