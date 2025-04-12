@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
 import { getToken } from "next-auth/jwt"
 import dbConnect from "@/server/db"
 import Event from "@/server/models/event"
@@ -7,11 +6,6 @@ import User from "@/server/models/userModel"
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     await dbConnect()
 
     const events = await Event.find({}).populate("organizer", "firstName email").sort({ date: 1 }).lean()
@@ -32,7 +26,7 @@ export async function POST(req: NextRequest) {
 
     await dbConnect()
 
-    const { title, description, date, time, location } = await req.json()
+    const { title, description, date, time, location, documentUrl, documentType } = await req.json()
 
     if (!title || !description || !date || !time || !location) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 })
@@ -50,10 +44,12 @@ export async function POST(req: NextRequest) {
       time,
       location,
       organizer: user._id,
+      documentUrl,
+      documentType,
     })
 
     await event.save()
-
+    console.log("in events")
     const populatedEvent = await Event.findById(event._id).populate("organizer", "firstName email").lean()
 
     return NextResponse.json(populatedEvent, { status: 201 })
@@ -62,4 +58,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create event" }, { status: 500 })
   }
 }
-

@@ -43,10 +43,18 @@ const meetingSchema = new mongoose.Schema(
       required: true,
     },
     comments: [commentSchema],
+    // Add document fields
+    documentUrl: {
+      type: String,
+    },
+    documentType: {
+      type: String,
+      enum: ["pdf", "image", null],
+    },
   },
   { timestamps: true },
 )
 
-export default mongoose.models.Meeting || mongoose.model("Meeting", meetingSchema)
+const Meeting = mongoose.models.Meeting || mongoose.model("Meeting", meetingSchema)
 
-  
+export default Meeting

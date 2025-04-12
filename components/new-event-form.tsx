@@ -13,9 +13,10 @@ import { toast } from "react-toastify"
 
 interface NewEventFormProps {
   onSubmit: (data: any) => void
+  type?: "event" | "meeting"
 }
 
-export default function NewEventForm({ onSubmit }: NewEventFormProps) {
+export default function NewEventForm({ onSubmit, type = "event" }: NewEventFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState<Date | undefined>(undefined)
@@ -33,12 +34,12 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
 
     // Validate file type
     if (documentType === "pdf" && file.type !== "application/pdf") {
-      toast("Please select a PDF file")
+      toast.error("Please select a PDF file")
       return
     }
 
     if (documentType === "image" && !file.type.startsWith("image/")) {
-      toast("Please select an image file")
+      toast.error("Please select an image file")
       return
     }
 
@@ -60,10 +61,10 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
 
       const data = await response.json()
       setDocumentUrl(data.fileUrl)
-      toast("File uploaded successfully")
+      toast.success("File uploaded successfully")
     } catch (error) {
       console.error("Error uploading file:", error)
-      toast("Failed to upload file")
+      toast.error("Failed to upload file")
     } finally {
       setIsUploading(false)
     }
@@ -73,7 +74,7 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
     e.preventDefault()
 
     if (!title || !date || !time || !location) {
-      toast("Please fill in all required fields")
+      toast.error("Please fill in all required fields")
       return
     }
 
@@ -110,7 +111,7 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
       setDocumentUrl("")
     } catch (error) {
       console.error("Error submitting form:", error)
-      toast("Failed to create event")
+      toast.error(`Failed to create ${type}`)
     } finally {
       setIsSubmitting(false)
     }
@@ -120,14 +121,14 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="title">Title</Label>
-        <Input id="title" placeholder="Event title" value={title} onChange={(e) => setTitle(e.target.value)} required />
+        <Input id="title" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
       </div>
 
       <div className="space-y-2">
         <Label htmlFor="description">Description</Label>
         <Textarea
           id="description"
-          placeholder="Event description"
+          placeholder="Description"
           value={description}
           onChange={(e) => setDescription(e.target.value)}
           rows={3}
@@ -156,7 +157,7 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
         <Label htmlFor="location">Location</Label>
         <Input
           id="location"
-          placeholder="Event location"
+          placeholder="Location"
           value={location}
           onChange={(e) => setLocation(e.target.value)}
           required
@@ -164,7 +165,7 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
       </div>
 
       <div className="space-y-2">
-        <Label>Announcement Document</Label>
+        <Label>Document</Label>
         <div className="space-y-1">
           <div className="flex items-center space-x-2">
             <input
@@ -262,8 +263,8 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
           </div>
           <p className="text-xs text-muted-foreground">
             {documentType === "pdf"
-              ? "Add a PDF document for event details (max 5MB)"
-              : "Add an image for event announcement (max 2MB)"}
+              ? `Add a PDF document for ${type} details (max 5MB)`
+              : `Add an image for ${type} announcement (max 2MB)`}
           </p>
         </div>
       )}
@@ -279,7 +280,7 @@ export default function NewEventForm({ onSubmit }: NewEventFormProps) {
               Creating...
             </>
           ) : (
-            "Create Event"
+            `Create ${type === "event" ? "Event" : "Meeting"}`
           )}
         </Button>
       </div>

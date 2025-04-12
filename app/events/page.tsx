@@ -16,7 +16,6 @@ import {
   ExternalLink,
   Clock,
   FileText,
-  Download,
 } from "lucide-react"
 import {
   Dialog,
@@ -84,61 +83,62 @@ export default function EventsPage() {
   const router = useRouter()
 
   // Fetch user data
-  useEffect(() => {
-    const fetchUser = async () => {
-      try {
-        const response = await fetch("/api/auth/session")
-        if (!response.ok) {
-          throw new Error("Failed to fetch user session")
-        }
-        const data = await response.json()
-
-        if (!data.user) {
-          router.push("/login?callbackUrl=/events")
-          return
-        }
-
-        setUser(data.user)
-      } catch (error) {
-        console.error("Error fetching user:", error)
-        router.push("/login?callbackUrl=/events")
-      } finally {
+  const fetchUser = async () => {
+    try {
+      const response = await fetch("/api/auth/session")
+      if (!response.ok) {
+        setUser(null)
         setLoading(false)
+        return
       }
-    }
 
+      const data = await response.json()
+      setUser(data.user || null)
+    } catch (error) {
+      console.error("Error fetching user:", error)
+      setUser(null)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  useEffect(() => {
     fetchUser()
   }, [router])
 
   // Fetch meetings and events
-  useEffect(() => {
-    const fetchData = async () => {
-      if (!user) return
-
-      try {
-        // Fetch meetings
-        const meetingsRes = await fetch("/api/collaborations/meetings")
-        if (meetingsRes.ok) {
-          const meetingsData = await meetingsRes.json()
-          setMeetings(meetingsData)
-        }
-
-        // Fetch events
-        const eventsRes = await fetch("/api/collaborations/events")
-        if (eventsRes.ok) {
-          const eventsData = await eventsRes.json()
-          setEvents(eventsData)
-        }
-      } catch (error) {
-        console.error("Error fetching data:", error)
+  const fetchData = async () => {
+    try {
+      // Fetch meetings
+      const meetingsRes = await fetch("/api/collaborations/meetings")
+      if (meetingsRes.ok) {
+        const meetingsData = await meetingsRes.json()
+        setMeetings(meetingsData)
       }
-    }
 
+      // Fetch events
+      const eventsRes = await fetch("/api/collaborations/events")
+      if (eventsRes.ok) {
+        const eventsData = await eventsRes.json()
+        setEvents(eventsData)
+      }
+    } catch (error) {
+      console.error("Error fetching data:", error)
+    }
+  }
+
+  useEffect(() => {
     fetchData()
-  }, [user])
+  }, [])
 
   const handleMeetingSubmit = async (data: any) => {
+    if (!data) {
+      setIsMeetingDialogOpen(false)
+      return
+    }
+
     try {
+      console.log("hi")
       const response = await fetch("/api/collaborations/meetings", {
         method: "POST",
         headers: {
@@ -154,14 +154,19 @@ export default function EventsPage() {
       const newMeeting = await response.json()
       setMeetings([newMeeting, ...meetings])
       setIsMeetingDialogOpen(false)
-      toast("Meeting scheduled successfully")
+      toast.success("Meeting scheduled successfully")
     } catch (error) {
       console.error("Error scheduling meeting:", error)
-      toast("Failed to schedule meeting")
+      toast.error("Failed to schedule meeting")
     }
   }
 
   const handleEventSubmit = async (data: any) => {
+    if (!data) {
+      setIsEventDialogOpen(false)
+      return
+    }
+
     try {
       const response = await fetch("/api/collaborations/events", {
         method: "POST",
@@ -178,10 +183,10 @@ export default function EventsPage() {
       const newEvent = await response.json()
       setEvents([newEvent, ...events])
       setIsEventDialogOpen(false)
-      toast("Event created successfully")
+      toast.success("Event created successfully")
     } catch (error) {
       console.error("Error creating event:", error)
-      toast("Failed to create event")
+      toast.error("Failed to create event")
     }
   }
 
@@ -205,7 +210,7 @@ export default function EventsPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="h-8 w-8 animate-spin text-[#4C1D95]" />
-        <span className="ml-2 text-lg">Loading...</span>
+        <span className="ml-2 text-lg">Loading events...</span>
       </div>
     )
   }
@@ -288,7 +293,7 @@ export default function EventsPage() {
                             <DialogTitle>Schedule New Meeting</DialogTitle>
                             <DialogDescription>Schedule a new monthly meeting for researchers</DialogDescription>
                           </DialogHeader>
-                          <NewEventForm onSubmit={handleMeetingSubmit} />
+                          <NewEventForm onSubmit={handleMeetingSubmit} type="meeting" />
                         </DialogContent>
                       </Dialog>
                     )}
@@ -343,6 +348,15 @@ export default function EventsPage() {
                                   <div className="text-xs text-[#6B7280] mt-1">
                                     Organized by: {meeting.organizer.firstName}
                                   </div>
+
+                                  {meeting.documentUrl && (
+                                    <div className="mt-2 flex items-center">
+                                      <FileText className="h-3 w-3 text-[#1B3668] mr-1" />
+                                      <span className="text-xs text-[#1B3668]">
+                                        {meeting.documentType === "pdf" ? "PDF Document" : "Image"} available
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
                             </CardContent>
@@ -379,7 +393,7 @@ export default function EventsPage() {
                             <DialogTitle>Create New Event</DialogTitle>
                             <DialogDescription>Add a new research event to the calendar</DialogDescription>
                           </DialogHeader>
-                          <NewEventForm onSubmit={handleEventSubmit} />
+                          <NewEventForm onSubmit={handleEventSubmit} type="event" />
                         </DialogContent>
                       </Dialog>
                     )}
@@ -449,14 +463,12 @@ export default function EventsPage() {
                                     <span className="text-xs text-[#6B7280] truncate">
                                       {event.documentType === "image" ? "Announcement Image" : "Announcement PDF"}
                                     </span>
-                                    <a
-                                      href={event.documentUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
+                                    <Link
+                                      href={`/events/events/${event._id}`}
                                       className="text-[#1B3668] hover:text-[#0A2240]"
                                     >
-                                      <Download className="h-4 w-4" />
-                                    </a>
+                                      <ExternalLink className="h-4 w-4" />
+                                    </Link>
                                   </div>
                                 </div>
                               )}
@@ -497,7 +509,7 @@ export default function EventsPage() {
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
-                                    <Link href={`/collaborations/events/${event._id}`}>
+                                    <Link href={`/events/events/${event._id}`}>
                                       <h3 className="font-medium text-[#1F2937] mb-1 hover:text-[#1B3668] transition-colors">
                                         {event.title}
                                       </h3>
@@ -523,30 +535,17 @@ export default function EventsPage() {
                                   <div className="text-xs text-[#6B7280] mt-1">
                                     Organized by: {event.organizer.firstName}
                                   </div>
+
+                                  {event.documentUrl && (
+                                    <div className="mt-2 flex items-center">
+                                      <FileText className="h-3 w-3 text-[#1B3668] mr-1" />
+                                      <span className="text-xs text-[#1B3668]">
+                                        {event.documentType === "pdf" ? "PDF Document" : "Image"} available
+                                      </span>
+                                    </div>
+                                  )}
                                 </div>
                               </div>
-
-                              {/* Event Content Document */}
-                              {event.documentUrl && (
-                                <div className="w-full md:w-64 flex-shrink-0 border rounded-md overflow-hidden bg-white">
-                                  <div className="h-40 flex flex-col items-center justify-center p-4">
-                                    <FileText className="h-12 w-12 text-[#1B3668] mb-2" />
-                                    <span className="text-sm font-medium text-[#1F2937]">Event Materials</span>
-                                    <span className="text-xs text-[#6B7280] mt-1">PDF Document</span>
-                                  </div>
-                                  <div className="p-2 bg-[#F3F4F6] border-t flex justify-between items-center">
-                                    <span className="text-xs text-[#6B7280] truncate">Download materials</span>
-                                    <a
-                                      href={event.documentUrl}
-                                      target="_blank"
-                                      rel="noopener noreferrer"
-                                      className="text-[#1B3668] hover:text-[#0A2240]"
-                                    >
-                                      <Download className="h-4 w-4" />
-                                    </a>
-                                  </div>
-                                </div>
-                              )}
                             </div>
                           </CardContent>
                         </Card>
