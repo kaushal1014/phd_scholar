@@ -5,11 +5,6 @@ import Meeting from "@/server/models/meeting"
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     await dbConnect()
 
     const meeting = await Meeting.findById(params.id)
