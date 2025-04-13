@@ -28,7 +28,7 @@ export async function POST(req: NextRequest) {
     await dbConnect()
 
     const { title, description, date, time, location, documentUrl, documentType } = await req.json()
-
+    console.log(documentUrl)
     if (!title || !description || !date || !time || !location) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 })
     }

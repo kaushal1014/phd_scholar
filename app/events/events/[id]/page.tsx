@@ -267,30 +267,44 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
             </CardHeader>
 
             <CardContent className="p-6">
-              {event.documentType === "image" ? (
-                <div className="flex justify-center">
-                  <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200">
-                    <Image
-                      src={event.documentUrl || "/placeholder.svg"}
-                      alt={event.title}
-                      width={800}
-                      height={600}
-                      className="object-contain"
-                      priority
-                    />
-                  </div>
-                </div>
-              ) : (
-                <div className="aspect-[16/9] w-full rounded-lg border border-gray-200">
-                  <iframe
-                    src={`${event.documentUrl}#toolbar=1&view=FitH`}
+              <div className="aspect-[16/9] w-full rounded-lg border border-gray-200">
+                {event.documentType === "pdf" ? (
+                  <object
+                    data={`${event.documentUrl}#toolbar=1&view=FitH`}
+                    type="application/pdf"
                     className="h-full w-full rounded-lg"
-                    title={event.title}
                     style={{ height: "70vh" }}
-                    sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"
-                  />
-                </div>
-              )}
+                  >
+                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
+                      <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
+                      <p className="text-center mb-4">Your browser cannot display the PDF directly.</p>
+                      <a
+                        href={event.documentUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
+                      </a>
+                    </div>
+                  </object>
+                ) : (
+                  <div className="flex justify-center">
+                    <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200">
+                      <Image
+                        src={event.documentUrl || "/placeholder.svg"}
+                        alt={event.title}
+                        width={800}
+                        height={600}
+                        className="object-contain"
+                        priority
+                      />
+                    </div>
+                  </div>
+                )}
+              </div>
             </CardContent>
 
             <CardFooter className="border-t p-6 flex justify-between">

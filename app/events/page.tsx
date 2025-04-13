@@ -320,7 +320,7 @@ export default function EventsPage() {
                     {monthlyMeetings.length > 0 ? (
                       monthlyMeetings.map((meeting) => (
                         <Link href={`/events/meetings/${meeting._id}`} key={meeting._id} className="block">
-                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
+                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 cursor-pointer group">
                             <CardContent className="p-4">
                               <div className="flex items-start gap-4">
                                 <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
@@ -328,8 +328,10 @@ export default function EventsPage() {
                                 </div>
                                 <div className="flex-1">
                                   <div className="flex items-center justify-between">
-                                    <h3 className="font-medium text-[#1F2937] mb-1">{meeting.title}</h3>
-                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
+                                    <h3 className="font-medium text-[#1F2937] mb-1 group-hover:text-[#1B3668] transition-colors">
+                                      {meeting.title}
+                                    </h3>
+                                    <ExternalLink className="h-4 w-4 text-[#6B7280] group-hover:text-[#1B3668] transition-colors" />
                                   </div>
                                   <p className="text-sm text-[#6B7280] mb-2">
                                     {meeting.description.length > 100
@@ -402,79 +404,73 @@ export default function EventsPage() {
                   <div className="grid gap-6">
                     {upcomingEvents.length > 0 ? (
                       upcomingEvents.map((event) => (
-                        <Card
-                          key={event._id}
-                          className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200"
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex flex-col md:flex-row gap-6">
-                              <div className="flex items-start gap-4 flex-1">
-                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
-                                  <Bell className="h-5 w-5 text-[#1B3668]" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <Link href={`/events/events/${event._id}`}>
-                                      <h3 className="font-medium text-[#1F2937] mb-1 hover:text-[#1B3668] transition-colors">
+                        <Link href={`/events/events/${event._id}`} key={event._id} className="block">
+                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 cursor-pointer group">
+                            <CardContent className="p-4">
+                              <div className="flex flex-col md:flex-row gap-6">
+                                <div className="flex items-start gap-4 flex-1">
+                                  <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                    <Bell className="h-5 w-5 text-[#1B3668]" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="flex items-center justify-between">
+                                      <h3 className="font-medium text-[#1F2937] mb-1 group-hover:text-[#1B3668] transition-colors">
                                         {event.title}
                                       </h3>
-                                    </Link>
-                                    <Badge className="bg-[#1B3668]">Upcoming</Badge>
-                                  </div>
-                                  <p className="text-sm text-[#6B7280] mb-2">
-                                    {event.description.length > 100
-                                      ? `${event.description.substring(0, 100)}...`
-                                      : event.description}
-                                  </p>
-                                  <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">
-                                      Date: {new Date(event.date).toLocaleDateString()}
-                                    </span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Time: {event.time}</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Location: {event.location}</span>
-                                  </div>
-                                  <div className="text-xs text-[#6B7280] mt-1">
-                                    Organized by: {event.organizer.firstName}
+                                      <Badge className="bg-[#1B3668]">Upcoming</Badge>
+                                    </div>
+                                    <p className="text-sm text-[#6B7280] mb-2">
+                                      {event.description.length > 100
+                                        ? `${event.description.substring(0, 100)}...`
+                                        : event.description}
+                                    </p>
+                                    <div className="flex items-center text-xs text-[#6B7280]">
+                                      <span className="font-medium">
+                                        Date: {new Date(event.date).toLocaleDateString()}
+                                      </span>
+                                      <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                      <span>Time: {event.time}</span>
+                                      <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                      <span>Location: {event.location}</span>
+                                    </div>
+                                    <div className="text-xs text-[#6B7280] mt-1">
+                                      Organized by: {event.organizer.firstName}
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
 
-                              {/* Announcement Document Preview */}
-                              {event.documentUrl && (
-                                <div className="w-full md:w-64 flex-shrink-0 border rounded-md overflow-hidden bg-gray-50">
-                                  {event.documentType === "image" ? (
-                                    <div className="relative h-40 w-full">
-                                      <Image
-                                        src={event.documentUrl || "/placeholder.svg"}
-                                        alt={`Announcement for ${event.title}`}
-                                        fill
-                                        className="object-cover"
-                                      />
+                                {/* Announcement Document Preview */}
+                                {event.documentUrl && (
+                                  <div className="w-full md:w-64 flex-shrink-0 border rounded-md overflow-hidden bg-gray-50">
+                                    {event.documentType === "image" ? (
+                                      <div className="relative h-40 w-full">
+                                        <Image
+                                          src={event.documentUrl || "/placeholder.svg"}
+                                          alt={`Announcement for ${event.title}`}
+                                          fill
+                                          className="object-cover"
+                                        />
+                                      </div>
+                                    ) : (
+                                      <div className="h-40 flex flex-col items-center justify-center p-4">
+                                        <FileText className="h-12 w-12 text-[#1B3668] mb-2" />
+                                        <span className="text-sm font-medium text-[#1F2937]">
+                                          Announcement Document
+                                        </span>
+                                      </div>
+                                    )}
+                                    <div className="p-2 bg-white border-t flex justify-between items-center">
+                                      <span className="text-xs text-[#6B7280] truncate">
+                                        {event.documentType === "image" ? "Announcement Image" : "Announcement PDF"}
+                                      </span>
+                                      <ExternalLink className="h-4 w-4 text-[#1B3668]" />
                                     </div>
-                                  ) : (
-                                    <div className="h-40 flex flex-col items-center justify-center p-4">
-                                      <FileText className="h-12 w-12 text-[#1B3668] mb-2" />
-                                      <span className="text-sm font-medium text-[#1F2937]">Announcement Document</span>
-                                    </div>
-                                  )}
-                                  <div className="p-2 bg-white border-t flex justify-between items-center">
-                                    <span className="text-xs text-[#6B7280] truncate">
-                                      {event.documentType === "image" ? "Announcement Image" : "Announcement PDF"}
-                                    </span>
-                                    <Link
-                                      href={`/events/events/${event._id}`}
-                                      className="text-[#1B3668] hover:text-[#0A2240]"
-                                    >
-                                      <ExternalLink className="h-4 w-4" />
-                                    </Link>
                                   </div>
-                                </div>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
+                                )}
+                              </div>
+                            </CardContent>
+                          </Card>
+                        </Link>
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">
@@ -497,58 +493,55 @@ export default function EventsPage() {
                   <div className="grid gap-6">
                     {pastEvents.length > 0 ? (
                       pastEvents.map((event) => (
-                        <Card
-                          key={event._id}
-                          className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 bg-gray-50"
-                        >
-                          <CardContent className="p-4">
-                            <div className="flex flex-col md:flex-row gap-6">
-                              <div className="flex items-start gap-4 flex-1">
-                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
-                                  <Clock className="h-5 w-5 text-[#1B3668]" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <Link href={`/events/events/${event._id}`}>
-                                      <h3 className="font-medium text-[#1F2937] mb-1 hover:text-[#1B3668] transition-colors">
+                        <Link href={`/events/events/${event._id}`} key={event._id} className="block">
+                          <Card className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200 bg-gray-50 cursor-pointer group">
+                            <CardContent className="p-4">
+                              <div className="flex flex-col md:flex-row gap-6">
+                                <div className="flex items-start gap-4 flex-1">
+                                  <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                    <Clock className="h-5 w-5 text-[#1B3668]" />
+                                  </div>
+                                  <div className="flex-1">
+                                    <div className="flex items-center justify-between">
+                                      <h3 className="font-medium text-[#1F2937] mb-1 group-hover:text-[#1B3668] transition-colors">
                                         {event.title}
                                       </h3>
-                                    </Link>
-                                    <Badge variant="outline" className="text-[#6B7280] border-[#6B7280]">
-                                      Past
-                                    </Badge>
-                                  </div>
-                                  <p className="text-sm text-[#6B7280] mb-2">
-                                    {event.description.length > 100
-                                      ? `${event.description.substring(0, 100)}...`
-                                      : event.description}
-                                  </p>
-                                  <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">
-                                      Date: {new Date(event.date).toLocaleDateString()}
-                                    </span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Time: {event.time}</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Location: {event.location}</span>
-                                  </div>
-                                  <div className="text-xs text-[#6B7280] mt-1">
-                                    Organized by: {event.organizer.firstName}
-                                  </div>
-
-                                  {event.documentUrl && (
-                                    <div className="mt-2 flex items-center">
-                                      <FileText className="h-3 w-3 text-[#1B3668] mr-1" />
-                                      <span className="text-xs text-[#1B3668]">
-                                        {event.documentType === "pdf" ? "PDF Document" : "Image"} available
-                                      </span>
+                                      <Badge variant="outline" className="text-[#6B7280] border-[#6B7280]">
+                                        Past
+                                      </Badge>
                                     </div>
-                                  )}
+                                    <p className="text-sm text-[#6B7280] mb-2">
+                                      {event.description.length > 100
+                                        ? `${event.description.substring(0, 100)}...`
+                                        : event.description}
+                                    </p>
+                                    <div className="flex items-center text-xs text-[#6B7280]">
+                                      <span className="font-medium">
+                                        Date: {new Date(event.date).toLocaleDateString()}
+                                      </span>
+                                      <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                      <span>Time: {event.time}</span>
+                                      <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                      <span>Location: {event.location}</span>
+                                    </div>
+                                    <div className="text-xs text-[#6B7280] mt-1">
+                                      Organized by: {event.organizer.firstName}
+                                    </div>
+
+                                    {event.documentUrl && (
+                                      <div className="mt-2 flex items-center">
+                                        <FileText className="h-3 w-3 text-[#1B3668] mr-1" />
+                                        <span className="text-xs text-[#1B3668]">
+                                          {event.documentType === "pdf" ? "PDF Document" : "Image"} available
+                                        </span>
+                                      </div>
+                                    )}
+                                  </div>
                                 </div>
                               </div>
-                            </div>
-                          </CardContent>
-                        </Card>
+                            </CardContent>
+                          </Card>
+                        </Link>
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">No past events to display.</div>

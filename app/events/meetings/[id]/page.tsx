@@ -266,7 +266,31 @@ export default function MeetingDetailPage({ params }: { params: { id: string } }
             </CardHeader>
 
             <CardContent className="p-6">
-              {meeting.documentType === "image" ? (
+              {meeting.documentType === "pdf" ? (
+                <div className="aspect-[16/9] w-full rounded-lg border border-gray-200">
+                  <object
+                    data={`${meeting.documentUrl}#toolbar=1&view=FitH`}
+                    type="application/pdf"
+                    className="h-full w-full rounded-lg"
+                    style={{ height: "70vh" }}
+                  >
+                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
+                      <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
+                      <p className="text-center mb-4">Your browser cannot display the PDF directly.</p>
+                      <a
+                        href={meeting.documentUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
+                      </a>
+                    </div>
+                  </object>
+                </div>
+              ) : (
                 <div className="flex justify-center">
                   <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200">
                     <Image
@@ -278,16 +302,6 @@ export default function MeetingDetailPage({ params }: { params: { id: string } }
                       priority
                     />
                   </div>
-                </div>
-              ) : (
-                <div className="aspect-[16/9] w-full rounded-lg border border-gray-200">
-                  <iframe
-                    src={`${meeting.documentUrl}#toolbar=1&view=FitH`}
-                    className="h-full w-full rounded-lg"
-                    title={meeting.title}
-                    style={{ height: "70vh" }}
-                    sandbox="allow-forms allow-modals allow-orientation-lock allow-pointer-lock allow-popups allow-popups-to-escape-sandbox allow-presentation allow-same-origin allow-scripts"
-                  />
                 </div>
               )}
             </CardContent>

@@ -16,7 +16,7 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
       .populate("organizer", "firstName email")
       .populate("comments.author", "firstName email")
       .lean()
-
+    console.log(meeting)
     if (!meeting) {
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 })
     }
