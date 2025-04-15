@@ -130,7 +130,7 @@ export default function MeetingDetailPage({ params }: { params: { id: string } }
 
     setSubmitting(true)
     try {
-      const response = await fetch(`/api/collabrations/meetings/${meeting._id}/comment`, {
+      const response = await fetch(`/api/collaborations/meetings/${meeting._id}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

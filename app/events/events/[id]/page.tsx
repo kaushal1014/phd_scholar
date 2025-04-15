@@ -131,7 +131,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
 
     setSubmitting(true)
     try {
-      const response = await fetch(`/api/collabrations/events/${event._id}/comment`, {
+      const response = await fetch(`/api/collaborations/events/${event._id}/comment`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
