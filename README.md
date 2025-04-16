@@ -18,7 +18,6 @@ A web-based portal designed to streamline and manage the academic journey of PhD
 - **Database**: MongoDB
 - **Authentication**: NextAuth.js
 - **Styling**: Tailwind CSS
-- **Deployment**: Vercel
 
 ## Getting Started
 
