@@ -184,7 +184,16 @@ export default function LoginPage() {
                 >
                   Forgot your Password?
                 </button>
+                <br></br>
+                <button
+                  type="button"
+                  onClick={() => router.push('/signup')}
+                  className="text-[#2563eb] hover:underline text-sm"
+                >
+                  Create an account?
+                </button>
               </div>
+              
             </div>
           </form>
 

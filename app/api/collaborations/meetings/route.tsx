@@ -1,5 +1,4 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getServerSession } from "next-auth/next"
 import { getToken } from "next-auth/jwt"
 import dbConnect from "@/server/db"
 import Meeting from "@/server/models/meeting"
@@ -7,11 +6,6 @@ import User from "@/server/models/userModel"
 
 export async function GET(req: NextRequest) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     await dbConnect()
 
     const meetings = await Meeting.find({}).populate("organizer", "firstName email").sort({ date: 1 }).lean()
@@ -25,6 +19,7 @@ export async function GET(req: NextRequest) {
 
 export async function POST(req: NextRequest) {
   try {
+    console.log("IN MEETINGS")
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
     if (!token) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -32,8 +27,8 @@ export async function POST(req: NextRequest) {
 
     await dbConnect()
 
-    const { title, description, date, time, location } = await req.json()
-
+    const { title, description, date, time, location, documentUrl, documentType } = await req.json()
+    console.log(documentUrl)
     if (!title || !description || !date || !time || !location) {
       return NextResponse.json({ error: "All fields are required" }, { status: 400 })
     }
@@ -50,6 +45,8 @@ export async function POST(req: NextRequest) {
       time,
       location,
       organizer: user._id,
+      documentUrl,
+      documentType,
     })
 
     await meeting.save()
@@ -62,4 +59,3 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Failed to create meeting" }, { status: 500 })
   }
 }
-

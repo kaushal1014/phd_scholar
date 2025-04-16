@@ -1,15 +1,10 @@
 import { type NextRequest, NextResponse } from "next/server"
-import { getToken } from "next-auth/jwt"
 import dbConnect from "@/server/db"
 import Event from "@/server/models/event"
 
+// No authentication check for GET
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     await dbConnect()
 
     const event = await Event.findById(params.id)
@@ -27,4 +22,3 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: "Failed to fetch event" }, { status: 500 })
   }
 }
-

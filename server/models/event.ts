@@ -42,18 +42,19 @@ const eventSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    documentType:{
-      type: String,
-      required: true,
-    },
-    documentUrl:{
-      type : String,
-      required: false,
-    },
     comments: [commentSchema],
+    // Add document fields
+    documentUrl: {
+      type: String,
+    },
+    documentType: {
+      type: String,
+      enum: ["pdf", "image", null],
+    },
   },
   { timestamps: true },
 )
 
-export default mongoose.models.Event || mongoose.model("Event", eventSchema)
+const Event = mongoose.models.Event || mongoose.model("Event", eventSchema)
 
+export default Event

@@ -5,18 +5,13 @@ import Meeting from "@/server/models/meeting"
 
 export async function GET(req: NextRequest, { params }: { params: { id: string } }) {
   try {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
-
     await dbConnect()
 
     const meeting = await Meeting.findById(params.id)
       .populate("organizer", "firstName email")
       .populate("comments.author", "firstName email")
       .lean()
-
+    console.log(meeting)
     if (!meeting) {
       return NextResponse.json({ error: "Meeting not found" }, { status: 404 })
     }
