@@ -19,13 +19,13 @@ interface NewEventFormProps {
 }
 
 export default function NewEventForm({ onSubmit, type = "event", initialData }: NewEventFormProps) {
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
-  const [date, setDate] = useState<Date | undefined>(undefined)
-  const [time, setTime] = useState("")
-  const [location, setLocation] = useState("")
-  const [documentType, setDocumentType] = useState<"none" | "pdf" | "image">("none")
-  const [documentUrl, setDocumentUrl] = useState("")
+  const [title, setTitle] = useState(initialData?.title || "")
+  const [description, setDescription] = useState(initialData?.description || "")
+  const [date, setDate] = useState<Date | undefined>(initialData?.date ? new Date(initialData.date) : undefined)
+  const [time, setTime] = useState(initialData?.time || "")
+  const [location, setLocation] = useState(initialData?.location || "")
+  const [documentType, setDocumentType] = useState<"none" | "pdf" | "image" | "pptx">(initialData?.documentType || "none")
+  const [documentUrl, setDocumentUrl] = useState(initialData?.documentUrl || "")
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
@@ -37,6 +37,11 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
     // Validate file type
     if (documentType === "pdf" && file.type !== "application/pdf") {
       toast.error("Please select a PDF file")
+      return
+    }
+
+    if (documentType === "pptx" && !file.name.endsWith('.pptx')) {
+      toast.error("Please select a PPTX file")
       return
     }
 
@@ -120,7 +125,7 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={handleSubmit} className="space-y-4 max-h-[80vh] overflow-y-auto pr-4 pb-4">
       <div className="space-y-2">
         <Label htmlFor="title">Title</Label>
         <Input id="title" placeholder="Title" value={title} onChange={(e) => setTitle(e.target.value)} required />
@@ -206,6 +211,23 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
           <div className="flex items-center space-x-2">
             <input
               type="radio"
+              id="doc-pptx"
+              name="documentType"
+              value="pptx"
+              checked={documentType === "pptx"}
+              onChange={() => {
+                setDocumentType("pptx")
+                setDocumentUrl("")
+              }}
+              className="h-4 w-4 text-[#1B3668] focus:ring-[#1B3668]"
+            />
+            <Label htmlFor="doc-pptx" className="text-sm font-normal">
+              PowerPoint (PPTX)
+            </Label>
+          </div>
+          <div className="flex items-center space-x-2">
+            <input
+              type="radio"
               id="doc-image"
               name="documentType"
               value="image"
@@ -230,7 +252,7 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
             type="file"
             ref={fileInputRef}
             onChange={handleFileUpload}
-            accept={documentType === "pdf" ? ".pdf" : "image/*"}
+            accept={documentType === "pdf" ? ".pdf" : documentType === "pptx" ? ".pptx" : "image/*"}
             className="hidden"
           />
           <div className="flex gap-2">
@@ -266,23 +288,22 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
           <p className="text-xs text-muted-foreground">
             {documentType === "pdf"
               ? `Add a PDF document for ${type} details (max 5MB)`
+              : documentType === "pptx"
+              ? `Add a PowerPoint (PPTX) document for ${type} details (max 5MB)`
               : `Add an image for ${type} announcement (max 2MB)`}
           </p>
         </div>
       )}
 
-      <div className="flex justify-end space-x-2 pt-4">
-        <Button type="button" variant="outline" onClick={() => onSubmit(null)}>
-          Cancel
-        </Button>
-        <Button type="submit" disabled={isSubmitting || isUploading || (documentType !== "none" && !documentUrl)}>
+      <div className="sticky bottom-0 bg-white pt-4 border-t">
+        <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
             <>
-              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-              Creating...
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              {type === "event" ? "Creating Event..." : "Creating Meeting..."}
             </>
           ) : (
-            `Create ${type === "event" ? "Event" : "Meeting"}`
+            type === "event" ? "Create Event" : "Create Meeting"
           )}
         </Button>
       </div>

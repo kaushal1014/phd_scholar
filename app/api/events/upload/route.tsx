@@ -29,12 +29,16 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: "Only PDF files are allowed" }, { status: 400 })
     }
 
+    if (type === "pptx" && !file.name.endsWith('.pptx')) {
+      return NextResponse.json({ error: "Only PPTX files are allowed" }, { status: 400 })
+    }
+
     if (type === "image" && !file.type.startsWith("image/")) {
       return NextResponse.json({ error: "Only image files are allowed" }, { status: 400 })
     }
 
     // Validate file size
-    const maxSize = type === "pdf" ? 5 * 1024 * 1024 : 2 * 1024 * 1024 // 5MB for PDFs, 2MB for images
+    const maxSize = type === "image" ? 2 * 1024 * 1024 : 5 * 1024 * 1024 // 5MB for PDFs/PPTX, 2MB for images
     if (file.size > maxSize) {
       return NextResponse.json(
         {

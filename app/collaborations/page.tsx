@@ -181,7 +181,7 @@ export default function CollaborationsPage() {
             <Users className="h-8 w-8 text-[#F59E0B]" />
             <h1 className="text-3xl font-bold text-white">Collaborations</h1>
           </div>
-          <p className="text-blue-100 mt-2 max-w-2xl">
+          <p className="text-blue-500 mt-2 max-w-2xl">
             Connect, collaborate, and stay updated with fellow researchers
           </p>
         </div>

@@ -49,7 +49,7 @@ const eventSchema = new mongoose.Schema(
     },
     documentType: {
       type: String,
-      enum: ["pdf", "image", null],
+      enum: ["pdf", "image", "pptx", null],
     },
   },
   { timestamps: true },

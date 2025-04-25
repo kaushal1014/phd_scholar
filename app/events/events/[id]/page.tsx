@@ -53,7 +53,7 @@ interface Event {
   comments: Comment[]
   createdAt: string
   documentUrl?: string
-  documentType?: "pdf" | "image"
+  documentType?: "pdf" | "image" | "pptx"
 }
 
 const commentSchema = z.object({
@@ -179,6 +179,8 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
   }
 
   const eventDate = new Date(event.date)
+  const eventTime = event.time.split(':')
+  eventDate.setHours(parseInt(eventTime[0]), parseInt(eventTime[1]))
   const isPastEvent = eventDate < new Date()
   const hasDocument = !!event.documentUrl
 
@@ -290,6 +292,28 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                       </a>
                     </div>
                   </object>
+                ) : event.documentType === "pptx" ? (
+                  <iframe
+                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(event.documentUrl)}&embedded=true`}
+                    className="h-full w-full rounded-lg"
+                    style={{ height: "70vh" }}
+                    frameBorder="0"
+                  >
+                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
+                      <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
+                      <p className="text-center mb-4">Your browser cannot display the PowerPoint directly.</p>
+                      <a
+                        href={event.documentUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PowerPoint
+                      </a>
+                    </div>
+                  </iframe>
                 ) : (
                   <div className="flex justify-center">
                     <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200">
