@@ -10,13 +10,15 @@ import { Label } from "@/components/ui/label"
 import { Upload, Loader2 } from "lucide-react"
 import { format } from "date-fns"
 import { toast } from "react-toastify"
+import type {Meeting, Event } from "@/app/events/page"
 
 interface NewEventFormProps {
   onSubmit: (data: any) => void
   type?: "event" | "meeting"
+  initialData?: Meeting | Event | null
 }
 
-export default function NewEventForm({ onSubmit, type = "event" }: NewEventFormProps) {
+export default function NewEventForm({ onSubmit, type = "event", initialData }: NewEventFormProps) {
   const [title, setTitle] = useState("")
   const [description, setDescription] = useState("")
   const [date, setDate] = useState<Date | undefined>(undefined)

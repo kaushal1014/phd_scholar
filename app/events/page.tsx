@@ -69,6 +69,8 @@ export default function EventsPage() {
   const [events, setEvents] = useState<Event[]>([])
   const [isMeetingDialogOpen, setIsMeetingDialogOpen] = useState(false)
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false)
+  const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null)
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null)
   const router = useRouter()
 
   // Fetch user data
@@ -119,12 +121,19 @@ export default function EventsPage() {
   const handleMeetingSubmit = async (data: any) => {
     if (!data) {
       setIsMeetingDialogOpen(false)
+      setEditingMeeting(null)
       return
     }
 
     try {
-      const response = await fetch("/api/collaborations/meetings", {
-        method: "POST",
+      const url = editingMeeting 
+        ? `/api/collaborations/meetings/${editingMeeting._id}`
+        : "/api/collaborations/meetings"
+      
+      const method = editingMeeting ? "PUT" : "POST"
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -132,28 +141,43 @@ export default function EventsPage() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to schedule meeting")
+        throw new Error(editingMeeting ? "Failed to update meeting" : "Failed to schedule meeting")
       }
 
-      const newMeeting = await response.json()
-      setMeetings([newMeeting, ...meetings])
+      const updatedMeeting = await response.json()
+      
+      if (editingMeeting) {
+        setMeetings(meetings.map(m => m._id === updatedMeeting._id ? updatedMeeting : m))
+        toast.success("Meeting updated successfully")
+      } else {
+        setMeetings([updatedMeeting, ...meetings])
+        toast.success("Meeting scheduled successfully")
+      }
+      
       setIsMeetingDialogOpen(false)
-      toast.success("Meeting scheduled successfully")
+      setEditingMeeting(null)
     } catch (error) {
-      console.error("Error scheduling meeting:", error)
-      toast.error("Failed to schedule meeting")
+      console.error("Error with meeting:", error)
+      toast.error(editingMeeting ? "Failed to update meeting" : "Failed to schedule meeting")
     }
   }
 
   const handleEventSubmit = async (data: any) => {
     if (!data) {
       setIsEventDialogOpen(false)
+      setEditingEvent(null)
       return
     }
 
     try {
-      const response = await fetch("/api/collaborations/events", {
-        method: "POST",
+      const url = editingEvent 
+        ? `/api/collaborations/events/${editingEvent._id}`
+        : "/api/collaborations/events"
+      
+      const method = editingEvent ? "PUT" : "POST"
+
+      const response = await fetch(url, {
+        method,
         headers: {
           "Content-Type": "application/json",
         },
@@ -161,17 +185,75 @@ export default function EventsPage() {
       })
 
       if (!response.ok) {
-        throw new Error("Failed to create event")
+        throw new Error(editingEvent ? "Failed to update event" : "Failed to create event")
       }
 
-      const newEvent = await response.json()
-      setEvents([newEvent, ...events])
+      const updatedEvent = await response.json()
+      
+      if (editingEvent) {
+        setEvents(events.map(e => e._id === updatedEvent._id ? updatedEvent : e))
+        toast.success("Event updated successfully")
+      } else {
+        setEvents([updatedEvent, ...events])
+        toast.success("Event created successfully")
+      }
+      
       setIsEventDialogOpen(false)
-      toast.success("Event created successfully")
+      setEditingEvent(null)
     } catch (error) {
-      console.error("Error creating event:", error)
-      toast.error("Failed to create event")
+      console.error("Error with event:", error)
+      toast.error(editingEvent ? "Failed to update event" : "Failed to create event")
     }
+  }
+
+  const handleDeleteMeeting = async (meetingId: string) => {
+    if (!confirm("Are you sure you want to delete this meeting?")) return
+
+    try {
+      const response = await fetch(`/api/collaborations/meetings/${meetingId}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to delete meeting")
+      }
+
+      setMeetings(meetings.filter(m => m._id !== meetingId))
+      toast.success("Meeting deleted successfully")
+    } catch (error) {
+      console.error("Error deleting meeting:", error)
+      toast.error("Failed to delete meeting")
+    }
+  }
+
+  const handleDeleteEvent = async (eventId: string) => {
+    if (!confirm("Are you sure you want to delete this event?")) return
+
+    try {
+      const response = await fetch(`/api/collaborations/events/${eventId}`, {
+        method: "DELETE",
+      })
+
+      if (!response.ok) {
+        throw new Error("Failed to delete event")
+      }
+
+      setEvents(events.filter(e => e._id !== eventId))
+      toast.success("Event deleted successfully")
+    } catch (error) {
+      console.error("Error deleting event:", error)
+      toast.error("Failed to delete event")
+    }
+  }
+
+  const handleEditMeeting = (meeting: Meeting) => {
+    setEditingMeeting(meeting)
+    setIsMeetingDialogOpen(true)
+  }
+
+  const handleEditEvent = (event: Event) => {
+    setEditingEvent(event)
+    setIsEventDialogOpen(true)
   }
 
   // Check if user is admin
@@ -294,10 +376,20 @@ export default function EventsPage() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
                       <DialogHeader>
-                        <DialogTitle>Schedule New Meeting</DialogTitle>
-                        <DialogDescription>Schedule a new monthly meeting for researchers</DialogDescription>
+                        <DialogTitle>
+                          {editingMeeting ? "Edit Meeting" : "Schedule New Meeting"}
+                        </DialogTitle>
+                        <DialogDescription>
+                          {editingMeeting 
+                            ? "Update the meeting details"
+                            : "Schedule a new monthly meeting for researchers"}
+                        </DialogDescription>
                       </DialogHeader>
-                      <NewEventForm onSubmit={handleMeetingSubmit} type="meeting" />
+                      <NewEventForm 
+                        onSubmit={handleMeetingSubmit} 
+                        type="meeting"
+                        initialData={editingMeeting}
+                      />
                     </DialogContent>
                   </Dialog>
                 )}
@@ -324,66 +416,86 @@ export default function EventsPage() {
                   monthlyMeetings.map((meeting) => {
                     const formattedDate = formatDate(meeting.date)
                     return (
-                      <Link href={`/events/meetings/${meeting._id}`} key={meeting._id} className="block">
-                        <div className="border border-gray-200 rounded-lg hover:border-[#1B3668] hover:shadow-md transition-all duration-200 overflow-hidden">
-                          <div className="flex">
-                            <div className="w-24 bg-gray-50 border-r border-gray-200 flex flex-col items-center justify-center p-3">
-                              <div className="text-center">
-                                <span className="block text-sm font-medium text-[#1B3668]">{formattedDate.month}</span>
-                                <span className="block text-3xl font-bold text-[#1B3668]">{formattedDate.day}</span>
-                                <span className="block text-xs text-[#1B3668]">{formattedDate.year}</span>
-                              </div>
-                              <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
-                                {meeting.time}
-                              </div>
-                            </div>
-                            <div className="flex-1 p-4">
-                              <div className="flex items-start justify-between">
-                                <h4 className="font-medium text-gray-900">{meeting.title}</h4>
-                                <Badge className="bg-[#1B3668]">Meeting</Badge>
-                              </div>
-                              <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{meeting.description}</p>
-                              <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
-                                <div className="flex items-center">
-                                  <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                  <span>{meeting.location}</span>
+                      <div key={meeting._id} className="mb-4">
+                        <Link href={`/events/meetings/${meeting._id}`} className="block">
+                          <div className="border border-gray-200 rounded-lg hover:border-[#1B3668] hover:shadow-md transition-all duration-200 overflow-hidden">
+                            <div className="flex">
+                              <div className="w-24 bg-gray-50 border-r border-gray-200 flex flex-col items-center justify-center p-3">
+                                <div className="text-center">
+                                  <span className="block text-sm font-medium text-[#1B3668]">{formattedDate.month}</span>
+                                  <span className="block text-3xl font-bold text-[#1B3668]">{formattedDate.day}</span>
+                                  <span className="block text-xs text-[#1B3668]">{formattedDate.year}</span>
                                 </div>
-                                <div className="flex items-center">
-                                  <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                  <span>Organized by: {meeting.organizer.firstName}</span>
+                                <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
+                                  {meeting.time}
                                 </div>
-                                {meeting.documentUrl && (
+                              </div>
+                              <div className="flex-1 p-4">
+                                <div className="flex items-start justify-between">
+                                  <h4 className="font-medium text-gray-900">{meeting.title}</h4>
+                                  <Badge className="bg-[#1B3668]">Meeting</Badge>
+                                </div>
+                                <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{meeting.description}</p>
+                                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
                                   <div className="flex items-center">
-                                    <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                    <span className="text-[#1B3668]">
-                                      {meeting.documentType === "pdf" ? "PDF Document" : "Image"} available
-                                    </span>
+                                    <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                                    <span>{meeting.location}</span>
                                   </div>
-                                )}
+                                  <div className="flex items-center">
+                                    <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                                    <span>Organized by: {meeting.organizer.firstName}</span>
+                                  </div>
+                                  {meeting.documentUrl && (
+                                    <div className="flex items-center">
+                                      <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                                      <span className="text-[#1B3668]">
+                                        {meeting.documentType === "pdf" ? "PDF Document" : "Image"} available
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
+                              {meeting.documentUrl && (
+                                <div className="w-24 border-l border-gray-200 bg-gray-50 flex items-center justify-center">
+                                  {meeting.documentType === "image" ? (
+                                    <div className="relative h-full w-full">
+                                      <Image
+                                        src={meeting.documentUrl || "/placeholder.svg?height=100&width=100"}
+                                        alt={`Document for ${meeting.title}`}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="flex flex-col items-center justify-center p-2">
+                                      <FileText className="h-8 w-8 text-[#1B3668]" />
+                                      <span className="text-xs text-center text-[#1B3668] mt-1">View Document</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                            {meeting.documentUrl && (
-                              <div className="w-24 border-l border-gray-200 bg-gray-50 flex items-center justify-center">
-                                {meeting.documentType === "image" ? (
-                                  <div className="relative h-full w-full">
-                                    <Image
-                                      src={meeting.documentUrl || "/placeholder.svg?height=100&width=100"}
-                                      alt={`Document for ${meeting.title}`}
-                                      fill
-                                      className="object-cover"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="flex flex-col items-center justify-center p-2">
-                                    <FileText className="h-8 w-8 text-[#1B3668]" />
-                                    <span className="text-xs text-center text-[#1B3668] mt-1">View Document</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
                           </div>
-                        </div>
-                      </Link>
+                        </Link>
+                        {isAdmin && (
+                          <div className="flex gap-2 mt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditMeeting(meeting)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteMeeting(meeting._id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     )
                   })
                 ) : (
@@ -423,10 +535,20 @@ export default function EventsPage() {
                     </DialogTrigger>
                     <DialogContent className="sm:max-w-[500px]">
                       <DialogHeader>
-                        <DialogTitle>Create New Event</DialogTitle>
-                        <DialogDescription>Add a new research event to the calendar</DialogDescription>
+                        <DialogTitle>
+                          {editingEvent ? "Edit Event" : "Create New Event"}
+                        </DialogTitle>
+                        <DialogDescription>
+                          {editingEvent 
+                            ? "Update the event details"
+                            : "Create a new event for researchers"}
+                        </DialogDescription>
                       </DialogHeader>
-                      <NewEventForm onSubmit={handleEventSubmit} type="event" />
+                      <NewEventForm 
+                        onSubmit={handleEventSubmit} 
+                        type="event"
+                        initialData={editingEvent}
+                      />
                     </DialogContent>
                   </Dialog>
                 )}
@@ -438,66 +560,86 @@ export default function EventsPage() {
                   upcomingEvents.map((event) => {
                     const formattedDate = formatDate(event.date)
                     return (
-                      <Link href={`/events/events/${event._id}`} key={event._id} className="block">
-                        <div className="border border-gray-200 rounded-lg hover:border-[#1B3668] hover:shadow-md transition-all duration-200 overflow-hidden">
-                          <div className="flex flex-col md:flex-row">
-                            <div className="w-full md:w-24 bg-[#1B3668]/5 md:border-r border-gray-200 flex flex-col items-center justify-center p-3">
-                              <div className="text-center">
-                                <span className="block text-sm font-medium text-[#1B3668]">{formattedDate.month}</span>
-                                <span className="block text-3xl font-bold text-[#1B3668]">{formattedDate.day}</span>
-                                <span className="block text-xs text-[#1B3668]">{formattedDate.year}</span>
-                              </div>
-                              <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
-                                {event.time}
-                              </div>
-                            </div>
-                            <div className="flex-1 p-4">
-                              <div className="flex items-start justify-between">
-                                <h4 className="font-medium text-gray-900">{event.title}</h4>
-                                <Badge className="bg-[#1B3668]">Upcoming</Badge>
-                              </div>
-                              <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{event.description}</p>
-                              <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
-                                <div className="flex items-center">
-                                  <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                  <span>{event.location}</span>
+                      <div key={event._id} className="mb-4">
+                        <Link href={`/events/events/${event._id}`} className="block">
+                          <div className="border border-gray-200 rounded-lg hover:border-[#1B3668] hover:shadow-md transition-all duration-200 overflow-hidden">
+                            <div className="flex flex-col md:flex-row">
+                              <div className="w-full md:w-24 bg-[#1B3668]/5 md:border-r border-gray-200 flex flex-col items-center justify-center p-3">
+                                <div className="text-center">
+                                  <span className="block text-sm font-medium text-[#1B3668]">{formattedDate.month}</span>
+                                  <span className="block text-3xl font-bold text-[#1B3668]">{formattedDate.day}</span>
+                                  <span className="block text-xs text-[#1B3668]">{formattedDate.year}</span>
                                 </div>
-                                <div className="flex items-center">
-                                  <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                  <span>Organized by: {event.organizer.firstName}</span>
+                                <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
+                                  {event.time}
                                 </div>
-                                {event.documentUrl && (
+                              </div>
+                              <div className="flex-1 p-4">
+                                <div className="flex items-start justify-between">
+                                  <h4 className="font-medium text-gray-900">{event.title}</h4>
+                                  <Badge className="bg-[#1B3668]">Upcoming</Badge>
+                                </div>
+                                <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{event.description}</p>
+                                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
                                   <div className="flex items-center">
-                                    <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                    <span className="text-[#1B3668]">
-                                      {event.documentType === "pdf" ? "PDF Document" : "Image"} available
-                                    </span>
+                                    <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                                    <span>{event.location}</span>
                                   </div>
-                                )}
+                                  <div className="flex items-center">
+                                    <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                                    <span>Organized by: {event.organizer.firstName}</span>
+                                  </div>
+                                  {event.documentUrl && (
+                                    <div className="flex items-center">
+                                      <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                                      <span className="text-[#1B3668]">
+                                        {event.documentType === "pdf" ? "PDF Document" : "Image"} available
+                                      </span>
+                                    </div>
+                                  )}
+                                </div>
                               </div>
+                              {event.documentUrl && (
+                                <div className="w-full md:w-32 h-32 md:h-auto border-t md:border-l border-gray-200 bg-gray-50 flex items-center justify-center">
+                                  {event.documentType === "image" ? (
+                                    <div className="relative h-full w-full">
+                                      <Image
+                                        src={event.documentUrl || "/placeholder.svg?height=100&width=100"}
+                                        alt={`Document for ${event.title}`}
+                                        fill
+                                        className="object-cover"
+                                      />
+                                    </div>
+                                  ) : (
+                                    <div className="flex flex-col items-center justify-center p-4">
+                                      <FileText className="h-10 w-10 text-[#1B3668]" />
+                                      <span className="text-xs text-center text-[#1B3668] mt-2">View Document</span>
+                                    </div>
+                                  )}
+                                </div>
+                              )}
                             </div>
-                            {event.documentUrl && (
-                              <div className="w-full md:w-32 h-32 md:h-auto border-t md:border-l border-gray-200 bg-gray-50 flex items-center justify-center">
-                                {event.documentType === "image" ? (
-                                  <div className="relative h-full w-full">
-                                    <Image
-                                      src={event.documentUrl || "/placeholder.svg?height=100&width=100"}
-                                      alt={`Document for ${event.title}`}
-                                      fill
-                                      className="object-cover"
-                                    />
-                                  </div>
-                                ) : (
-                                  <div className="flex flex-col items-center justify-center p-4">
-                                    <FileText className="h-10 w-10 text-[#1B3668]" />
-                                    <span className="text-xs text-center text-[#1B3668] mt-2">View Document</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
                           </div>
-                        </div>
-                      </Link>
+                        </Link>
+                        {isAdmin && (
+                          <div className="flex gap-2 mt-2">
+                            <Button
+                              variant="outline"
+                              size="sm"
+                              onClick={() => handleEditEvent(event)}
+                            >
+                              Edit
+                            </Button>
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              onClick={() => handleDeleteEvent(event._id)}
+                            >
+                              Delete
+                            </Button>
+                          </div>
+                        )}
+                      </div>
                     )
                   })
                 ) : (
@@ -614,3 +756,5 @@ export default function EventsPage() {
     </div>
   )
 }
+
+export type {Meeting, Event}

@@ -83,9 +83,9 @@ function Header() {
               Programs
             </Link>
             <Link
-              href="/#"
+              href="/research-support"
               className={`text-lg font-medium transition-colors hover:text-primary ${
-                pathname === "/milestones" ? "text-primary" : "text-foreground/60"
+                pathname === "/research-support" ? "text-primary" : "text-foreground/60"
               }`}
             >
               Research Support
@@ -129,10 +129,7 @@ function Header() {
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
                     <DropdownMenuItem asChild>
-                      <Link href={`/myprofile/`}>Profile</Link>
-                    </DropdownMenuItem>
-                    <DropdownMenuItem asChild>
-                      <Link href="/settings">Settings</Link>
+                      <Link href={session.user.isAdmin ? "/admin" : "/dashboard"}>Dashboard</Link>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={handleSignOut}>Sign out</DropdownMenuItem>
                   </DropdownMenuContent>

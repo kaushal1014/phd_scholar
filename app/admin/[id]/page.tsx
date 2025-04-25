@@ -18,6 +18,7 @@ import {
   School,
   Shield,
   Loader2,
+  CalendarCheck
 } from "lucide-react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
@@ -635,7 +636,26 @@ export default function UserDetail() {
                       label: "Award of Degree",
                       date: phdScholarData?.phdMilestones?.awardOfDegreeDate,
                       icon: <Award className="h-4 w-4" />,
+                    },      {
+                      label: "Coursework 1 Completion",
+                      date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework1?.toString(),
+                      icon:<CalendarCheck className="h-4 w-4"/>
                     },
+                    {
+                      label: "Coursework 2 Completion",
+                      date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework2?.toString(),
+                      icon:<CalendarCheck className="h-4 w-4"/>
+                    },
+                    {
+                      label: "Coursework 3 Completion",
+                      date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework3?.toString(),
+                      icon:<CalendarCheck className="h-4 w-4"/>
+                    },
+                    {
+                      label: "Coursework 4 Completion",
+                      date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework4?.toString(),
+                      icon:<CalendarCheck className="h-4 w-4"/>
+                    }
                   ].map((milestone, index, array) => {
                     const isCompleted = milestone.date ? new Date(milestone.date) <= new Date() : false
                     const isLast = index === array.length - 1
