@@ -8,8 +8,6 @@ import Image from "next/image"
 import { useRouter, usePathname } from "next/navigation"
 import { Moon, Sun, GraduationCap, User, ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { ToastContainer, toast } from "react-toastify"
-import "react-toastify/dist/ReactToastify.css"
 import { useTheme } from "next-themes"
 import { AuthProvider } from "./Providers"
 import { useSession, signOut } from "next-auth/react"
@@ -45,13 +43,12 @@ function Header() {
   const handleSignOut = async () => {
     try {
       await signOut({ redirect: false })
-      toast.success("Signed out successfully")
 
       if (pathname === "/dashboard") {
         router.push("/login")
       }
     } catch (error) {
-      toast.error("Error signing out. Please try again.")
+      console.log("signout error",error)  
     }
   }
 
@@ -159,17 +156,7 @@ export default function RootLayout({
         <AuthProvider>
             <Header />
             <main className="w-full px-4 sm:px-6 lg:px-8 py-8">{children}</main>
-            <ToastContainer
-              position="top-right"
-              autoClose={5000}
-              hideProgressBar={false}
-              newestOnTop
-              closeOnClick
-              rtl={false}
-              pauseOnFocusLoss
-              draggable
-              pauseOnHover
-            />
+  
 <footer className="w-full bg-gradient-to-r from-[#1B3668] via-[#0A2240] to-[#1B3668] text-white py-16 mt-24 relative overflow-hidden">
 <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c')] opacity-5 bg-cover bg-center mix-blend-overlay" />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center relative">

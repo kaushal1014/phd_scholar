@@ -14,7 +14,6 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog"
-import { toast } from "react-toastify"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import NewEventForm from "@/components/new-event-form"
@@ -148,18 +147,15 @@ export default function EventsPage() {
       
       if (editingMeeting) {
         setMeetings(meetings.map(m => m._id === updatedMeeting._id ? updatedMeeting : m))
-        toast.success("Meeting updated successfully")
       } else {
         setMeetings([updatedMeeting, ...meetings])
-        toast.success("Meeting scheduled successfully")
-      }
+        }
       
       setIsMeetingDialogOpen(false)
       setEditingMeeting(null)
     } catch (error) {
       console.error("Error with meeting:", error)
-      toast.error(editingMeeting ? "Failed to update meeting" : "Failed to schedule meeting")
-    }
+      }
   }
 
   const handleEventSubmit = async (data: any) => {
@@ -192,18 +188,15 @@ export default function EventsPage() {
       
       if (editingEvent) {
         setEvents(events.map(e => e._id === updatedEvent._id ? updatedEvent : e))
-        toast.success("Event updated successfully")
-      } else {
+        } else {
         setEvents([updatedEvent, ...events])
-        toast.success("Event created successfully")
-      }
+        }
       
       setIsEventDialogOpen(false)
       setEditingEvent(null)
     } catch (error) {
       console.error("Error with event:", error)
-      toast.error(editingEvent ? "Failed to update event" : "Failed to create event")
-    }
+      }
   }
 
   const handleDeleteMeeting = async (meetingId: string) => {
@@ -219,11 +212,9 @@ export default function EventsPage() {
       }
 
       setMeetings(meetings.filter(m => m._id !== meetingId))
-      toast.success("Meeting deleted successfully")
-    } catch (error) {
+      } catch (error) {
       console.error("Error deleting meeting:", error)
-      toast.error("Failed to delete meeting")
-    }
+      }
   }
 
   const handleDeleteEvent = async (eventId: string) => {
@@ -239,11 +230,9 @@ export default function EventsPage() {
       }
 
       setEvents(events.filter(e => e._id !== eventId))
-      toast.success("Event deleted successfully")
-    } catch (error) {
+      } catch (error) {
       console.error("Error deleting event:", error)
-      toast.error("Failed to delete event")
-    }
+      }
   }
 
   const handleEditMeeting = (meeting: Meeting) => {

@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
 import Link from "next/link"
+import Image from "next/image"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback } from "@/components/ui/avatar"
@@ -26,7 +27,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { Form, FormControl, FormField, FormItem, FormMessage } from "@/components/ui/form"
-import Image from "next/image"
 
 // Types
 interface Comment {
@@ -275,7 +275,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                     data={`${event.documentUrl}#toolbar=1&view=FitH`}
                     type="application/pdf"
                     className="h-full w-full rounded-lg"
-                    style={{ height: "70vh" }}
+                    style={{ height: "90vh" }}
                   >
                     <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
                       <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
@@ -293,30 +293,23 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                     </div>
                   </object>
                 ) : event.documentType === "pptx" ? (
-                  <iframe
-                    src={`https://docs.google.com/viewer?url=${encodeURIComponent(event.documentUrl)}&embedded=true`}
-                    className="h-full w-full rounded-lg"
-                    style={{ height: "70vh" }}
-                    frameBorder="0"
-                  >
-                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
-                      <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
-                      <p className="text-center mb-4">Your browser cannot display the PowerPoint directly.</p>
-                      <a
-                        href={event.documentUrl}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download PowerPoint
-                      </a>
-                    </div>
-                  </iframe>
-                ) : (
-                  <div className="flex justify-center">
-                    <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200">
+                  <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
+                    <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
+                    <p className="text-center mb-4">PowerPoint files can be downloaded and viewed locally.</p>
+                    <a
+                      href={event.documentUrl}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download PowerPoint
+                    </a>
+                  </div>
+                ) : event.documentType === "image" ? (
+                  <div className="flex flex-col items-center justify-center">
+                    <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200 mb-4">
                       <Image
                         src={event.documentUrl || "/placeholder.svg"}
                         alt={event.title}
@@ -326,8 +319,18 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                         priority
                       />
                     </div>
+                    <a
+                      href={event.documentUrl}
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
+                    >
+                      <Download className="h-4 w-4 mr-2" />
+                      Download Image
+                    </a>
                   </div>
-                )}
+                ) : null}
               </div>
             </CardContent>
 
