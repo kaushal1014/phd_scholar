@@ -107,22 +107,22 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="flex min-h-screen">
+    <div className="flex flex-col lg:flex-row min-h-screen">
       {/* Left side - Login form */}
-      <div className="w-full lg:w-1/2 flex items-start justify-center p-4 lg:p-8 bg-[#f5f7fa]">
+      <div className="w-full lg:w-1/2 flex items-start justify-center p-2 sm:p-4 lg:p-8 bg-[#f5f7fa]">
         <div className="w-full max-w-md mt-8">
-          <div className="mb-12">
-            <Image src="/logoPesu.png" alt="PES University Logo" width={240} height={80} className="mb-8" />
-            <h1 className="text-4xl font-light text-gray-800">Sign in</h1>
+          <div className="mb-8 sm:mb-12">
+            <Image src="/logoPesu.png" alt="PES University Logo" width={240} height={80} className="mb-6 sm:mb-8" />
+            <h1 className="text-2xl sm:text-4xl font-light text-gray-800">Sign in</h1>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="space-y-6">
+            <div className="space-y-4 sm:space-y-6">
               <div className="space-y-2">
                 <Input
                   id="email"
                   placeholder="Email"
-                  className="h-12 bg-white border-gray-200 rounded-md"
+                  className="h-10 sm:h-12 bg-white border-gray-200 rounded-md text-sm sm:text-base"
                   {...register("email", {
                     required: "Email is required",
                     pattern: {
@@ -132,7 +132,7 @@ export default function LoginPage() {
                   })}
                   disabled={isSubmitting}
                 />
-                {errors.email && <p className="text-red-500 text-sm mt-1">{errors.email.message}</p>}
+                {errors.email && <p className="text-red-500 text-xs sm:text-sm mt-1">{errors.email.message}</p>}
               </div>
 
               <div className="space-y-2">
@@ -141,7 +141,7 @@ export default function LoginPage() {
                     id="password"
                     type={showPassword ? "text" : "password"}
                     placeholder="Password"
-                    className="h-12 bg-white border-gray-200 rounded-md pr-10"
+                    className="h-10 sm:h-12 bg-white border-gray-200 rounded-md pr-10 text-sm sm:text-base"
                     {...register("password", {
                       required: "Password is required",
                     })}
@@ -158,12 +158,12 @@ export default function LoginPage() {
                     {showPassword ? <EyeOffIcon className="h-4 w-4" /> : <EyeIcon className="h-4 w-4" />}
                   </Button>
                 </div>
-                {errors.password && <p className="text-red-500 text-sm">{errors.password.message}</p>}
+                {errors.password && <p className="text-red-500 text-xs sm:text-sm">{errors.password.message}</p>}
               </div>
 
               <Button
                 type="submit"
-                className="w-full h-12 bg-[#0a2158] hover:bg-[#0a2158]/90 transition-colors rounded-md"
+                className="w-full h-10 sm:h-12 bg-[#0a2158] hover:bg-[#0a2158]/90 transition-colors rounded-md text-sm sm:text-base"
                 disabled={isSubmitting}
               >
                 {isSubmitting ? (
@@ -176,11 +176,11 @@ export default function LoginPage() {
                 )}
               </Button>
 
-              <div className="text-center mt-8">
+              <div className="text-center mt-6 sm:mt-8">
                 <button
                   type="button"
                   onClick={() => setForgotPasswordOpen(true)}
-                  className="text-[#2563eb] hover:underline text-sm"
+                  className="text-[#2563eb] hover:underline text-xs sm:text-sm"
                 >
                   Forgot your Password?
                 </button>
@@ -188,7 +188,7 @@ export default function LoginPage() {
                 <button
                   type="button"
                   onClick={() => router.push('/signup')}
-                  className="text-[#2563eb] hover:underline text-sm"
+                  className="text-[#2563eb] hover:underline text-xs sm:text-sm"
                 >
                   Create an account?
                 </button>
@@ -197,7 +197,7 @@ export default function LoginPage() {
             </div>
           </form>
 
-          <div className="mt-12 text-center text-sm text-gray-500">
+          <div className="mt-8 sm:mt-12 text-center text-xs sm:text-sm text-gray-500">
             <p>Copyright © PES University, Bengaluru, India.</p>
           </div>
         </div>

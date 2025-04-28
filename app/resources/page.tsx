@@ -113,56 +113,54 @@ export default function ResourcesPage() {
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
-        <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl font-bold text-white">Resources & Information</h1>
+        <div className="max-w-7xl mx-auto py-8 px-2 sm:py-10 sm:px-4 lg:px-8">
+          <h1 className="text-2xl sm:text-3xl font-bold text-white">Resources & Information</h1>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-7xl mx-auto py-8 px-2 sm:py-16 sm:px-4 lg:px-8">
         <Card className="group overflow-hidden border-[#E5E7EB] bg-white shadow-sm hover:shadow-md transition-shadow">
-          <CardHeader className="border-b bg-[#F9FAFB] p-6">
-            <div className="flex items-center space-x-4">
-              <div className="rounded-full bg-[#4C1D95]/10 p-3">
-                <FileText className="h-8 w-8 text-[#4C1D95]" />
+          <CardHeader className="border-b bg-[#F9FAFB] p-4 sm:p-6">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <div className="rounded-full bg-[#4C1D95]/10 p-2 sm:p-3">
+                <FileText className="h-7 w-7 sm:h-8 sm:w-8 text-[#4C1D95]" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-[#1F2937]">Ph.D. Resources & Information</CardTitle>
-                <CardDescription className="text-base mt-1 text-[#6B7280]">
+                <CardTitle className="text-lg sm:text-2xl font-bold text-[#1F2937]">Ph.D. Resources & Information</CardTitle>
+                <CardDescription className="text-sm sm:text-base mt-1 text-[#6B7280]">
                   Browse through our comprehensive collection of resources for Ph.D. scholars
                 </CardDescription>
               </div>
             </div>
           </CardHeader>
-          <CardContent className="p-6">
-            <div className="flex flex-col md:flex-row gap-6">
+          <CardContent className="p-4 sm:p-6">
+            <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
               {/* Left side - Category tree */}
-              <div className="w-full md:w-1/3 border rounded-lg overflow-hidden">
-                <div className="p-4 bg-[#F9FAFB] border-b">
-                  <h3 className="text-lg font-semibold text-[#1F2937]">Resource Categories</h3>
+              <div className="w-full md:w-1/3 border rounded-lg overflow-hidden mb-4 md:mb-0">
+                <div className="p-3 sm:p-4 bg-[#F9FAFB] border-b">
+                  <h3 className="text-base sm:text-lg font-semibold text-[#1F2937]">Resource Categories</h3>
                 </div>
-                <ul className="divide-y">
+                <ul className="divide-y max-h-64 sm:max-h-none overflow-y-auto">
                   {allCategories.map((category, index) => (
                     <li
                       key={index}
                       className={`transition-colors ${displayCategory === category.title ? "bg-[#4C1D95]/10" : "hover:bg-[#F3F4F6]"}`}
                     >
                       <button
-                        className="w-full flex items-center p-4 text-left"
+                        className="w-full flex items-center p-3 sm:p-4 text-left"
                         onClick={() => setActiveCategory(activeCategory === category.title ? null : category.title)}
                         onMouseEnter={() => setHoverCategory(category.title)}
                         onMouseLeave={() => setHoverCategory(null)}
                       >
-                        <div className="rounded-full bg-[#4C1D95]/10 p-2 mr-3">
-                          <category.icon className="h-5 w-5 text-[#4C1D95]" />
+                        <div className="rounded-full bg-[#4C1D95]/10 p-1.5 sm:p-2 mr-2 sm:mr-3">
+                          <category.icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4C1D95]" />
                         </div>
                         <div className="flex-1">
-                          <h4 className="font-medium text-[#1F2937]">{category.title}</h4>
-                          <p className="text-xs text-[#6B7280] line-clamp-1">{category.description}</p>
+                          <h4 className="font-medium text-[#1F2937] text-sm sm:text-base">{category.title}</h4>
+                          <p className="text-xs sm:text-xs text-[#6B7280] line-clamp-1">{category.description}</p>
                         </div>
                         <ChevronRight
-                          className={`h-5 w-5 text-[#4C1D95] transition-transform ${
-                            displayCategory === category.title ? "rotate-90" : ""
-                          }`}
+                          className={`h-4 w-4 sm:h-5 sm:w-5 text-[#4C1D95] transition-transform ${displayCategory === category.title ? "rotate-90" : ""}`}
                         />
                       </button>
                     </li>
@@ -174,33 +172,30 @@ export default function ResourcesPage() {
               <div className="w-full md:w-2/3 border rounded-lg overflow-hidden">
                 {currentCategory ? (
                   <>
-                    <div className="p-4 bg-[#F9FAFB] border-b">
+                    <div className="p-3 sm:p-4 bg-[#F9FAFB] border-b">
                       <div className="flex items-center">
-                        <div className="rounded-full bg-[#4C1D95]/10 p-2 mr-3">
-                          <currentCategory.icon className="h-5 w-5 text-[#4C1D95]" />
+                        <div className="rounded-full bg-[#4C1D95]/10 p-1.5 sm:p-2 mr-2 sm:mr-3">
+                          <currentCategory.icon className="h-4 w-4 sm:h-5 sm:w-5 text-[#4C1D95]" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-[#1F2937]">{currentCategory.title}</h3>
-                          <p className="text-sm text-[#6B7280]">{currentCategory.description}</p>
+                          <h3 className="text-base sm:text-lg font-semibold text-[#1F2937]">{currentCategory.title}</h3>
+                          <p className="text-xs sm:text-sm text-[#6B7280]">{currentCategory.description}</p>
                         </div>
                       </div>
                     </div>
-                    <div className="p-4">
-                      <ul className="grid grid-cols-1 gap-3">
+                    <div className="p-3 sm:p-4">
+                      <ul className="grid grid-cols-1 gap-2 sm:gap-3">
                         {currentCategory.items.map((item, itemIndex) => (
                           <li key={itemIndex}>
                             <Link
                               href={item.href}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="flex items-center p-3 rounded-lg text-[#1F2937] bg-[#F9FAFB] hover:bg-[#4C1D95]/10 hover:text-[#4C1D95] transition-all duration-200 group/item"
+                              className="flex items-center p-2 sm:p-3 rounded-lg text-[#1F2937] bg-[#F9FAFB] hover:bg-[#4C1D95]/10 hover:text-[#4C1D95] transition-all duration-200 group/item"
                             >
-                              <ArrowRight className="h-5 w-5 mr-3 flex-shrink-0 transition-transform duration-200 group-hover/item:translate-x-1" />
-                              <span className="font-medium">{item.text}</span>
-                              <ExternalLink
-                                className="h-4 w-4 ml-auto flex-shrink-0 opacity-0 group-hover/item:opacity-100 transition-opacity duration-200"
-                                aria-label="Opens in a new tab"
-                              />
+                              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0 transition-transform duration-200 group-hover/item:translate-x-1" />
+                              <span className="font-medium text-sm sm:text-base">{item.text}</span>
+                              <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 ml-auto text-[#4C1D95]" />
                             </Link>
                           </li>
                         ))}
@@ -208,14 +203,10 @@ export default function ResourcesPage() {
                     </div>
                   </>
                 ) : (
-                  <div className="flex flex-col items-center justify-center h-full py-16 px-4 text-center">
-                    <div className="rounded-full bg-[#4C1D95]/10 p-4 mb-4">
-                      <ChevronRight className="h-8 w-8 text-[#4C1D95]" />
-                    </div>
-                    <h3 className="text-xl font-semibold text-[#1F2937] mb-2">Select a Category</h3>
-                    <p className="text-[#6B7280] max-w-md">
-                      Choose a resource category from the left to view available documents and information
-                    </p>
+                  <div className="flex flex-col items-center justify-center h-full p-6">
+                    <BookOpen className="h-10 w-10 text-[#4C1D95] mb-4" />
+                    <h3 className="text-base sm:text-lg font-semibold text-[#1F2937] mb-2 text-center">Select a resource category to view documents</h3>
+                    <p className="text-xs sm:text-sm text-[#6B7280] text-center">Browse the categories on the left to see available resources and information for Ph.D. scholars.</p>
                   </div>
                 )}
               </div>

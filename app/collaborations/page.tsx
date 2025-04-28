@@ -176,27 +176,27 @@ export default function CollaborationsPage() {
     <div className="min-h-screen bg-[#F9FAFB]">
       <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow-md relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-        <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 relative">
-          <div className="flex items-center space-x-3">
-            <Users className="h-8 w-8 text-[#F59E0B]" />
-            <h1 className="text-3xl font-bold text-white">Collaborations</h1>
+        <div className="max-w-7xl mx-auto py-6 px-2 sm:py-10 sm:px-4 lg:px-8 relative">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-3">
+            <Users className="h-7 w-7 sm:h-8 sm:w-8 text-[#F59E0B]" />
+            <h1 className="text-xl sm:text-3xl font-bold text-white">Collaborations</h1>
           </div>
-          <p className="text-blue-500 mt-2 max-w-2xl">
+          <p className="text-blue-500 mt-2 max-w-2xl text-sm sm:text-base">
             Connect, collaborate, and stay updated with fellow researchers
           </p>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
-        <Card className="border-[#E5E7EB] bg-white shadow-sm mb-8">
-          <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-6">
-            <div className="flex items-center space-x-4">
-              <div className="rounded-full bg-[#1B3668]/10 p-3 border border-[#1B3668]/20">
-                <Users className="h-8 w-8 text-[#1B3668]" />
+      <main className="max-w-7xl mx-auto py-4 px-2 sm:py-8 sm:px-6 lg:px-8">
+        <Card className="border-[#E5E7EB] bg-white shadow-sm mb-6 sm:mb-8">
+          <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-4 sm:p-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center space-y-2 sm:space-y-0 sm:space-x-4">
+              <div className="rounded-full bg-[#1B3668]/10 p-2 sm:p-3 border border-[#1B3668]/20">
+                <Users className="h-7 w-7 sm:h-8 sm:w-8 text-[#1B3668]" />
               </div>
               <div>
-                <CardTitle className="text-2xl font-bold text-[#1F2937]">Research Collaborations</CardTitle>
-                <CardDescription className="text-base mt-1 text-[#6B7280]">
+                <CardTitle className="text-lg sm:text-2xl font-bold text-[#1F2937]">Research Collaborations</CardTitle>
+                <CardDescription className="text-sm sm:text-base mt-1 text-[#6B7280]">
                   Connect, collaborate, and stay updated with fellow researchers
                 </CardDescription>
               </div>

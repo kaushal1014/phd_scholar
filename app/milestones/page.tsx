@@ -108,13 +108,13 @@ const PhDMilestoneFlowchart: React.FC = () => {
   return (
     <div className={`min-h-screen ${isDarkMode ? "dark" : ""}`}>
       {showConfetti && <Confetti />}
-      <Card className="max-w-4xl mx-auto p-8 bg-gradient-to-br from-gray-50 to-white shadow-xl dark:from-gray-900 dark:to-gray-800 dark:text-white">
-        <CardHeader className="flex flex-row items-center justify-between">
-          <CardTitle className="text-3xl font-bold text-center mb-8 text-gray-800 dark:text-white">
+      <Card className="max-w-4xl mx-auto p-4 sm:p-8 bg-gradient-to-br from-gray-50 to-white shadow-xl dark:from-gray-900 dark:to-gray-800 dark:text-white w-full">
+        <CardHeader className="flex flex-col sm:flex-row items-center justify-between">
+          <CardTitle className="text-xl sm:text-3xl font-bold text-center mb-4 sm:mb-8 text-gray-800 dark:text-white w-full">
             PhD Scholar's Journey
           </CardTitle>
         </CardHeader>
-        <div className="max-w-md mx-auto mb-8">
+        <div className="max-w-md mx-auto mb-6 sm:mb-8 w-full">
           <Select
             value={currentMilestone}
             onValueChange={handleMilestoneChange}
@@ -133,7 +133,7 @@ const PhDMilestoneFlowchart: React.FC = () => {
           </Select>
         </div>
         <CardContent>
-          <div className="relative pl-16 mt-12">
+          <div className="relative pl-0 sm:pl-16 mt-8 sm:mt-12 w-full">
             {milestones.map((milestone, index) => (
               <React.Fragment key={milestone.id}>
                 <MilestoneBox
@@ -142,7 +142,7 @@ const PhDMilestoneFlowchart: React.FC = () => {
                   isCompleted={milestones.findIndex((m) => m.id === currentMilestone) > index}
                 />
                 {index < milestones.length - 1 && (
-                  <div className="flex justify-center my-4">
+                  <div className="flex justify-center my-2 sm:my-4">
                     <ArrowDown className="text-gray-400 dark:text-gray-500" size={24} />
                   </div>
                 )}
@@ -151,7 +151,7 @@ const PhDMilestoneFlowchart: React.FC = () => {
           </div>
         </CardContent>
         {currentMilestone === "award" && (
-          <div className="text-center mt-8 text-2xl font-bold text-purple-600 dark:text-purple-300 animate-pulse">
+          <div className="text-center mt-6 sm:mt-8 text-xl sm:text-2xl font-bold text-purple-600 dark:text-purple-300 animate-pulse">
             Congratulations on completing your PhD journey!
           </div>
         )}

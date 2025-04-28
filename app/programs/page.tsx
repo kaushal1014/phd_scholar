@@ -8,13 +8,13 @@ export default function ProgramsPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-orange-50 dark:from-gray-900 dark:to-gray-800">
       <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
-        <div className="max-w-7xl mx-auto py-6 px-4 sm:px-6 lg:px-8">
-          <h1 className="text-3xl text-center font-bold text-white">Embark on a journey of advanced research and academic excellence with PES University Research programs.</h1>
+        <div className="max-w-7xl mx-auto py-4 px-2 sm:py-6 sm:px-4 lg:px-8">
+          <h1 className="text-xl sm:text-3xl text-center font-bold text-white">Embark on a journey of advanced research and academic excellence with PES University Research programs.</h1>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+      <main className="max-w-7xl mx-auto py-6 px-2 sm:py-12 sm:px-4 lg:px-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-8">
           {/* PhD Column */}
           <div>
             <Card className="bg-gradient-to-br from-white to-blue-50 dark:from-gray-800 dark:to-gray-700 shadow-lg">

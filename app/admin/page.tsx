@@ -84,11 +84,11 @@ export default function AdminUsers() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-8">
-      <div className="flex justify-between items-center">
-        <h1 className="text-2xl font-bold text-[#1B3668]">Admin Dashboard</h1>
-        <Link href="/admin/create-user">
-          <Button className="bg-[#1B3668] hover:bg-[#1B3668]/90">
+    <div className="container mx-auto p-2 sm:p-4 space-y-6 sm:space-y-8">
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
+        <h1 className="text-xl sm:text-2xl font-bold text-[#1B3668]">Admin Dashboard</h1>
+        <Link href="/admin/create-user" className="w-full sm:w-auto">
+          <Button className="bg-[#1B3668] hover:bg-[#1B3668]/90 w-full sm:w-auto">
             <UserPlus className="h-4 w-4 mr-2" />
             Add User
           </Button>
@@ -96,28 +96,28 @@ export default function AdminUsers() {
       </div>
 
       {/* Admin Tracker Section */}
-      <div className="mb-8">
+      <div className="mb-6 sm:mb-8">
         <AdminTracker />
       </div>
 
       {/* User Management Section */}
       <Card className="shadow-md">
         <CardHeader className="bg-gray-50 border-b">
-          <div className="flex flex-row items-center justify-between">
-            <CardTitle className="text-xl text-[#1B3668]">User Management</CardTitle>
-            <div className="relative w-64">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-0">
+            <CardTitle className="text-lg sm:text-xl text-[#1B3668]">User Management</CardTitle>
+            <div className="relative w-full sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400" />
               <Input
                 placeholder="Search users..."
-                className="pl-10"
+                className="pl-10 w-full"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
               />
             </div>
           </div>
         </CardHeader>
-        <CardContent className="p-0">
-          <Table>
+        <CardContent className="p-0 overflow-x-auto">
+          <Table className="min-w-[600px]">
             <TableCaption>A list of all users in the system</TableCaption>
             <TableHeader>
               <TableRow className="bg-gray-50">

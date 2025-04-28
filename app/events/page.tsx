@@ -547,17 +547,18 @@ export default function EventsPage() {
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
+    <div className="container mx-auto px-2 sm:px-4 py-6 sm:py-8">
       <style jsx>{calendarStyles}</style>
-      <div className="flex justify-between items-center mb-8">
-        <h1 className="text-3xl font-bold">Events & Meetings</h1>
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6">
+        <h1 className="text-2xl sm:text-3xl font-bold">Events & Meetings</h1>
       </div>
 
+      {/* Calendar Modal */}
       {showCalendar && (
-        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white p-6 rounded-lg shadow-lg">
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-2">
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-lg w-full max-w-md">
             <div className="flex justify-between items-center mb-4">
-              <h2 className="text-xl font-semibold">Monthly Meeting Calendar</h2>
+              <h2 className="text-lg sm:text-xl font-semibold">Monthly Meeting Calendar</h2>
               <button
                 onClick={() => setShowCalendar(false)}
                 className="text-gray-500 hover:text-gray-700"
@@ -573,7 +574,7 @@ export default function EventsPage() {
               value={null}
               tileDisabled={() => true}
             />
-            <div className="mt-4 text-sm text-gray-600">
+            <div className="mt-4 text-xs sm:text-sm text-gray-600">
               <p>• Last Saturdays of each month are highlighted in blue</p>
               <p>• Today's date is highlighted in green</p>
               <p>• If today is a last Saturday, it's highlighted in purple</p>
@@ -583,16 +584,16 @@ export default function EventsPage() {
       )}
 
       {/* Header */}
-      <div className="mb-8">
-        <div className="flex items-center justify-between">
+      <div className="mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div>
-            <h1 className="text-2xl font-bold text-[#1B3668]">Events</h1>
-            <p className="text-blue-500">Stay updated with all research events</p>
+            <h1 className="text-xl sm:text-2xl font-bold text-[#1B3668]">Events</h1>
+            <p className="text-blue-500 text-sm sm:text-base">Stay updated with all research events</p>
           </div>
           {user?.isAdmin && (
             <Dialog open={isEventDialogOpen} onOpenChange={setIsEventDialogOpen}>
               <DialogTrigger asChild>
-                <Button className="bg-[#1B3668] text-white hover:bg-[#0F2341]">
+                <Button className="bg-[#1B3668] text-white hover:bg-[#0F2341] w-full sm:w-auto">
                   <CalendarClock className="w-4 h-4 mr-2" />
                   Create Event
                 </Button>
@@ -614,26 +615,26 @@ export default function EventsPage() {
             </Dialog>
           )}
         </div>
-        <p className="text-gray-500 text-sm">View upcoming events and past events</p>
+        <p className="text-gray-500 text-xs sm:text-sm">View upcoming events and past events</p>
       </div>
 
       {/* Regular Monthly Meeting Schedule */}
-      <div className="bg-blue-50 border-l-4 border-[#1B3668] p-4 mb-6">
-        <div className="flex items-center justify-between">
+      <div className="bg-blue-50 border-l-4 border-[#1B3668] p-3 sm:p-4 mb-6">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
           <div className="flex">
             <div className="flex-shrink-0">
               <Info className="h-5 w-5 text-[#1B3668]" />
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-[#1B3668]">Regular Monthly Meeting Schedule</h3>
-              <p className="text-sm text-blue-700 mt-1">
+              <h3 className="text-sm sm:text-base font-medium text-[#1B3668]">Regular Monthly Meeting Schedule</h3>
+              <p className="text-xs sm:text-sm text-blue-700 mt-1">
                 Last Saturday of every month at PESU RF conference room during 10am to 12pm.
               </p>
             </div>
           </div>
           <button
             onClick={() => setShowCalendar(true)}
-            className="flex items-center gap-2 bg-[#1B3668] text-white px-4 py-2 rounded-lg hover:bg-[#0F2341] transition-colors"
+            className="flex items-center gap-2 bg-[#1B3668] text-white px-4 py-2 rounded-lg hover:bg-[#0F2341] transition-colors w-full sm:w-auto"
           >
             <Calendar className="h-4 w-4" />
             View Calendar
@@ -642,10 +643,10 @@ export default function EventsPage() {
       </div>
 
       {/* Tabs */}
-      <div className="flex space-x-4 mb-6">
+      <div className="flex space-x-2 sm:space-x-4 mb-6">
         <button
           onClick={() => setActiveTab("upcoming-events")}
-          className={`px-4 py-2 rounded-lg ${
+          className={`px-4 py-2 rounded-lg w-full sm:w-auto ${
             activeTab === "upcoming-events"
               ? "bg-[#1B3668] text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -655,7 +656,7 @@ export default function EventsPage() {
         </button>
         <button
           onClick={() => setActiveTab("past-events")}
-          className={`px-4 py-2 rounded-lg ${
+          className={`px-4 py-2 rounded-lg w-full sm:w-auto ${
             activeTab === "past-events"
               ? "bg-[#1B3668] text-white"
               : "bg-gray-100 text-gray-600 hover:bg-gray-200"
@@ -666,7 +667,7 @@ export default function EventsPage() {
       </div>
 
       {/* Content */}
-      <div className="space-y-6">
+      <div className="space-y-4 sm:space-y-6">
         {loading ? (
           <div className="flex items-center justify-center py-8">
             <Loader2 className="w-6 h-6 animate-spin" />
@@ -675,8 +676,8 @@ export default function EventsPage() {
           <>
             {/* Upcoming Events Tab */}
             {activeTab === "upcoming-events" && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-[#1B3668]">
+              <div className="space-y-2 sm:space-y-4">
+                <h2 className="text-lg sm:text-xl font-semibold text-[#1B3668]">
                   Upcoming Events
                 </h2>
                 {upcomingEvents.length > 0 ? (
@@ -685,9 +686,9 @@ export default function EventsPage() {
                   ))
                 ) : (
                   <Card>
-                    <CardContent className="p-6 text-center">
-                      <h3 className="text-lg font-medium text-gray-900 mb-1">No upcoming events</h3>
-                      <p className="text-gray-500">
+                    <CardContent className="p-4 sm:p-6 text-center">
+                      <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-1">No upcoming events</h3>
+                      <p className="text-gray-500 text-xs sm:text-base">
                         There are currently no upcoming events scheduled. Check back later for updates.
                       </p>
                     </CardContent>
@@ -698,8 +699,8 @@ export default function EventsPage() {
 
             {/* Past Events Tab */}
             {activeTab === "past-events" && (
-              <div className="space-y-4">
-                <h2 className="text-xl font-semibold text-[#1B3668]">
+              <div className="space-y-2 sm:space-y-4">
+                <h2 className="text-lg sm:text-xl font-semibold text-[#1B3668]">
                   Past Events
                 </h2>
                 {pastEvents.length > 0 ? (
@@ -708,9 +709,9 @@ export default function EventsPage() {
                   ))
                 ) : (
                   <Card>
-                    <CardContent className="p-6 text-center">
-                      <h3 className="text-lg font-medium text-gray-900 mb-1">No past events</h3>
-                      <p className="text-gray-500">
+                    <CardContent className="p-4 sm:p-6 text-center">
+                      <h3 className="text-base sm:text-lg font-medium text-gray-900 mb-1">No past events</h3>
+                      <p className="text-gray-500 text-xs sm:text-base">
                         There are no past events to display.
                       </p>
                     </CardContent>

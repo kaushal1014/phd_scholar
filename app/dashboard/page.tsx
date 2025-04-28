@@ -625,20 +625,20 @@ export default function Dashboard() {
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-0">
         {/* Header */}
         <div className="bg-[#1B3668] text-white p-4">
-          <div className="max-w-[2000px] mx-auto flex justify-between items-center">
+          <div className="max-w-[2000px] mx-auto flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
             <div className="flex items-center space-x-4">
               <GraduationCap className="h-8 w-8" />
               <div>
-                <h1 className="text-xl font-bold">PhD Research Analytics</h1>
-                <p className="text-sm opacity-80">PES University</p>
+                <h1 className="text-lg sm:text-xl font-bold">PhD Research Analytics</h1>
+                <p className="text-xs sm:text-sm opacity-80">PES University</p>
               </div>
             </div>
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 mt-2 sm:mt-0">
               <div className="text-right">
-                <p className="font-medium">{session.user.name}</p>
-                <p className="text-sm opacity-80">{phdScholarData.admissionDetails.department}</p>
+                <p className="font-medium text-sm sm:text-base">{session.user.name}</p>
+                <p className="text-xs sm:text-sm opacity-80">{phdScholarData.admissionDetails.department}</p>
               </div>
-              <div className="h-10 w-10 rounded-full bg-white/20 flex items-center justify-center">
+              <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/20 flex items-center justify-center">
                 {session.user.name?.charAt(0) || "U"}
               </div>
             </div>
@@ -646,10 +646,9 @@ export default function Dashboard() {
         </div>
 
         {/* Main Content */}
-        <div className="max-w-[2000px] mx-auto p-4 lg:p-6">
+        <div className="max-w-[2000px] mx-auto p-2 sm:p-4 lg:p-6">
           {/* Top Stats Row */}
-          {/* Replace the Top Stats Row with this updated version */}
-          <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-5 gap-4 mb-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-2 sm:gap-4 mb-4 sm:mb-6">
             <Card className="border-l-4 border-l-[#1B3668]">
               <CardContent className="p-4 flex items-center h-full">
                 <div className="bg-[#1B3668]/10 p-3 rounded-full mr-4 flex-shrink-0">
@@ -730,16 +729,16 @@ export default function Dashboard() {
           </div>
 
           {/* Main Dashboard Content */}
-          <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-4 gap-4 sm:gap-6">
             {/* Left Column - PhD Journey */}
             <div className="lg:col-span-1">
-              <Card>
+              <Card className="mb-4 w-full">
                 <CardHeader className="pb-2 border-b">
-                  <CardTitle className="text-lg text-[#1B3668] flex items-center">
+                  <CardTitle className="text-base sm:text-lg text-[#1B3668] flex items-center">
                     <Award className="h-5 w-5 mr-2" /> PhD Journey
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="p-4 overflow-auto h-auto">
+                <CardContent className="p-2 sm:p-4 overflow-auto h-auto">
                   <ClimbingAnimation milestones={getMilestones()} />
                 </CardContent>
               </Card>
@@ -760,13 +759,12 @@ export default function Dashboard() {
             {/* Middle Columns - Main Content */}
             <div className="lg:col-span-3">
               <Tabs defaultValue="overview" className="h-full">
-                {/* Update the TabsList for the main tabs (around line 650) */}
-                <TabsList className="grid grid-cols-5 mb-4 p-1">
-                  <TabsTrigger value="overview" className="text-base py-3 font-medium">Overview</TabsTrigger>
-                  <TabsTrigger value="profile" className="text-base py-3 font-medium">Profile</TabsTrigger>
-                  <TabsTrigger value="supervision" className="text-base py-3 font-medium">Supervision</TabsTrigger>
-                  <TabsTrigger value="publications" className="text-base py-3 font-medium">Publications</TabsTrigger>
-                  <TabsTrigger value="coursework" className="text-base py-3 font-medium">Coursework</TabsTrigger>
+                <TabsList className="grid grid-cols-2 sm:grid-cols-5 mb-2 sm:mb-4 p-1">
+                  <TabsTrigger value="overview" className="text-xs sm:text-base py-2 sm:py-3 font-medium">Overview</TabsTrigger>
+                  <TabsTrigger value="profile" className="text-xs sm:text-base py-2 sm:py-3 font-medium">Profile</TabsTrigger>
+                  <TabsTrigger value="supervision" className="text-xs sm:text-base py-2 sm:py-3 font-medium">Supervision</TabsTrigger>
+                  <TabsTrigger value="publications" className="text-xs sm:text-base py-2 sm:py-3 font-medium">Publications</TabsTrigger>
+                  <TabsTrigger value="coursework" className="text-xs sm:text-base py-2 sm:py-3 font-medium">Coursework</TabsTrigger>
                 </TabsList>
 
                 {/* Overview Tab */}
@@ -1576,7 +1574,7 @@ export default function Dashboard() {
           <DialogContent className="sm:max-w-[500px]">
             <DialogHeader>
               <DialogTitle className="text-[#F7941D]">Add Conference Publication</DialogTitle>
-</DialogHeader>
+            </DialogHeader>
             <DialogDescription>Enter the details of your conference publication below.</DialogDescription>
             <Form {...conferenceForm}>
               <form onSubmit={conferenceForm.handleSubmit(handleAddConference)} className="space-y-4">

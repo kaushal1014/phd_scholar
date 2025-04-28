@@ -120,66 +120,66 @@ export default function UserProfile({ params }: { params: { id: string } }) {
 
   if (status === "authenticated" && userData && phdScholarData) {
     return (
-      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-4 sm:p-6 lg:p-8">
-        <div className="max-w-4xl mx-auto space-y-6">
+      <div className="min-h-screen bg-gray-100 dark:bg-gray-900 p-2 sm:p-4 lg:p-8">
+        <div className="max-w-4xl mx-auto space-y-4 sm:space-y-6">
           <Card className="border-[#1B3C87] shadow-lg overflow-hidden">
-            <CardHeader className="bg-[#1B3C87] text-white p-6 flex justify-between items-center">
+            <CardHeader className="bg-[#1B3C87] text-white p-4 sm:p-6 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2">
               <div>
-                <CardTitle className="text-2xl">Welcome, {userData.firstName} {userData.lastName}!</CardTitle>
+                <CardTitle className="text-xl sm:text-2xl">Welcome, {userData.firstName} {userData.lastName}!</CardTitle>
                 <CardDescription className="text-gray-200">User Profile</CardDescription>
               </div>
               {isEditing ? (
-                <div className="flex space-x-2">
-                  <Button onClick={handleCancel} variant="outline" className="bg-white text-[#1B3C87] hover:bg-gray-100">
+                <div className="flex flex-col sm:flex-row space-y-2 sm:space-y-0 sm:space-x-2 w-full sm:w-auto">
+                  <Button onClick={handleCancel} variant="outline" className="bg-white text-[#1B3C87] hover:bg-gray-100 w-full sm:w-auto">
                     <X className="mr-2 h-4 w-4" /> Cancel
                   </Button>
-                  <Button onClick={handleSave} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white">
+                  <Button onClick={handleSave} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white w-full sm:w-auto">
                     <Save className="mr-2 h-4 w-4" /> Save
                   </Button>
                 </div>
               ) : (
-                <Button onClick={() => setIsEditing(true)} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white">
+                <Button onClick={() => setIsEditing(true)} className="bg-[#FF6B00] hover:bg-[#FF6B00]/90 text-white w-full sm:w-auto">
                   <Edit2 className="mr-2 h-4 w-4" /> Edit Profile
                 </Button>
               )}
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <CardContent className="p-4 sm:p-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4">
                 <div className="flex items-center space-x-2">
                   <Mail className="h-5 w-5 text-[#FF6B00]" />
                   {isEditing ? (
                     <Input
                       value={editedData.user?.email}
                       onChange={(e) => handleInputChange('user', 'email', e.target.value)}
-                      className="flex-1"
+                      className="flex-1 text-sm sm:text-base"
                     />
                   ) : (
-                    <span>{userData.email}</span>
+                    <span className="text-sm sm:text-base">{userData.email}</span>
                   )}
                 </div>
                 <div className="flex items-center space-x-2">
                   <Shield className="h-5 w-5 text-[#FF6B00]" />
-                  <span>Admin: {userData.isAdmin ? "Yes" : "No"}</span>
+                  <span className="text-sm sm:text-base">Admin: {userData.isAdmin ? "Yes" : "No"}</span>
                 </div>
                 <div className="flex items-center space-x-2">
                   <CheckCircle className="h-5 w-5 text-[#FF6B00]" />
-                  <span>Verified: {userData.isVerified ? "Yes" : "No"}</span>
+                  <span className="text-sm sm:text-base">Verified: {userData.isVerified ? "Yes" : "No"}</span>
                 </div>
               </div>
             </CardContent>
           </Card>
 
           <Card className="border-[#1B3C87] shadow-lg overflow-hidden">
-            <CardHeader className="bg-[#1B3C87] text-white p-6">
-              <CardTitle>PhD Scholar Details</CardTitle>
+            <CardHeader className="bg-[#1B3C87] text-white p-4 sm:p-6">
+              <CardTitle className="text-lg sm:text-xl">PhD Scholar Details</CardTitle>
               <CardDescription className="text-gray-200">Your academic journey at a glance</CardDescription>
             </CardHeader>
-            <CardContent className="p-6">
-              <div className="space-y-8">
-                <div className="flex items-center">
+            <CardContent className="p-4 sm:p-6">
+              <div className="space-y-6 sm:space-y-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-2">
                   <GraduationCap className="h-6 w-6 mr-2 text-[#FF6B00]" />
-                  <div className="space-y-1">
-                    <p className="text-lg font-medium">
+                  <div className="space-y-1 w-full">
+                    <p className="text-base sm:text-lg font-medium">
                       {isEditing ? (
                         <Input
                           value={`${editedData.phdScholar?.personalDetails?.firstName} ${editedData.phdScholar?.personalDetails?.lastName}`}
@@ -188,13 +188,14 @@ export default function UserProfile({ params }: { params: { id: string } }) {
                             handleNestedInputChange('phdScholar', 'personalDetails', 'firstName', firstName);
                             handleNestedInputChange('phdScholar', 'personalDetails', 'lastName', lastNameParts.join(' '));
                           }}
-                          className="font-medium"
-                        disabled/>
+                          className="font-medium text-sm sm:text-base"
+                          disabled
+                        />
                       ) : (
-                        `${phdScholarData.personalDetails?.firstName} ${phdScholarData.personalDetails?.lastName}`
+                        <span className="text-sm sm:text-base">{phdScholarData.personalDetails?.firstName} {phdScholarData.personalDetails?.lastName}</span>
                       )}
                     </p>
-                    <p className="text-[#1B3C87]">
+                    <p className="text-[#1B3C87] text-sm sm:text-base">
                       Department: {isEditing ? (
                         <Input
                           value={editedData.phdScholar?.admissionDetails?.department}

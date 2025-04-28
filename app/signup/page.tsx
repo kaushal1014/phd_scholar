@@ -356,71 +356,34 @@ const PhDScholarForm: React.FC = () => {
   };
 
   return (
-    <div className="flex justify-center items-center min-h-screen bg-gradient-to-b from-gray-100 to-gray-200 dark:from-gray-900 dark:to-gray-800 py-12 px-4 sm:px-6 lg:px-8">
-  <form onSubmit={handleSubmit} className="w-full max-w-4xl">
-    <h1 className="text-3xl font-bold text-center text-gray-800 dark:text-gray-100 mb-8">PhD Scholar Registration</h1>
-    <Card className="bg-white dark:bg-gray-800 shadow-lg border-2 border-gray-300 dark:border-gray-700 rounded-xl overflow-hidden">
-      <CardHeader className="border-b-2 border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900 p-6">
-        <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">Personal Details</CardTitle>
-      </CardHeader>
-      <CardContent className="p-6 space-y-8">
-        <div className="flex flex-col items-center space-y-6 mb-8">
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="firstName" className="text-gray-700 dark:text-gray-300">First Name</Label>
-            <Input
-              id="firstName"
-              name="firstName"
-              value={formData.firstName}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            required/>
+    <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-4 sm:py-8 px-2 sm:px-6">
+      <Card className="w-full max-w-2xl sm:max-w-3xl mx-auto p-2 sm:p-6 rounded-lg shadow-md">
+        <CardHeader className="p-2 sm:p-6">
+          <CardTitle className="text-lg sm:text-2xl font-bold text-center">PhD Scholar Signup</CardTitle>
+        </CardHeader>
+        <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
+          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full">
+            <div className="w-full">
+              <Label htmlFor="firstName" className="text-sm sm:text-base">First Name</Label>
+              <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+            </div>
+            <div className="w-full">
+              <Label htmlFor="middleName" className="text-sm sm:text-base">Middle Name</Label>
+              <Input id="middleName" name="middleName" value={formData.middleName} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+            </div>
+            <div className="w-full">
+              <Label htmlFor="lastName" className="text-sm sm:text-base">Last Name</Label>
+              <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+            </div>
           </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="middleName" className="text-gray-700 dark:text-gray-300">Middle Name</Label>
-            <Input
-              id="middleName"
-              name="middleName"
-              value={formData.middleName}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
+            <Input id="email" name="email" type="email" placeholder="example@pesu.pes.edu" onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="lastName" className="text-gray-700 dark:text-gray-300">Last Name</Label>
-            <Input
-              id="lastName"
-              name="lastName"
-              value={formData.lastName}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            required/>
-          </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700 dark:text-gray-300">Email</Label>
-            <Input 
-              id="email"
-              name="email"
-              type="email"
-              placeholder="example@pesu.pes.edu"
-              onChange={handleChange}
-                
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            required/>
-          </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700 dark:text-gray-300">Password</Label>
+          <div className="w-full">
+            <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
             <div className="relative">
-              <Input 
-                id="password"
-                name="password"
-                type={showPassword ? "text" : 
-                "password"}
-                onChange={handleChange}
-                  
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              required/>
+              <Input id="password" name="password" type={showPassword ? "text" : "password"} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
               <button
                 type="button"
                 onClick={togglePasswordVisibility}
@@ -434,797 +397,62 @@ const PhDScholarForm: React.FC = () => {
               </button>
             </div>
           </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="dateOfBirth" className="text-gray-700 dark:text-gray-300">Date of Birth</Label>
-            <Input
-              id="dateOfBirth"
-              name="dateOfBirth"
-              type="date"
-              value={formData.dateOfBirth}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-               
-            />
+          <div className="w-full">
+            <Label htmlFor="dateOfBirth" className="text-sm sm:text-base">Date of Birth</Label>
+            <Input id="dateOfBirth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="nationality" className="text-gray-700 dark:text-gray-300">Nationality</Label>
-            <Input
-              id="nationality"
-              name="nationality"
-              value={formData.nationality}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="nationality" className="text-sm sm:text-base">Nationality</Label>
+            <Input id="nationality" name="nationality" value={formData.nationality} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="w-full max-w-md space-y-2">
-            <Label htmlFor="mobileNumber" className="text-gray-700 dark:text-gray-300">Mobile Number</Label>
-            <Input
-              id="mobileNumber"
-              name="mobileNumber"
-              value={formData.mobileNumber}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="mobileNumber" className="text-sm sm:text-base">Mobile Number</Label>
+            <Input id="mobileNumber" name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-        </div>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="entranceExamination" className="text-gray-700 dark:text-gray-300">Entrance Examination</Label>
-            <Input
-              id="entranceExamination"
-              name="entranceExamination"
-              value={formData.entranceExamination}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="entranceExamination" className="text-sm sm:text-base">Entrance Examination</Label>
+            <Input id="entranceExamination" name="entranceExamination" value={formData.entranceExamination} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="qualifyingExamination" className="text-gray-700 dark:text-gray-300">Qualifying Examination</Label>
-            <Input
-              id="qualifyingExamination"
-              name="qualifyingExamination"
-              value={formData.qualifyingExamination}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="qualifyingExamination" className="text-sm sm:text-base">Qualifying Examination</Label>
+            <Input id="qualifyingExamination" name="qualifyingExamination" value={formData.qualifyingExamination} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="allotmentNumber" className="text-gray-700 dark:text-gray-300">Allotment Number</Label>
-            <Input
-              id="allotmentNumber"
-              name="allotmentNumber"
-              value={formData.allotmentNumber}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="allotmentNumber" className="text-sm sm:text-base">Allotment Number</Label>
+            <Input id="allotmentNumber" name="allotmentNumber" value={formData.allotmentNumber} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="admissionDate" className="text-gray-700 dark:text-gray-300">Admission Date</Label>
-            <Input
-              id="admissionDate"
-              name="admissionDate"
-              type="date"
-              value={formData.admissionDate}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="admissionDate" className="text-sm sm:text-base">Admission Date</Label>
+            <Input id="admissionDate" name="admissionDate" type="date" value={formData.admissionDate} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="department" className="text-gray-700 dark:text-gray-300">Department</Label>
-            <Input
-              id="department"
-              name="department"
-              value={formData.department}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="department" className="text-sm sm:text-base">Department</Label>
+            <Input id="department" name="department" value={formData.department} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="usn" className="text-gray-700 dark:text-gray-300">USN</Label>
-            <Input
-              id="usn"
-              name="usn"
-              value={formData.usn}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="usn" className="text-sm sm:text-base">USN</Label>
+            <Input id="usn" name="usn" value={formData.usn} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="srn" className="text-gray-700 dark:text-gray-300">SRN</Label>
-            <Input
-              id="srn"
-              name="srn"
-              value={formData.srn}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="srn" className="text-sm sm:text-base">SRN</Label>
+            <Input id="srn" name="srn" value={formData.srn} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="modeOfProgram" className="text-gray-700 dark:text-gray-300">Mode of Program</Label>
-            <Input
-              id="modeOfProgram"
-              name="modeOfProgram"
-              value={formData.modeOfProgram}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="modeOfProgram" className="text-sm sm:text-base">Mode of Program</Label>
+            <Input id="modeOfProgram" name="modeOfProgram" value={formData.modeOfProgram} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="researchSupervisor" className="text-gray-700 dark:text-gray-300">Research Supervisor</Label>
-            <Input
-              id="researchSupervisor"
-              name="researchSupervisor"
-              value={formData.researchSupervisor}
-              onChange={handleChange}
-               
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="researchSupervisor" className="text-sm sm:text-base">Research Supervisor</Label>
+            <Input id="researchSupervisor" name="researchSupervisor" value={formData.researchSupervisor} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="researchCoSupervisor" className="text-gray-700 dark:text-gray-300">Research Co-Supervisor</Label>
-            <Input
-              id="researchCoSupervisor"
-              name="researchCoSupervisor"
-              value={formData.researchCoSupervisor}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
+          <div className="w-full">
+            <Label htmlFor="researchCoSupervisor" className="text-sm sm:text-base">Research Co-Supervisor</Label>
+            <Input id="researchCoSupervisor" name="researchCoSupervisor" value={formData.researchCoSupervisor} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
           </div>
-        </div>
-
-        <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Doctoral Committee Members</h3>
-        {formData.doctoralCommitteeMembers.map((member, index) => (
-          <div key={index} className="space-y-2">
-            <Label htmlFor={`doctoralCommitteeMembers[${index}].name`} className="text-gray-700 dark:text-gray-300">Member {index + 1}</Label>
-            <Input
-              id={`doctoralCommitteeMembers[${index}].name`}
-              name={`doctoralCommitteeMembers[${index}].name`}
-              value={member.name}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-            <Button type="button" onClick={() => deleteCommitteeMember(index)} className="mt-2 bg-red-500 hover:bg-red-600 text-white dark:bg-red-700 dark:hover:bg-red-600">
-              Delete Member
-            </Button>
-          </div>
-        ))}
-        <Button type="button" onClick={addNewCommitteeMember} className="mt-4 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-600">Add Member</Button>
-      </div>
-      
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Course Work</h3>
-        
-        <div className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Course Work 1</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="courseWork1SubjectCode" className="text-gray-700 dark:text-gray-300">Subject Code</Label>
-              <Input
-                id="courseWork1SubjectCode"
-                placeholder="Subject Code"
-                name="courseWork1SubjectCode"
-                value={formData.courseWork1SubjectCode}
-                onChange={handleChange}
-                
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork1SubjectName" className="text-gray-700 dark:text-gray-300">Subject Name</Label>
-              <Input
-                id="courseWork1SubjectName"
-                placeholder="Subject Name"
-                name="courseWork1SubjectName"
-                value={formData.courseWork1SubjectName}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="courseWork1SubjectGrade" className="text-gray-700 dark:text-gray-300">Subject Grade</Label>
-              <Input
-                id="courseWork1SubjectGrade"
-                placeholder="Subject Grade"
-                name="courseWork1SubjectGrade"
-                value={formData.courseWork1SubjectGrade}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork1Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select
-                name="courseWork1Status"
-                value={formData.courseWork1Status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Enrolled">Enrolled</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="courseWork1EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
-              <Input
-                id="courseWork1EligibilityDate"
-                type="date"
-                name="courseWork1EligibilityDate"
-                value={formData.courseWork1EligibilityDate}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseworkCompletionDate1" className="text-gray-700 dark:text-gray-300">Course Work 1 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate1"
-                type="date"
-                name="courseworkCompletionDate1"
-                value={formData.courseworkCompletionDate1}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Course Work 2</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="courseWork2SubjectCode" className="text-gray-700 dark:text-gray-300">Subject Code</Label>
-              <Input
-                id="courseWork2SubjectCode"
-                placeholder="Subject Code"
-                name="courseWork2SubjectCode"
-                value={formData.courseWork2SubjectCode}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork2SubjectName" className="text-gray-700 dark:text-gray-300">Subject Name</Label>
-              <Input
-                id="courseWork2SubjectName"
-                placeholder="Subject Name"
-                name="courseWork2SubjectName"
-                value={formData.courseWork2SubjectName}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="courseWork2SubjectGrade" className="text-gray-700 dark:text-gray-300">Subject Grade</Label>
-              <Input
-                id="courseWork2SubjectGrade"
-                placeholder="Subject Grade"
-                name="courseWork2SubjectGrade"
-                value={formData.courseWork2SubjectGrade}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork2Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select
-                name="courseWork2Status"
-                value={formData.courseWork2Status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Enrolled">Enrolled</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="courseWork2EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
-              <Input
-                id="courseWork2EligibilityDate"
-                type="date"
-                name="courseWork2EligibilityDate"
-                value={formData.courseWork2EligibilityDate}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseworkCompletionDate2" className="text-gray-700 dark:text-gray-300">Course Work 2 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate2"
-                type="date"
-                name="courseworkCompletionDate2"
-                value={formData.courseworkCompletionDate2}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Course Work 3</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="courseWork3SubjectCode" className="text-gray-700 dark:text-gray-300">Subject Code</Label>
-              <Input
-                id="courseWork3SubjectCode"
-                placeholder="Subject Code"
-                name="courseWork3SubjectCode"
-                value={formData.courseWork3SubjectCode}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork3SubjectName" className="text-gray-700 dark:text-gray-300">Subject Name</Label>
-              <Input
-                id="courseWork3SubjectName"
-                placeholder="Subject Name"
-                name="courseWork3SubjectName"
-                value={formData.courseWork3SubjectName}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="courseWork3SubjectGrade" className="text-gray-700 dark:text-gray-300">Subject Grade</Label>
-              <Input
-                id="courseWork3SubjectGrade"
-                placeholder="Subject Grade"
-                name="courseWork3SubjectGrade"
-                value={formData.courseWork3SubjectGrade}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork3Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select
-                name="courseWork3Status"
-                value={formData.courseWork3Status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Enrolled">Enrolled</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="courseWork3EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
-              <Input
-                id="courseWork3EligibilityDate"
-                type="date"
-                name="courseWork3EligibilityDate"
-                value={formData.courseWork3EligibilityDate}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseworkCompletionDate3" className="text-gray-700 dark:text-gray-300">Course Work 3 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate3"
-                type="date"
-                name="courseworkCompletionDate3"
-                value={formData.courseworkCompletionDate3}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-        </div>
-
-        <div className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-          <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Course Work 4</h4>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <Label htmlFor="courseWork4SubjectCode" className="text-gray-700 dark:text-gray-300">Subject Code</Label>
-              <Input
-                id="courseWork4SubjectCode"
-                placeholder="Subject Code"
-                name="courseWork4SubjectCode"
-                value={formData.courseWork4SubjectCode}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork4SubjectName" className="text-gray-700 dark:text-gray-300">Subject Name</Label>
-              <Input
-                id="courseWork4SubjectName"
-                placeholder="Subject Name"
-                name="courseWork4SubjectName"
-                value={formData.courseWork4SubjectName}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <Label htmlFor="courseWork4SubjectGrade" className="text-gray-700 dark:text-gray-300">Subject Grade</Label>
-              <Input
-                id="courseWork4SubjectGrade"
-                placeholder="Subject Grade"
-                name="courseWork4SubjectGrade"
-                value={formData.courseWork4SubjectGrade}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseWork4Status" className="text-gray-700 dark:text-gray-300">Status</Label>
-              <select
-                name="courseWork4Status"
-                value={formData.courseWork4Status}
-                onChange={handleChange}
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              >
-                <option value="Pending">Pending</option>
-                <option value="Enrolled">Enrolled</option>
-                <option value="Completed">Completed</option>
-              </select>
-            </div>
-            <div>
-              <Label htmlFor="courseWork4EligibilityDate" className="text-gray-700 dark:text-gray-300">Eligibility Date</Label>
-              <Input
-                id="courseWork4EligibilityDate"
-                type="date"
-                name="courseWork4EligibilityDate"
-                value={formData.courseWork4EligibilityDate}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-            <div>
-              <Label htmlFor="courseworkCompletionDate4" className="text-gray-700 dark:text-gray-300">Course Work 4 Completion Date</Label>
-              <Input
-                id="courseworkCompletionDate4"
-                type="date"
-                name="courseworkCompletionDate4"
-                value={formData.courseworkCompletionDate4}
-                onChange={handleChange}
-                 
-                className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-              />
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <CardHeader className="border-b dark:border-gray-700">
-        <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">DC Meetings</CardTitle>
-      </CardHeader>
-      <div className="p-6 space-y-6">
-        {formData.dcMeetings.map((meeting, index) => (
-          <div key={index} className="p-4 border rounded-lg bg-gray-50 dark:bg-gray-700">
-            <Label className="text-lg font-semibold mb-2 text-gray-800 dark:text-gray-200">DC Meeting {index + 1}</Label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`scheduledDate-${index}`} className="text-gray-700 dark:text-gray-300">Scheduled Date</Label>
-                <Input
-                  id={`scheduledDate-${index}`}
-                  placeholder="Scheduled Date"
-                  name={`dcMeetings[${index}].scheduledDate`}
-                  type="date"
-                  value={meeting.scheduledDate}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`actualDate-${index}`} className="text-gray-700 dark:text-gray-300">Actual Date</Label>
-                <Input
-                  id={`actualDate-${index}`}
-                  placeholder="Actual Date"
-                  name={`dcMeetings[${index}].actualDate`}
-                  type="date"
-                  value={meeting.actualDate}
-                  onChange={handleChange}
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                disabled/>
-              </div>
-            </div>
-          </div>
-        ))}
-        <Button type="button" onClick={addDcmMeetings} className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-600">Add DCM Meeting</Button>
-      </div>
-
-      <CardHeader className="border-b dark:border-gray-700">
-        <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">Examination and Defense Dates</CardTitle>
-      </CardHeader>
-      <div className="p-6 space-y-6">
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-          <div className="space-y-2">
-            <Label htmlFor="comprehensiveExamDate" className="text-gray-700 dark:text-gray-300">Comprehensive Exam Date</Label>
-            <Input
-              id="comprehensiveExamDate"
-              name="comprehensiveExamDate"
-              type="date"
-              value={formData.comprehensiveExamDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="proposalDefenseDate" className="text-gray-700 dark:text-gray-300">Proposal Defense Date</Label>
-            <Input
-              id="proposalDefenseDate"
-              name="proposalDefenseDate"
-              type="date"
-              value={formData.proposalDefenseDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="openSeminarDate1" className="text-gray-700 dark:text-gray-300">Open Seminar Date</Label>
-            <Input
-              id="openSeminarDate1"
-              name="openSeminarDate1"
-              type="date"
-              value={formData.openSeminarDate1}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="preSubmissionSeminarDate" className="text-gray-700 dark:text-gray-300">Pre-Submission Seminar Date</Label>
-            <Input
-              id="preSubmissionSeminarDate"
-              name="preSubmissionSeminarDate"
-              type="date"
-              value={formData.preSubmissionSeminarDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="synopsisSubmissionDate" className="text-gray-700 dark:text-gray-300">Synopsis Submission Date</Label>
-            <Input
-              id="synopsisSubmissionDate"
-              name="synopsisSubmissionDate"
-              type="date"
-              value={formData.synopsisSubmissionDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="thesisSubmissionDate" className="text-gray-700 dark:text-gray-300">Thesis Submission Date</Label>
-            <Input
-              id="thesisSubmissionDate"
-              name="thesisSubmissionDate"
-              type="date"
-              value={formData.thesisSubmissionDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="thesisDefenseDate" className="text-gray-700 dark:text-gray-300">Thesis Defense Date</Label>
-            <Input
-              id="thesisDefenseDate"
-              name="thesisDefenseDate"
-              type="date"
-              value={formData.thesisDefenseDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-          <div className="space-y-2">
-            <Label htmlFor="awardOfDegreeDate" className="text-gray-700 dark:text-gray-300">Award of Degree Date</Label>
-            <Input
-              id="awardOfDegreeDate"
-              name="awardOfDegreeDate"
-              type="date"
-              value={formData.awardOfDegreeDate}
-              onChange={handleChange}
-              className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-            />
-          </div>
-        </div>
-      </div>
-
-      <CardHeader className="border-b dark:border-gray-700">
-        <CardTitle className="text-2xl font-bold text-gray-800 dark:text-gray-100">Publications</CardTitle>
-      </CardHeader>
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Journals</h3>
-        {formData.journals.map((journal, index) => (
-          <div key={index} className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Journal {index + 1}</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-title`} className="text-gray-700 dark:text-gray-300">Title</Label>
-                <Input
-                  id={`journal-${index}-title`}
-                  placeholder="Title"
-                  name={`journals[${index}].title`}
-                  value={journal.title}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-journalName`} className="text-gray-700 dark:text-gray-300">Journal Name</Label>
-                <Input
-                  id={`journal-${index}-journalName`}
-                  placeholder="Journal Name"
-                  name={`journals[${index}].journalName`}
-                  value={journal.journalName}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-publicationYear`} className="text-gray-700 dark:text-gray-300">Publication Year</Label>
-                <Input
-                  id={`journal-${index}-publicationYear`}
-                  placeholder="Publication Year"
-                  name={`journals[${index}].publicationYear`}
-                  value={journal.publicationYear}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-volumeNumber`} className="text-gray-700 dark:text-gray-300">Volume Number</Label>
-                <Input
-                  id={`journal-${index}-volumeNumber`}
-                  placeholder="Volume Number"
-                  name={`journals[${index}].volumeNumber`}
-                  value={journal.volumeNumber}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-issueNumber`} className="text-gray-700 dark:text-gray-300">Issue Number</Label>
-                <Input
-                  id={`journal-${index}-issueNumber`}
-                  placeholder="Issue Number"
-                  name={`journals[${index}].issueNumber`}
-                  value={journal.issueNumber}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-pageNumbers`} className="text-gray-700 dark:text-gray-300">Page Numbers</Label>
-                <Input
-                  id={`journal-${index}-pageNumbers`}
-                  placeholder="Page Numbers"
-                  name={`journals[${index}].pageNumbers`}
-                  value={journal.pageNumbers}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`journal-${index}-impactFactor`} className="text-gray-700 dark:text-gray-300">Impact Factor</Label>
-                <Input
-                  id={`journal-${index}-impactFactor`}
-                  placeholder="Impact Factor"
-                  name={`journals[${index}].impactFactor`}
-                  value={journal.impactFactor}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-            </div>
-            <Button type="button" onClick={() => deleteJournal(index)} className="mt-2 bg-red-500 hover:bg-red-600 text-white dark:bg-red-700 dark:hover:bg-red-600">
-              Delete Journal
-            </Button>
-          </div>
-        ))}
-        <Button type="button" onClick={addNewJournal} className="mt-4 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-600">Add Journal</Button>
-      </div>
-
-      <div className="space-y-6">
-        <h3 className="text-xl font-semibold text-gray-800 dark:text-gray-200">Conferences</h3>
-        {formData.conferences.map((conference, index) => (
-          <div key={index} className="space-y-4 p-4 border rounded-lg shadow-sm bg-gray-50 dark:bg-gray-700">
-            <h4 className="font-semibold text-lg text-gray-800 dark:text-gray-200">Conference {index + 1}</h4>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor={`conference-${index}-title`} className="text-gray-700 dark:text-gray-300">Title</Label>
-                <Input
-                  id={`conference-${index}-title`}
-                  placeholder="Title"
-                  name={`conferences[${index}].title`}
-                  value={conference.title}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`conference-${index}-conferenceName`} className="text-gray-700 dark:text-gray-300">Conference Name</Label>
-                <Input
-                  id={`conference-${index}-conferenceName`}
-                  placeholder="Conference Name"
-                  name={`conferences[${index}].conferenceName`}
-                  value={conference.conferenceName}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor={`conference-${index}-publicationYear`} className="text-gray-700 dark:text-gray-300">Publication Year</Label>
-                <Input
-                  id={`conference-${index}-publicationYear`}
-                  placeholder="Publication Year"
-                  name={`conferences[${index}].publicationYear`}
-                  value={conference.publicationYear}
-                  onChange={handleChange}
-                   
-                  className="w-full px-3 py-2 border-2 border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-100"
-                />
-              </div>
-            </div>
-            <Button type="button" onClick={() => deleteConference(index)} className="mt-2 bg-red-500 hover:bg-red-600 text-white dark:bg-red-700 dark:hover:bg-red-600">
-              Delete Conference
-            </Button>
-          </div>
-        ))}
-        <Button type="button" onClick={addNewConference} className="mt-4 bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-600">Add Conference</Button>
-      </div>
-    </CardContent>
-    <CardFooter>
-      <Button type="submit" className="w-full bg-blue-600 hover:bg-blue-700 text-white dark:bg-blue-700 dark:hover:bg-blue-600">Submit</Button>
-    </CardFooter>
-  </Card>
-</form>
-</div>
+          <Button type="submit" className="w-full sm:w-auto mt-4 bg-[#1B3668] text-white hover:bg-[#0F2341] py-2 text-base rounded-lg">Submit</Button>
+        </form>
+      </Card>
+    </div>
   );
 };
 

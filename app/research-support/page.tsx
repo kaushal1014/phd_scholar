@@ -58,19 +58,19 @@ export default function ResearchSupportPage() {
   return (
     <div className="min-h-screen bg-white">
       {/* Header */}
-      <div className="bg-[#1B3668] py-10 px-6">
+      <div className="bg-[#1B3668] py-6 px-2 sm:py-10 sm:px-6">
         <div className="max-w-7xl mx-auto">
-          <div className="flex items-center space-x-3 mb-2">
-            <Library className="h-8 w-8 text-[#F59E0B]" />
-            <h1 className="text-3xl font-bold text-white">Research Support at PES University</h1>
+          <div className="flex items-center space-x-2 sm:space-x-3 mb-2">
+            <Library className="h-7 w-7 sm:h-8 sm:w-8 text-[#F59E0B]" />
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Research Support at PES University</h1>
           </div>
-          <p className="text-blue-100">Comprehensive support services for research scholars at PES University</p>
+          <p className="text-blue-100 text-sm sm:text-base">Comprehensive support services for research scholars at PES University</p>
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="max-w-7xl mx-auto px-2 sm:px-6 py-6 sm:py-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {/* Financial Support */}
           <Card>
             <CardHeader>

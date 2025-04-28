@@ -18,55 +18,55 @@ export default function HomePage() {
       <header className="relative overflow-hidden bg-[conic-gradient(at_top,_var(--tw-gradient-stops))] from-[#1B3668] via-[#0A2240] to-[#1B3668]">
         <div className="absolute inset-0 bg-[url('https://images.unsplash.com/photo-1519389950473-47ba0277781c')] opacity-5 bg-cover bg-center mix-blend-overlay" />
         <div className="absolute inset-0 bg-gradient-to-b from-black/20 to-transparent" />
-        <div className="relative max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
+        <div className="relative max-w-7xl mx-auto py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8 }}
           >
-            <h1 className="text-3xl font-bold text-white tracking-tight [text-shadow:_0_1px_2px_rgb(0_0_0_/_20%)]">PES University Research Degree</h1>
-            <p className="text-lg text-gray-200 mt-2 font-light [text-shadow:_0_1px_1px_rgb(0_0_0_/_10%)]">Integrated PhD, M.Tech, PhD</p>
+            <h1 className="text-2xl sm:text-3xl font-bold text-white tracking-tight [text-shadow:_0_1px_2px_rgb(0_0_0_/_20%)]">PES University Research Degree</h1>
+            <p className="text-base sm:text-lg text-gray-200 mt-2 font-light [text-shadow:_0_1px_1px_rgb(0_0_0_/_10%)]">Integrated PhD, M.Tech, PhD</p>
           </motion.div>
         </div>
         <div className="absolute bottom-0 w-full h-16 bg-gradient-to-t from-blue-50 dark:from-gray-900" />
       </header>
 
-      <main className="relative max-w-7xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <main className="relative max-w-7xl mx-auto py-8 sm:py-16 px-4 sm:px-6 lg:px-8">
         <motion.div 
-          className="text-center mb-16 max-w-3xl mx-auto"
+          className="text-center mb-8 sm:mb-16 max-w-3xl mx-auto"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.8, delay: 0.2 }}
         >
-          <h2 className="text-4xl font-bold sm:text-5xl sm:tracking-tight lg:text-6xl bg-clip-text text-transparent bg-gradient-to-r from-[#1B3668] via-[#2A4A8F] to-[#1B3668] dark:from-blue-300 dark:via-white dark:to-blue-300 [text-shadow:_0_1px_2px_rgb(0_0_0_/_5%)]">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-[#1B3668] via-[#2A4A8F] to-[#1B3668] dark:from-blue-300 dark:via-white dark:to-blue-300 [text-shadow:_0_1px_2px_rgb(0_0_0_/_5%)]">
             Welcome to Your Research Journey at PESU
           </h2>
-            <p className="mt-6 max-w-2xl mx-auto text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-8">
+          <p className="mt-4 sm:mt-6 max-w-2xl mx-auto text-lg sm:text-xl text-gray-700 dark:text-gray-300 leading-relaxed mb-6 sm:mb-8">
             Track your progress, manage your research, collaborate with your peers, and stay on top of your academic
             milestones all in one place.
-            </p>
-            <div className="bg-gradient-to-br from-blue-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 rounded-lg overflow-hidden mb-10 shadow-md max-w-lg mx-auto">
-            <div className="px-8 py-8 sm:px-10 lg:py-10">
-              <div className="text-center space-y-4">
-              <p className="text-2xl font-bold text-[#1B3668] dark:text-white">
-              <span className="block text-[#F7941D]">Sign up now to access all features.</span>
-              </p>
-                <p className="mt-1 text-lg text-gray-700 dark:text-gray-300 leading-snug text-center">
-                Take control of your academic progress today.
+          </p>
+          <div className="bg-gradient-to-br from-blue-100 to-orange-100 dark:from-gray-800 dark:to-gray-700 rounded-lg overflow-hidden mb-8 sm:mb-10 shadow-md max-w-lg mx-auto">
+            <div className="px-4 sm:px-8 py-6 sm:py-8 lg:py-10">
+              <div className="text-center space-y-3 sm:space-y-4">
+                <p className="text-xl sm:text-2xl font-bold text-[#1B3668] dark:text-white">
+                  <span className="block text-[#F7941D]">Sign up now to access all features.</span>
                 </p>
-              <Link 
-              href="/login"
-              className="mt-4 inline-flex items-center px-6 py-3 text-lg font-medium rounded-md shadow-sm text-white bg-[#1B3668] hover:bg-[#1B3668]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B3668]"
-              >
-              Get Started
-              </Link>
+                <p className="text-base sm:text-lg text-gray-700 dark:text-gray-300 leading-snug text-center">
+                  Take control of your academic progress today.
+                </p>
+                <Link 
+                  href="/login"
+                  className="mt-4 inline-flex items-center px-4 sm:px-6 py-2 sm:py-3 text-base sm:text-lg font-medium rounded-md shadow-sm text-white bg-[#1B3668] hover:bg-[#1B3668]/90 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#1B3668]"
+                >
+                  Get Started
+                </Link>
               </div>
             </div>
-            </div>
+          </div>
         </motion.div>
 
         <motion.div 
-          className="grid grid-cols-1 gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-16"
+          className="grid grid-cols-1 gap-4 sm:gap-8 sm:grid-cols-2 lg:grid-cols-3 mb-8 sm:mb-16"
           initial="initial"
           animate="animate"
           variants={{
@@ -108,14 +108,14 @@ export default function HomePage() {
             >
               <Card className="h-full border-t-4 border-t-[#1B3668] bg-white/50 backdrop-blur-sm dark:bg-gray-800/50 shadow-lg hover:shadow-2xl transition-all duration-500 relative overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-[#1B3668]/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
-                <CardHeader className="pb-2 relative">
-                  <CardTitle className="flex items-center text-[#1B3668] dark:text-blue-300 text-xl">
-                    <card.icon className="h-6 w-6 mr-3 flex-shrink-0" />
+                <CardHeader className="pb-2 relative p-4 sm:p-6">
+                  <CardTitle className="flex items-center text-[#1B3668] dark:text-blue-300 text-lg sm:text-xl">
+                    <card.icon className="h-5 w-5 sm:h-6 sm:w-6 mr-2 sm:mr-3 flex-shrink-0" />
                     {card.title}
                   </CardTitle>
                 </CardHeader>
-                <CardContent className="relative">
-                  <CardDescription className="text-gray-600 dark:text-gray-300 text-base mb-6">
+                <CardContent className="relative p-4 sm:p-6">
+                  <CardDescription className="text-gray-600 dark:text-gray-300 text-sm sm:text-base mb-4 sm:mb-6">
                     {card.description}
                   </CardDescription>
                   <Button
