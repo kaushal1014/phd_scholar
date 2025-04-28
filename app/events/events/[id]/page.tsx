@@ -293,35 +293,33 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                     </div>
                   </object>
                 ) : event.documentType === "pptx" ? (
-                  <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
-                    <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
+                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
+                      <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
                     <p className="text-center mb-4">PowerPoint files can be downloaded and viewed locally.</p>
-                    <a
-                      href={event.documentUrl}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download PowerPoint
-                    </a>
-                  </div>
+                      <a
+                        href={event.documentUrl}
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PowerPoint
+                      </a>
+                    </div>
                 ) : event.documentType === "image" ? (
                   <div className="flex flex-col items-center justify-center">
                     <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200 mb-4">
-                      <Image
-                        src={event.documentUrl || "/placeholder.svg"}
+                      <img
+                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
                         alt={event.title}
-                        width={800}
-                        height={600}
                         className="object-contain"
-                        priority
+                        style={{ maxWidth: '100%', height: 'auto' }}
                       />
                     </div>
                     <a
-                      href={event.documentUrl}
-                      download
+                      href={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
+                      download={event.title}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"

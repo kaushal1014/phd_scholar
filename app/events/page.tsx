@@ -17,6 +17,86 @@ import {
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import NewEventForm from "@/components/new-event-form"
+import ReactCalendar from 'react-calendar'
+import 'react-calendar/dist/Calendar.css'
+
+// Add custom styles for the calendar
+const calendarStyles = `
+  .react-calendar {
+    width: 350px;
+    max-width: 100%;
+    border: none;
+    font-family: inherit;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+  }
+  
+  .react-calendar__navigation {
+    margin-bottom: 0.5rem;
+  }
+  
+  .react-calendar__navigation button {
+    min-width: 30px;
+    background: none;
+    font-size: 0.875rem;
+    color: #1B3668;
+  }
+  
+  .react-calendar__navigation button:enabled:hover,
+  .react-calendar__navigation button:enabled:focus {
+    background-color: #f3f4f6;
+  }
+  
+  .react-calendar__month-view__weekdays {
+    text-align: center;
+    text-transform: uppercase;
+    font-weight: 500;
+    font-size: 0.75rem;
+    color: #6b7280;
+  }
+  
+  .react-calendar__month-view__weekdays__weekday {
+    padding: 0.5rem;
+  }
+  
+  .react-calendar__tile {
+    padding: 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 0.25rem;
+  }
+  
+  .react-calendar__tile:enabled:hover,
+  .react-calendar__tile:enabled:focus {
+    background-color: #f3f4f6;
+  }
+  
+  .react-calendar__tile--last-saturday {
+    background-color: #3b82f6 !important;
+    color: white !important;
+  }
+  
+  .react-calendar__tile--today {
+    background-color: #10b981 !important;
+    color: white !important;
+  }
+
+  .react-calendar__tile--last-saturday-today {
+    background-color: #8b5cf6 !important;
+    color: white !important;
+  }
+
+  /* Remove active date highlighting */
+  .react-calendar__tile--active {
+    background: none !important;
+    color: inherit !important;
+  }
+  
+  .react-calendar__tile--active:enabled:hover,
+  .react-calendar__tile--active:enabled:focus {
+    background-color: #f3f4f6 !important;
+  }
+`
 
 // Types
 interface UserType {
@@ -70,6 +150,7 @@ export default function EventsPage() {
   const [isEventDialogOpen, setIsEventDialogOpen] = useState(false)
   const [editingMeeting, setEditingMeeting] = useState<Meeting | null>(null)
   const [editingEvent, setEditingEvent] = useState<Event | null>(null)
+  const [showCalendar, setShowCalendar] = useState(false)
   const router = useRouter()
 
   // Fetch user data
@@ -294,6 +375,46 @@ export default function EventsPage() {
     }
   }
 
+  const getLastSaturdays = () => {
+    const lastSaturdays = []
+    const currentDate = new Date()
+    const currentYear = currentDate.getFullYear()
+    
+    for (let month = 0; month < 12; month++) {
+      const lastDay = new Date(currentYear, month + 1, 0)
+      const lastSaturday = new Date(lastDay)
+      
+      // Move back to the last Saturday
+      while (lastSaturday.getDay() !== 6) {
+        lastSaturday.setDate(lastSaturday.getDate() - 1)
+      }
+      
+      lastSaturdays.push(lastSaturday)
+    }
+    
+    return lastSaturdays
+  }
+
+  const tileClassName = ({ date }: { date: Date }) => {
+    const lastSaturdays = getLastSaturdays()
+    const isLastSaturday = lastSaturdays.some(
+      saturday => 
+        date.getDate() === saturday.getDate() &&
+        date.getMonth() === saturday.getMonth() &&
+        date.getFullYear() === saturday.getFullYear()
+    )
+    
+    const isToday = 
+      date.getDate() === new Date().getDate() &&
+      date.getMonth() === new Date().getMonth() &&
+      date.getFullYear() === new Date().getFullYear()
+    
+    if (isLastSaturday && isToday) return 'react-calendar__tile--last-saturday-today'
+    if (isLastSaturday) return 'react-calendar__tile--last-saturday'
+    if (isToday) return 'react-calendar__tile--today'
+    return ''
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -308,6 +429,40 @@ export default function EventsPage() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <style jsx>{calendarStyles}</style>
+      <div className="flex justify-between items-center mb-8">
+        <h1 className="text-3xl font-bold">Events & Meetings</h1>
+      </div>
+
+      {showCalendar && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-white p-6 rounded-lg shadow-lg">
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-xl font-semibold">Monthly Meeting Calendar</h2>
+              <button
+                onClick={() => setShowCalendar(false)}
+                className="text-gray-500 hover:text-gray-700"
+              >
+                ✕
+              </button>
+            </div>
+            <ReactCalendar
+              tileClassName={tileClassName}
+              className="border-0"
+              selectRange={false}
+              onClickDay={undefined}
+              value={null}
+              tileDisabled={() => true}
+            />
+            <div className="mt-4 text-sm text-gray-600">
+              <p>• Last Saturdays of each month are highlighted in blue</p>
+              <p>• Today's date is highlighted in green</p>
+              <p>• If today is a last Saturday, it's highlighted in purple</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Header */}
       <div className="mb-8">
         <div className="flex items-center justify-between">
@@ -345,16 +500,25 @@ export default function EventsPage() {
 
       {/* Regular Monthly Meeting Schedule */}
       <div className="bg-blue-50 border-l-4 border-[#1B3668] p-4 mb-6">
-        <div className="flex">
-          <div className="flex-shrink-0">
-            <Info className="h-5 w-5 text-[#1B3668]" />
+        <div className="flex items-center justify-between">
+          <div className="flex">
+            <div className="flex-shrink-0">
+              <Info className="h-5 w-5 text-[#1B3668]" />
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-[#1B3668]">Regular Monthly Meeting Schedule</h3>
+              <p className="text-sm text-blue-700 mt-1">
+                Last Saturday of every month at PESU RF conference room during 10am to 12pm.
+              </p>
+            </div>
           </div>
-          <div className="ml-3">
-            <h3 className="text-sm font-medium text-[#1B3668]">Regular Monthly Meeting Schedule</h3>
-            <p className="text-sm text-blue-700 mt-1">
-              Last Saturday of every month at PESU RF conference room during 10am to 12pm.
-            </p>
-          </div>
+          <button
+            onClick={() => setShowCalendar(true)}
+            className="flex items-center gap-2 bg-[#1B3668] text-white px-4 py-2 rounded-lg hover:bg-[#0F2341] transition-colors"
+          >
+            <Calendar className="h-4 w-4" />
+            View Calendar
+          </button>
         </div>
       </div>
 

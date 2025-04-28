@@ -7,6 +7,8 @@ import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
+import { toast } from "react-toastify"
+import "react-toastify/dist/ReactToastify.css"
 import axios from "axios"
 import Image from "next/image"
 import {
@@ -28,6 +30,8 @@ type ForgotPasswordFormData = {
   email: string
 }
 
+const notifyErr = (msg: string) => toast.error(msg)
+const notifySucc = (msg: string) => toast.success(msg)
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -62,10 +66,13 @@ export default function LoginPage() {
         redirect: false,
       })
       if (response?.ok) {
+        notifySucc("Login successful")
         router.push("/dashboard")
+      } else {
+        notifyErr("Invalid credentials")
       }
     } catch (err) {
-      console.error("Login error",err)
+      notifyErr("Something went wrong")
     }
   }
 
@@ -76,10 +83,11 @@ export default function LoginPage() {
       // Simulate API call to send reset password email
       const response = await axios.post("api/reset-password", { email: data.email })
 
+      notifySucc(`Password reset link sent to ${data.email}`)
       setForgotPasswordOpen(false)
       resetForgotPasswordForm()
     } catch (error) {
-      console.error("Password reset error", error)
+      notifyErr("Failed to send reset link. Please try again.")
     } finally {
       setIsResettingPassword(false)
     }
@@ -101,8 +109,8 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen">
       {/* Left side - Login form */}
-      <div className="w-full lg:w-1/2 flex items-start justify-center lg:p-4 bg-[#f5f7fa]">
-        <div className="w-full max-w-md">
+      <div className="w-full lg:w-1/2 flex items-start justify-center p-4 lg:p-8 bg-[#f5f7fa]">
+        <div className="w-full max-w-md mt-8">
           <div className="mb-12">
             <Image src="/logoPesu.png" alt="PES University Logo" width={240} height={80} className="mb-8" />
             <h1 className="text-4xl font-light text-gray-800">Sign in</h1>

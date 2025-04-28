@@ -68,7 +68,7 @@ export async function POST(req: NextRequest) {
 
     // Return the file URL with proper content type
     const fileUrl = `/uploads/${fileName}`
-    
+
     // For images, return both the URL and the file path
     if (type === "image") {
       return NextResponse.json({ 
