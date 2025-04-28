@@ -7,15 +7,22 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import { Label } from "@/components/ui/label"
-import { Upload, Loader2 } from "lucide-react"
+import { Upload, Loader2, FileText, X, Image as ImageIcon } from "lucide-react"
 import { format } from "date-fns"
 import { toast } from "react-toastify"
 import type {Meeting, Event } from "@/app/events/page"
+import Image from "next/image"
 
 interface NewEventFormProps {
   onSubmit: (data: any) => void
   type?: "event" | "meeting"
   initialData?: Meeting | Event | null
+}
+
+interface UploadedFile {
+  fileUrl: string
+  fileName: string
+  mimeType: string
 }
 
 export default function NewEventForm({ onSubmit, type = "event", initialData }: NewEventFormProps) {
@@ -25,36 +32,34 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
   const [time, setTime] = useState(initialData?.time || "")
   const [location, setLocation] = useState(initialData?.location || "")
   const [documentType, setDocumentType] = useState<"none" | "pdf" | "image" | "pptx">(initialData?.documentType || "none")
-  const [documentUrl, setDocumentUrl] = useState(initialData?.documentUrl || "")
+  const initialFiles: UploadedFile[] = []
+  if (initialData?.documentUrl) {
+    const urls = initialData.documentUrl.split(',').filter(Boolean)
+    for (const url of urls) {
+      const ext = url.split('.').pop()?.toLowerCase() || ''
+      let mimeType = ''
+      if (["jpg","jpeg","png","gif","webp"].includes(ext)) mimeType = "image"
+      else if (ext === "pdf") mimeType = "pdf"
+      else if (ext === "pptx") mimeType = "pptx"
+      initialFiles.push({ fileUrl: url, fileName: url.split('/').pop() || '', mimeType })
+    }
+  }
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>(initialFiles)
   const [isSubmitting, setIsSubmitting] = useState(false)
   const [isUploading, setIsUploading] = useState(false)
   const fileInputRef = useRef<HTMLInputElement>(null)
 
   const handleFileUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0]
-    if (!file) return
-
-    // Validate file type
-    if (documentType === "pdf" && file.type !== "application/pdf") {
-      toast.error("Please select a PDF file")
-      return
-    }
-
-    if (documentType === "pptx" && !file.name.endsWith('.pptx')) {
-      toast.error("Please select a PPTX file")
-      return
-    }
-
-    if (documentType === "image" && !file.type.startsWith("image/")) {
-      toast.error("Please select an image file")
-      return
-    }
+    const files = e.target.files
+    if (!files || files.length === 0) return
 
     setIsUploading(true)
 
     try {
       const formData = new FormData()
-      formData.append("file", file)
+      for (let i = 0; i < files.length; i++) {
+        formData.append("files", files[i])
+      }
       formData.append("type", documentType)
 
       const response = await fetch("/api/events/upload", {
@@ -63,18 +68,25 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
       })
 
       if (!response.ok) {
-        throw new Error("Failed to upload file")
+        throw new Error("Failed to upload files")
       }
 
       const data = await response.json()
-      setDocumentUrl(data.fileUrl)
-      toast.success("File uploaded successfully")
+      setUploadedFiles(prev => [...prev, ...data.files])
+      toast.success("Files uploaded successfully")
     } catch (error) {
-      console.error("Error uploading file:", error)
-      toast.error("Failed to upload file")
+      console.error("Error uploading files:", error)
+      toast.error("Failed to upload files")
     } finally {
       setIsUploading(false)
+      if (fileInputRef.current) {
+        fileInputRef.current.value = ""
+      }
     }
+  }
+
+  const handleRemoveFile = (index: number) => {
+    setUploadedFiles(prev => prev.filter((_, i) => i !== index))
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -96,29 +108,14 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
         date: formattedDate,
         time,
         location,
+        documentType,
+        documentUrl: uploadedFiles.map(file => file.fileUrl).join(','),
       }
 
-      // Add document data if available
-      if (documentType !== "none" && documentUrl) {
-        Object.assign(formData, {
-          documentUrl,
-          documentType,
-        })
-      }
-
-      onSubmit(formData)
-
-      // Reset form
-      setTitle("")
-      setDescription("")
-      setDate(undefined)
-      setTime("")
-      setLocation("")
-      setDocumentType("none")
-      setDocumentUrl("")
+      await onSubmit(formData)
     } catch (error) {
       console.error("Error submitting form:", error)
-      toast.error(`Failed to create ${type}`)
+      toast.error("Failed to submit form")
     } finally {
       setIsSubmitting(false)
     }
@@ -172,138 +169,95 @@ export default function NewEventForm({ onSubmit, type = "event", initialData }: 
       </div>
 
       <div className="space-y-2">
-        <Label>Document</Label>
-        <div className="space-y-1">
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="doc-none"
-              name="documentType"
-              value="none"
-              checked={documentType === "none"}
-              onChange={() => {
-                setDocumentType("none")
-                setDocumentUrl("")
-              }}
-              className="h-4 w-4 text-[#1B3668] focus:ring-[#1B3668]"
-            />
-            <Label htmlFor="doc-none" className="text-sm font-normal">
-              No document
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="doc-pdf"
-              name="documentType"
-              value="pdf"
-              checked={documentType === "pdf"}
-              onChange={() => {
-                setDocumentType("pdf")
-                setDocumentUrl("")
-              }}
-              className="h-4 w-4 text-[#1B3668] focus:ring-[#1B3668]"
-            />
-            <Label htmlFor="doc-pdf" className="text-sm font-normal">
-              PDF Document
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="doc-pptx"
-              name="documentType"
-              value="pptx"
-              checked={documentType === "pptx"}
-              onChange={() => {
-                setDocumentType("pptx")
-                setDocumentUrl("")
-              }}
-              className="h-4 w-4 text-[#1B3668] focus:ring-[#1B3668]"
-            />
-            <Label htmlFor="doc-pptx" className="text-sm font-normal">
-              PowerPoint (PPTX)
-            </Label>
-          </div>
-          <div className="flex items-center space-x-2">
-            <input
-              type="radio"
-              id="doc-image"
-              name="documentType"
-              value="image"
-              checked={documentType === "image"}
-              onChange={() => {
-                setDocumentType("image")
-                setDocumentUrl("")
-              }}
-              className="h-4 w-4 text-[#1B3668] focus:ring-[#1B3668]"
-            />
-            <Label htmlFor="doc-image" className="text-sm font-normal">
-              Image
-            </Label>
-          </div>
-        </div>
+        <Label htmlFor="documentType">Document Type</Label>
+        <select
+          id="documentType"
+          value={documentType}
+          onChange={(e) => setDocumentType(e.target.value as "none" | "pdf" | "image" | "pptx")}
+          className="w-full p-2 border rounded"
+        >
+          <option value="none">None</option>
+          <option value="pdf">PDF</option>
+          <option value="image">Image</option>
+          <option value="pptx">PowerPoint</option>
+        </select>
       </div>
 
       {documentType !== "none" && (
         <div className="space-y-2">
-          <Label>Upload Document</Label>
-          <input
-            type="file"
-            ref={fileInputRef}
-            onChange={handleFileUpload}
-            accept={documentType === "pdf" ? ".pdf" : documentType === "pptx" ? ".pptx" : "image/*"}
-            className="hidden"
-          />
-          <div className="flex gap-2">
-            <div className="flex-1 border rounded-md p-2 text-sm truncate">
-              {documentUrl ? (
-                <span className="text-green-600">
-                  File uploaded successfully <span className="text-gray-500">({documentUrl.split("/").pop()})</span>
-                </span>
-              ) : (
-                <span className="text-gray-500">No file selected</span>
-              )}
-            </div>
+          <Label>Upload Files</Label>
+          <div className="flex items-center space-x-2">
+            <input
+              type="file"
+              ref={fileInputRef}
+              onChange={handleFileUpload}
+              multiple
+              accept={
+                documentType === "pdf" ? "application/pdf" :
+                documentType === "pptx" ? ".pptx" :
+                documentType === "image" ? "image/*" : ""
+              }
+              className="hidden"
+            />
             <Button
               type="button"
-              variant="outline"
-              className="flex-shrink-0"
               onClick={() => fileInputRef.current?.click()}
               disabled={isUploading}
+              className="flex items-center space-x-2"
             >
               {isUploading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Uploading...
-                </>
+                <Loader2 className="w-4 h-4 animate-spin" />
               ) : (
-                <>
-                  <Upload className="h-4 w-4 mr-2" />
-                  Upload
-                </>
+                <Upload className="w-4 h-4" />
               )}
+              <span>Upload Files</span>
             </Button>
           </div>
-          <p className="text-xs text-muted-foreground">
-            {documentType === "pdf"
-              ? `Add a PDF document for ${type} details (max 5MB)`
-              : documentType === "pptx"
-              ? `Add a PowerPoint (PPTX) document for ${type} details (max 5MB)`
-              : `Add an image for ${type} announcement (max 2MB)`}
-          </p>
+        </div>
+      )}
+
+      {uploadedFiles.length > 0 && (
+        <div className="space-y-2">
+          <Label>Uploaded Files</Label>
+          <div className="space-y-2">
+            {uploadedFiles.map((file, index) => (
+              <div key={index} className="flex items-center justify-between p-2 border rounded bg-gray-50">
+                <div className="flex items-center space-x-2">
+                  {file.mimeType === "image" ? (
+                    <div className="w-10 h-10 relative rounded overflow-hidden border bg-white">
+                      <Image src={file.fileUrl.startsWith("/uploads") ? `/api/events/download?path=${encodeURIComponent(file.fileUrl)}` : file.fileUrl} alt={file.fileName} fill className="object-cover" />
+                    </div>
+                  ) : file.mimeType === "pdf" ? (
+                    <FileText className="w-6 h-6 text-red-600" />
+                  ) : file.mimeType === "pptx" ? (
+                    <FileText className="w-6 h-6 text-blue-600" />
+                  ) : (
+                    <FileText className="w-6 h-6 text-gray-400" />
+                  )}
+                  <span className="text-sm max-w-[120px] truncate">{file.fileName}</span>
+                </div>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => handleRemoveFile(index)}
+                  className="hover:bg-red-100"
+                  title="Remove file"
+                >
+                  <X className="w-4 h-4 text-red-500" />
+                </Button>
+              </div>
+            ))}
+          </div>
         </div>
       )}
 
       <div className="sticky bottom-0 bg-white pt-4 border-t">
         <Button type="submit" className="w-full" disabled={isSubmitting}>
           {isSubmitting ? (
-            <>
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              {type === "event" ? "Creating Event..." : "Creating Meeting..."}
-            </>
+            <Loader2 className="w-4 h-4 animate-spin" />
           ) : (
-            type === "event" ? "Create Event" : "Create Meeting"
+            "Submit"
           )}
         </Button>
       </div>

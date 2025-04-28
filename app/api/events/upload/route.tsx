@@ -17,64 +17,68 @@ export async function POST(req: NextRequest) {
 
     // Parse the form data
     const formData = await req.formData()
-    const file = formData.get("file") as File
+    const files = formData.getAll("files") as File[]
     const type = formData.get("type") as string
 
-    if (!file) {
-      return NextResponse.json({ error: "No file uploaded" }, { status: 400 })
+    if (!files || files.length === 0) {
+      return NextResponse.json({ error: "No files uploaded" }, { status: 400 })
     }
 
-    // Validate file type
-    if (type === "pdf" && file.type !== "application/pdf") {
-      return NextResponse.json({ error: "Only PDF files are allowed" }, { status: 400 })
+    const uploadedFiles = []
+
+    for (const file of files) {
+      // Validate file type
+      if (type === "pdf" && file.type !== "application/pdf") {
+        return NextResponse.json({ error: "Only PDF files are allowed" }, { status: 400 })
+      }
+
+      if (type === "pptx" && !file.name.endsWith('.pptx')) {
+        return NextResponse.json({ error: "Only PPTX files are allowed" }, { status: 400 })
+      }
+
+      if (type === "image" && !file.type.startsWith("image/")) {
+        return NextResponse.json({ error: "Only image files are allowed" }, { status: 400 })
+      }
+
+      // Validate file size
+      const maxSize = type === "image" ? 2 * 1024 * 1024 : 5 * 1024 * 1024 // 5MB for PDFs/PPTX, 2MB for images
+      if (file.size > maxSize) {
+        return NextResponse.json(
+          {
+            error: `File size exceeds the limit (${maxSize / (1024 * 1024)}MB)`,
+          },
+          { status: 400 },
+        )
+      }
+
+      // Create uploads directory if it doesn't exist
+      const uploadDir = path.join(process.cwd(), "public", "uploads")
+      if (!fs.existsSync(uploadDir)) {
+        fs.mkdirSync(uploadDir, { recursive: true })
+      }
+
+      // Generate unique filename
+      const fileExtension = file.name.split(".").pop()
+      const fileName = `${uuidv4()}.${fileExtension}`
+      const filePath = path.join(uploadDir, fileName)
+
+      // Convert file to buffer and save it
+      const bytes = await file.arrayBuffer()
+      const buffer = Buffer.from(bytes)
+
+      // Write the file to the filesystem
+      fs.writeFileSync(filePath, buffer)
+
+      // Add file info to the response
+      uploadedFiles.push({
+        fileUrl: `/uploads/${fileName}`,
+        mimeType: file.type,
+        fileName: file.name
+      })
     }
 
-    if (type === "pptx" && !file.name.endsWith('.pptx')) {
-      return NextResponse.json({ error: "Only PPTX files are allowed" }, { status: 400 })
-    }
-
-    if (type === "image" && !file.type.startsWith("image/")) {
-      return NextResponse.json({ error: "Only image files are allowed" }, { status: 400 })
-    }
-
-    // Validate file size
-    const maxSize = type === "image" ? 2 * 1024 * 1024 : 5 * 1024 * 1024 // 5MB for PDFs/PPTX, 2MB for images
-    if (file.size > maxSize) {
-      return NextResponse.json(
-        {
-          error: `File size exceeds the limit (${maxSize / (1024 * 1024)}MB)`,
-        },
-        { status: 400 },
-      )
-    }
-
-    // Create uploads directory if it doesn't exist
-    const uploadDir = path.join(process.cwd(), "public", "uploads")
-    if (!fs.existsSync(uploadDir)) {
-      fs.mkdirSync(uploadDir, { recursive: true })
-    }
-
-    // Generate unique filename
-    const fileExtension = file.name.split(".").pop()
-    const fileName = `${uuidv4()}.${fileExtension}`
-    const filePath = path.join(uploadDir, fileName)
-
-    // Convert file to buffer and save it
-    const bytes = await file.arrayBuffer()
-    const buffer = Buffer.from(bytes)
-
-    // Write the file to the filesystem
-    fs.writeFileSync(filePath, buffer)
-
-    // Return the file URL with proper content type
-    const fileUrl = `/uploads/${fileName}`
-
-    // Return the file URL with proper content type and headers
-    return NextResponse.json({ 
-      fileUrl,
-      mimeType: file.type,
-      fileName: file.name
-    }, {
+    // Return the file URLs with proper content type and headers
+    return NextResponse.json({ files: uploadedFiles }, {
       headers: {
         'Cache-Control': 'no-store, must-revalidate',
         'Pragma': 'no-cache',
@@ -83,9 +87,9 @@ export async function POST(req: NextRequest) {
       }
     })
   } catch (error) {
-    console.error("Error uploading file:", error)
+    console.error("Error uploading files:", error)
     return NextResponse.json(
-      { error: error instanceof Error ? error.message : "Failed to upload file" },
+      { error: error instanceof Error ? error.message : "Failed to upload files" },
       { status: 500 },
     )
   }

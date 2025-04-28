@@ -137,7 +137,7 @@ interface Event {
   }
   createdAt: string
   documentUrl?: string
-  documentType?: "pdf" | "image"
+  documentType?: "pdf" | "image" | "pptx"
 }
 
 export default function EventsPage() {
@@ -175,27 +175,38 @@ export default function EventsPage() {
     try {
       // Fetch meetings
       const meetingsRes = await fetch("/api/collaborations/meetings")
-      if (meetingsRes.ok) {
-        const meetingsData = await meetingsRes.json()
-        setMeetings(meetingsData)
+      if (!meetingsRes.ok) {
+        throw new Error(`Failed to fetch meetings: ${meetingsRes.statusText}`)
       }
+      const meetingsData = await meetingsRes.json()
+      setMeetings(meetingsData)
 
       // Fetch events
       const eventsRes = await fetch("/api/collaborations/events")
-      if (eventsRes.ok) {
-        const eventsData = await eventsRes.json()
-        setEvents(eventsData)
+      if (!eventsRes.ok) {
+        throw new Error(`Failed to fetch events: ${eventsRes.statusText}`)
       }
+      const eventsData = await eventsRes.json()
+      setEvents(eventsData)
     } catch (error) {
       console.error("Error fetching data:", error)
-    } finally {
-      setLoading(false)
+      throw error // Re-throw the error to be caught by the useEffect
     }
   }
 
   useEffect(() => {
-    fetchData()
-    fetchUser()
+    const initializeData = async () => {
+      try {
+        setLoading(true)
+        await Promise.all([fetchData(), fetchUser()])
+      } catch (error) {
+        console.error("Error initializing data:", error)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    initializeData()
   }, [])
 
   const handleMeetingSubmit = async (data: any) => {
@@ -418,6 +429,111 @@ export default function EventsPage() {
     return ''
   }
 
+  const EventCard = ({ event, onEdit, onDelete }: { event: Event; onEdit: (event: Event) => void; onDelete: (id: string) => void }) => {
+    const [isOpen, setIsOpen] = useState(false)
+    const files = event.documentUrl?.split(',').filter(Boolean) || []
+
+    const handleFileDownload = async (filePath: string) => {
+      try {
+        const response = await fetch(`/api/events/download?path=${encodeURIComponent(filePath)}`, {
+          method: 'GET',
+          headers: {
+            'Accept': 'application/octet-stream',
+          },
+        })
+        
+        if (!response.ok) {
+          throw new Error('Failed to download file')
+        }
+
+        // Get the filename from the path
+        const fileName = filePath.split('/').pop() || 'download'
+
+        // Create a blob from the response
+        const blob = await response.blob()
+        
+        // Create a download link and trigger it
+        const url = window.URL.createObjectURL(blob)
+        const a = document.createElement('a')
+        a.href = url
+        a.download = fileName
+        document.body.appendChild(a)
+        a.click()
+        window.URL.revokeObjectURL(url)
+        document.body.removeChild(a)
+      } catch (error) {
+        console.error('Error downloading file:', error)
+        alert('Failed to download file. Please try again.')
+      }
+    }
+
+    return (
+      <div className="mb-4">
+        <Link href={`/events/events/${event._id}`} className="block">
+          <Card className="hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
+            <CardContent className="p-0">
+              <div className="flex">
+                <div className="w-24 bg-gray-50 border-r border-gray-200 flex flex-col items-center justify-center p-3">
+                  <div className="text-center">
+                    <span className="block text-sm font-medium text-[#1B3668]">{formatDate(event.date).month}</span>
+                    <span className="block text-3xl font-bold text-[#1B3668]">{formatDate(event.date).day}</span>
+                    <span className="block text-xs text-[#1B3668]">{formatDate(event.date).year}</span>
+                  </div>
+                  <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
+                    {event.time}
+                  </div>
+                </div>
+                <div className="flex-1 p-4">
+                  <div className="flex items-start justify-between">
+                    <h4 className="font-medium text-gray-900">{event.title}</h4>
+                    <Badge className="bg-[#1B3668]">Event</Badge>
+                  </div>
+                  <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{event.description}</p>
+                  <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
+                    <div className="flex items-center">
+                      <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                      <span>{event.location}</span>
+                    </div>
+                    <div className="flex items-center">
+                      <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                      <span>Organized by: {event.organizer.firstName}</span>
+                    </div>
+                    {files.length > 0 && (
+                      <div className="flex items-center">
+                        <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
+                        <span className="text-[#1B3668]">
+                          {files.length} {files.length === 1 ? 'File' : 'Files'} attached
+                        </span>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </Link>
+        {user?.isAdmin && (
+          <div className="flex gap-2 mt-2">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => onEdit(event)}
+            >
+              Edit
+            </Button>
+            <Button
+              variant="destructive"
+              size="sm"
+              onClick={() => onDelete(event._id)}
+            >
+              Delete
+            </Button>
+          </div>
+        )}
+      </div>
+    )
+  }
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white">
@@ -565,87 +681,7 @@ export default function EventsPage() {
                 </h2>
                 {upcomingEvents.length > 0 ? (
                   upcomingEvents.map((event) => (
-                    <div key={event._id} className="mb-4">
-                      <Link href={`/events/events/${event._id}`} className="block">
-                        <Card className="hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
-                          <CardContent className="p-0">
-                            <div className="flex">
-                              <div className="w-24 bg-gray-50 border-r border-gray-200 flex flex-col items-center justify-center p-3">
-                                <div className="text-center">
-                                  <span className="block text-sm font-medium text-[#1B3668]">{formatDate(event.date).month}</span>
-                                  <span className="block text-3xl font-bold text-[#1B3668]">{formatDate(event.date).day}</span>
-                                  <span className="block text-xs text-[#1B3668]">{formatDate(event.date).year}</span>
-                                </div>
-                                <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
-                                  {event.time}
-                                </div>
-                              </div>
-                              <div className="flex-1 p-4">
-                                <div className="flex items-start justify-between">
-                                  <h4 className="font-medium text-gray-900">{event.title}</h4>
-                                  <Badge className="bg-[#1B3668]">Event</Badge>
-                                </div>
-                                <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{event.description}</p>
-                                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
-                                  <div className="flex items-center">
-                                    <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                    <span>{event.location}</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                    <span>Organized by: {event.organizer.firstName}</span>
-                                  </div>
-                                  {event.documentUrl && (
-                                    <div className="flex items-center">
-                                      <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                      <span className="text-[#1B3668]">
-                                        {event.documentType === "pdf" ? "PDF Document" : "Image"} available
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              {event.documentUrl && (
-                                <div className="w-24 border-l border-gray-200 bg-gray-50 flex items-center justify-center">
-                                  {event.documentType === "image" ? (
-                                    <div className="relative h-full w-full">
-                                      <Image
-                                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                                        alt={`Document for ${event.title}`}
-                                        className="object-cover"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="flex flex-col items-center justify-center p-2">
-                                      <FileText className="h-8 w-8 text-[#1B3668]" />
-                                      <span className="text-xs text-center text-[#1B3668] mt-1">View Document</span>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                      {user?.isAdmin && (
-                        <div className="flex gap-2 mt-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditEvent(event)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteEvent(event._id)}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                    <EventCard key={event._id} event={event} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
                   ))
                 ) : (
                   <Card>
@@ -668,87 +704,7 @@ export default function EventsPage() {
                 </h2>
                 {pastEvents.length > 0 ? (
                   pastEvents.map((event) => (
-                    <div key={event._id} className="mb-4">
-                      <Link href={`/events/events/${event._id}`} className="block">
-                        <Card className="hover:border-[#1B3668] hover:shadow-md transition-all duration-200">
-                          <CardContent className="p-0">
-                            <div className="flex">
-                              <div className="w-24 bg-gray-50 border-r border-gray-200 flex flex-col items-center justify-center p-3">
-                                <div className="text-center">
-                                  <span className="block text-sm font-medium text-[#1B3668]">{formatDate(event.date).month}</span>
-                                  <span className="block text-3xl font-bold text-[#1B3668]">{formatDate(event.date).day}</span>
-                                  <span className="block text-xs text-[#1B3668]">{formatDate(event.date).year}</span>
-                                </div>
-                                <div className="mt-2 text-xs font-medium bg-[#1B3668]/10 text-[#1B3668] px-2 py-1 rounded-full">
-                                  {event.time}
-                                </div>
-                              </div>
-                              <div className="flex-1 p-4">
-                                <div className="flex items-start justify-between">
-                                  <h4 className="font-medium text-gray-900">{event.title}</h4>
-                                  <Badge variant="secondary">Past Event</Badge>
-                                </div>
-                                <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{event.description}</p>
-                                <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
-                                  <div className="flex items-center">
-                                    <MapPin className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                    <span>{event.location}</span>
-                                  </div>
-                                  <div className="flex items-center">
-                                    <User className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                    <span>Organized by: {event.organizer.firstName}</span>
-                                  </div>
-                                  {event.documentUrl && (
-                                    <div className="flex items-center">
-                                      <FileText className="h-3.5 w-3.5 mr-1 text-[#1B3668]" />
-                                      <span className="text-[#1B3668]">
-                                        {event.documentType === "pdf" ? "PDF Document" : "Image"} available
-                                      </span>
-                                    </div>
-                                  )}
-                                </div>
-                              </div>
-                              {event.documentUrl && (
-                                <div className="w-24 border-l border-gray-200 bg-gray-50 flex items-center justify-center">
-                                  {event.documentType === "image" ? (
-                                    <div className="relative h-full w-full">
-                                      <Image
-                                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                                        alt={`Document for ${event.title}`}
-                                        className="object-cover"
-                                      />
-                                    </div>
-                                  ) : (
-                                    <div className="flex flex-col items-center justify-center p-2">
-                                      <FileText className="h-8 w-8 text-[#1B3668]" />
-                                      <span className="text-xs text-center text-[#1B3668] mt-1">View Document</span>
-                                    </div>
-                                  )}
-                                </div>
-                              )}
-                            </div>
-                          </CardContent>
-                        </Card>
-                      </Link>
-                      {user?.isAdmin && (
-                        <div className="flex gap-2 mt-2">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleEditEvent(event)}
-                          >
-                            Edit
-                          </Button>
-                          <Button
-                            variant="destructive"
-                            size="sm"
-                            onClick={() => handleDeleteEvent(event._id)}
-                          >
-                            Delete
-                          </Button>
-                        </div>
-                      )}
-                    </div>
+                    <EventCard key={event._id} event={event} onEdit={handleEditEvent} onDelete={handleDeleteEvent} />
                   ))
                 ) : (
                   <Card>

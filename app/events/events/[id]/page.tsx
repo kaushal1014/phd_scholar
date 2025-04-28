@@ -73,6 +73,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
   const [submitting, setSubmitting] = useState(false)
   const [user, setUser] = useState<any>(null)
   const [showDocument, setShowDocument] = useState(false)
+  const [imagesExpanded, setImagesExpanded] = useState(false)
   const router = useRouter()
 
   const form = useForm<z.infer<typeof commentSchema>>({
@@ -185,24 +186,24 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
   const hasDocument = !!event.documentUrl
 
   return (
-    <div className="min-h-screen bg-[#F9FAFB]">
-      <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow-md relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px]"></div>
-        <div className="max-w-7xl mx-auto py-10 px-4 sm:px-6 lg:px-8 relative">
+    <div className="min-h-screen bg-gradient-to-b from-[#F3F4F6] to-[#F9FAFB] pb-12">
+      <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow-md relative overflow-hidden rounded-b-2xl">
+        <div className="absolute inset-0 bg-grid-white/[0.05] bg-[size:20px_20px] rounded-b-2xl"></div>
+        <div className="max-w-5xl mx-auto py-10 px-4 sm:px-6 lg:px-8 relative">
           <div className="flex items-center space-x-3">
             <Bell className="h-8 w-8 text-[#F59E0B]" />
-            <h1 className="text-3xl font-bold text-white">Event Details</h1>
+            <h1 className="text-3xl font-extrabold text-white tracking-tight drop-shadow">Event Details</h1>
           </div>
           <p className="text-blue-100 mt-2 max-w-2xl">Stay updated with research events and activities</p>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
+      <main className="max-w-5xl mx-auto py-8 px-4 sm:px-6 lg:px-8">
         <div className="mb-6">
           <Button
             asChild
             variant="outline"
-            className="group rounded-full px-4 border-[#1B3668] text-[#1B3668] hover:bg-[#1B3668] hover:text-white transition-all duration-200"
+            className="group rounded-full px-4 border-[#1B3668] text-[#1B3668] hover:bg-[#1B3668] hover:text-white transition-all duration-200 shadow"
           >
             <Link href="/events">
               <ChevronLeft className="mr-2 h-5 w-5 transition-transform duration-200 group-hover:-translate-x-1" />
@@ -211,132 +212,153 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
           </Button>
         </div>
 
-        {hasDocument && (
-          <div className="mb-6 flex justify-end">
-            <div className="inline-flex rounded-md shadow-sm" role="group">
-              <button
-                type="button"
-                onClick={() => setShowDocument(false)}
-                className={`px-4 py-2 text-sm font-medium rounded-l-lg border ${
-                  !showDocument
-                    ? "bg-[#1B3668] text-white border-[#1B3668]"
-                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                Details
-              </button>
-              <button
-                type="button"
-                onClick={() => setShowDocument(true)}
-                className={`px-4 py-2 text-sm font-medium rounded-r-lg border ${
-                  showDocument
-                    ? "bg-[#1B3668] text-white border-[#1B3668]"
-                    : "bg-white text-gray-700 border-gray-200 hover:bg-gray-100"
-                }`}
-              >
-                Document
-              </button>
-            </div>
-          </div>
-        )}
-
         {hasDocument && showDocument ? (
-          <Card className="border-[#E5E7EB] bg-white shadow-sm mb-8">
-            <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-6">
+          <Card className="border-[#E5E7EB] bg-white shadow-lg mb-10 rounded-2xl">
+            <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-8 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="rounded-full bg-[#1B3668]/10 p-3 border border-[#1B3668]/20">
                     <FileText className="h-8 w-8 text-[#1B3668]" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl font-bold text-[#1F2937]">{event.title}</CardTitle>
+                    <CardTitle className="text-3xl font-extrabold text-[#1F2937]">{event.title}</CardTitle>
                     <CardDescription className="text-base mt-1 text-[#6B7280]">
                       {isPastEvent ? "Event Materials" : "Event Announcement"}
                     </CardDescription>
                   </div>
                 </div>
-                <a
-                  href={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                  download
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
-                >
-                  <Download className="h-4 w-4 mr-2" />
-                  Download
-                </a>
               </div>
             </CardHeader>
 
-            <CardContent className="p-6">
-              <div className="aspect-[16/9] w-full rounded-lg border border-gray-200">
-                {event.documentType === "pdf" ? (
-                  <object
-                    data={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                    type="application/pdf"
-                    className="h-full w-full rounded-lg"
-                    style={{ height: "90vh" }}
-                  >
-                    <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
-                      <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
-                      <p className="text-center mb-4">Your browser cannot display the PDF directly.</p>
-                      <a
-                        href={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                        download
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Download PDF
-                      </a>
+            <CardContent className="p-8">
+              <div className="space-y-8">
+                {/* Files Grid */}
+                {event.documentUrl && (
+                  <div className="w-full rounded-xl border border-gray-200 bg-[#F9FAFB] shadow-sm p-6">
+                    <div className="mb-6 flex items-center gap-2">
+                      <FileText className="h-6 w-6 text-[#1B3668]" />
+                      <span className="text-lg font-semibold text-[#1B3668]">Event Files</span>
                     </div>
-                  </object>
-                ) : event.documentType === "pptx" ? (
-                  <div className="flex flex-col items-center justify-center h-full bg-gray-100 p-4 rounded-lg">
-                    <FileText className="h-16 w-16 text-[#1B3668] mb-4" />
-                    <p className="text-center mb-4">PowerPoint files can be downloaded and viewed locally.</p>
-                    <a
-                      href={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                      download
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download PowerPoint
-                    </a>
-                  </div>
-                ) : event.documentType === "image" ? (
-                  <div className="flex flex-col items-center justify-center">
-                    <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200 mb-4">
-                      <img
-                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                        alt={event.title}
-                        className="object-contain"
-                        style={{ maxWidth: '100%', height: 'auto' }}
-                      />
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                      {/* PDF and PPTX files */}
+                      {event.documentUrl.split(',').map((file, index) => {
+                        const fileType = file.toLowerCase().endsWith('.pdf') ? 'pdf' :
+                                       file.toLowerCase().endsWith('.pptx') ? 'pptx' :
+                                       file.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/) ? 'image' : '';
+                        if (fileType === 'pdf') {
+                          return (
+                            <div key={index} className="border rounded-xl p-4 col-span-full bg-white shadow-md">
+                              <div className="mb-2 flex items-center gap-2">
+                                <FileText className="h-5 w-5 text-[#1B3668]" />
+                                <span className="font-semibold text-[#1B3668]">PDF Document</span>
+                              </div>
+                              <div className="w-full rounded-lg overflow-hidden border border-[#E5E7EB] shadow">
+                                <iframe
+                                  src={`/api/events/download?path=${encodeURIComponent(file)}`}
+                                  className="w-full rounded-lg"
+                                  style={{ height: "85vh", width: "100%" }}
+                                  title={`PDF Viewer ${index + 1}`}
+                                />
+                              </div>
+                              <div className="mt-4 flex justify-center">
+                                <a
+                                  href={`/api/events/download?path=${encodeURIComponent(file)}`}
+                                  download
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-lg hover:bg-[#0A2240] transition-colors shadow"
+                                >
+                                  <Download className="h-4 w-4 mr-2" />
+                                  Download PDF
+                                </a>
+                              </div>
+                            </div>
+                          );
+                        }
+                        if (fileType === 'pptx') {
+                          return (
+                            <div key={index} className="border rounded-xl p-4 flex flex-col items-center justify-center h-48 bg-gray-100 shadow-md">
+                              <FileText className="h-8 w-8 text-[#1B3668] mb-2" />
+                              <p className="text-center mb-2 text-sm">PowerPoint Presentation</p>
+                              <a
+                                href={`/api/events/download?path=${encodeURIComponent(file)}`}
+                                download
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="inline-flex items-center px-3 py-1 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors text-sm shadow"
+                              >
+                                <Download className="h-3 w-3 mr-1" />
+                                Download PowerPoint
+                              </a>
+                            </div>
+                          );
+                        }
+                        return null;
+                      })}
+                      {/* Collapsible Images */}
+                      {(() => {
+                        const imageFiles = event.documentUrl.split(',').filter(f => f.toLowerCase().match(/\.(jpg|jpeg|png|gif|webp)$/));
+                        if (imageFiles.length === 0) return null;
+                        return (
+                          <div className="border rounded-xl p-4 col-span-full bg-white shadow-md">
+                            <div className="mb-2">
+                              <button
+                                className="w-full focus:outline-none group"
+                                onClick={() => setImagesExpanded(v => !v)}
+                              >
+                                <div className="relative h-64 w-full cursor-pointer group-hover:shadow-lg transition-shadow rounded-lg overflow-hidden">
+                                  <Image
+                                    src={`/api/events/download?path=${encodeURIComponent(imageFiles[0])}`}
+                                    alt={`Event cover image`}
+                                    fill
+                                    className="object-cover rounded-lg group-hover:scale-105 transition-transform"
+                                  />
+                                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 flex justify-center rounded-b-lg">
+                                    <span className="text-white font-semibold">{imagesExpanded ? 'Hide Images' : `Show All Images (${imageFiles.length})`}</span>
+                                  </div>
+                                </div>
+                              </button>
+                            </div>
+                            {imagesExpanded && (
+                              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+                                {imageFiles.map((img, idx) => (
+                                  <div key={idx} className="relative h-64 w-full rounded-lg overflow-hidden group">
+                                    <Image
+                                      src={`/api/events/download?path=${encodeURIComponent(img)}`}
+                                      alt={`Event image ${idx + 1}`}
+                                      fill
+                                      className="object-cover rounded-lg group-hover:scale-105 transition-transform"
+                                    />
+                                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-black bg-opacity-50 flex justify-center rounded-b-lg">
+                                      <a
+                                        href={`/api/events/download?path=${encodeURIComponent(img)}`}
+                                        download
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                        className="inline-flex items-center px-3 py-1 bg-white text-[#1B3668] rounded-md hover:bg-gray-100 transition-colors text-sm shadow"
+                                      >
+                                        <Download className="h-3 w-3 mr-1" />
+                                        Download Image
+                                      </a>
+                                    </div>
+                                  </div>
+                                ))}
+                              </div>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </div>
-                    <a
-                      href={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
-                      download={event.title}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors"
-                    >
-                      <Download className="h-4 w-4 mr-2" />
-                      Download Image
-                    </a>
                   </div>
-                ) : null}
+                )}
               </div>
             </CardContent>
 
-            <CardFooter className="border-t p-6 flex justify-between">
+            <CardFooter className="border-t p-8 flex justify-between rounded-b-2xl bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6]">
               <Button
                 asChild
                 variant="outline"
-                className="group rounded-full px-6 border-[#1B3668] text-[#1B3668] hover:bg-[#1B3668] hover:text-white transition-all duration-200"
+                className="group rounded-full px-6 border-[#1B3668] text-[#1B3668] hover:bg-[#1B3668] hover:text-white transition-all duration-200 shadow"
               >
                 <Link href="/events">
                   <ChevronLeft className="mr-2 h-5 w-5 transition-transform duration-200 group-hover:-translate-x-1" />
@@ -346,22 +368,22 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
 
               <Button
                 onClick={() => setShowDocument(false)}
-                className="rounded-full px-6 bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200"
+                className="rounded-full px-6 bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200 shadow"
               >
                 View Event Details
               </Button>
             </CardFooter>
           </Card>
         ) : (
-          <Card className="border-[#E5E7EB] bg-white shadow-sm mb-8">
-            <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-6">
+          <Card className="border-[#E5E7EB] bg-white shadow-lg mb-10 rounded-2xl">
+            <CardHeader className="border-b bg-gradient-to-r from-[#F9FAFB] to-[#F3F4F6] p-8 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <div className="flex items-center space-x-4">
                   <div className="rounded-full bg-[#1B3668]/10 p-3 border border-[#1B3668]/20">
-                    <Bell className="h-8 w-8 text-[#1B3668]" />
+                    <Bell className="h-8 w-8 text-[#F59E0B]" />
                   </div>
                   <div>
-                    <CardTitle className="text-2xl font-bold text-[#1F2937]">{event.title}</CardTitle>
+                    <CardTitle className="text-3xl font-extrabold text-[#1F2937]">{event.title}</CardTitle>
                     <CardDescription className="text-base mt-1 text-[#6B7280] flex items-center">
                       Organized by {event.organizer.firstName}
                       <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
@@ -375,22 +397,22 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
               </div>
             </CardHeader>
 
-            <CardContent className="p-6">
-              <div className="grid md:grid-cols-3 gap-6">
+            <CardContent className="p-8">
+              <div className="grid md:grid-cols-3 gap-8">
                 <div className="md:col-span-2">
-                  <h3 className="text-lg font-semibold text-[#1F2937] mb-3 flex items-center">
+                  <h3 className="text-lg font-bold text-[#1F2937] mb-3 flex items-center">
                     <span className="inline-block w-1 h-5 bg-[#F59E0B] mr-2 rounded"></span>
                     Description
                   </h3>
-                  <p className="text-[#4B5563] whitespace-pre-line mb-6 bg-[#F9FAFB] p-4 rounded-md border border-[#E5E7EB]">
+                  <p className="text-[#4B5563] whitespace-pre-line mb-6 bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB] shadow-sm">
                     {event.description}
                   </p>
 
-                  <h3 className="text-lg font-semibold text-[#1F2937] mb-3 flex items-center">
+                  <h3 className="text-lg font-bold text-[#1F2937] mb-3 flex items-center">
                     <span className="inline-block w-1 h-5 bg-[#F59E0B] mr-2 rounded"></span>
                     Details
                   </h3>
-                  <div className="space-y-3 bg-[#F9FAFB] p-4 rounded-md border border-[#E5E7EB]">
+                  <div className="space-y-3 bg-[#F9FAFB] p-4 rounded-xl border border-[#E5E7EB] shadow-sm">
                     <div className="flex items-center text-[#4B5563]">
                       <Calendar className="h-5 w-5 mr-2 text-[#1B3668]" />
                       <span>
@@ -419,7 +441,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                 </div>
 
                 <div className="md:col-span-1">
-                  <Card className="border-[#E5E7EB] bg-gradient-to-b from-[#F9FAFB] to-white shadow-sm">
+                  <Card className="border-[#E5E7EB] bg-gradient-to-b from-[#F9FAFB] to-white shadow-sm rounded-xl">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-lg font-semibold text-[#1F2937] flex items-center">
                         <Bell className="h-5 w-5 mr-2 text-[#F59E0B]" />
@@ -428,19 +450,19 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                     </CardHeader>
                     <CardContent>
                       <div className="space-y-3 text-sm">
-                        <div className="flex justify-between items-center p-2 rounded-md bg-white border border-[#E5E7EB]">
+                        <div className="flex justify-between items-center p-2 rounded-md bg-white border border-[#E5E7EB] shadow-sm">
                           <span className="text-[#6B7280]">Status:</span>
                           <Badge className={isPastEvent ? "bg-gray-500" : "bg-[#F59E0B] hover:bg-[#D97706]"}>
                             {isPastEvent ? "Completed" : "Upcoming"}
                           </Badge>
                         </div>
-                        <div className="flex justify-between items-center p-2 rounded-md bg-white border border-[#E5E7EB]">
+                        <div className="flex justify-between items-center p-2 rounded-md bg-white border border-[#E5E7EB] shadow-sm">
                           <span className="text-[#6B7280]">Created:</span>
                           <span className="text-[#1F2937] font-medium">
                             {formatDistanceToNow(new Date(event.createdAt))} ago
                           </span>
                         </div>
-                        <div className="flex justify-between items-center p-2 rounded-md bg-white border border-[#E5E7EB]">
+                        <div className="flex justify-between items-center p-2 rounded-md bg-white border border-[#E5E7EB] shadow-sm">
                           <span className="text-[#6B7280]">Comments:</span>
                           <span className="text-[#1F2937] font-medium">{event.comments?.length || 0}</span>
                         </div>
@@ -452,7 +474,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                     <div className="mt-4">
                       <Button
                         onClick={() => setShowDocument(true)}
-                        className="w-full bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200"
+                        className="w-full bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200 shadow rounded-full"
                       >
                         <FileText className="h-4 w-4 mr-2" />
                         View Document
@@ -465,8 +487,8 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
           </Card>
         )}
 
-        <div className="mb-8">
-          <h2 className="text-xl font-semibold text-[#1F2937] mb-4 flex items-center">
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold text-[#1F2937] mb-4 flex items-center">
             <MessageSquare className="h-5 w-5 mr-2 text-[#F59E0B]" />
             Comments ({event.comments?.length || 0})
           </h2>
@@ -476,24 +498,24 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
               {event.comments.map((comment) => (
                 <Card
                   key={comment._id}
-                  className="border-[#E5E7EB] bg-white hover:border-[#1B3668]/30 transition-all duration-200"
+                  className="border-[#E5E7EB] bg-white hover:border-[#1B3668]/30 transition-all duration-200 rounded-xl shadow-sm"
                 >
-                  <CardContent className="p-4">
+                  <CardContent className="p-6">
                     <div className="flex items-start gap-4">
-                      <Avatar className="h-8 w-8 border border-[#E5E7EB]">
-                        <AvatarFallback className="bg-[#1B3668]/10 text-[#1B3668]">
+                      <Avatar className="h-10 w-10 border border-[#E5E7EB] shadow">
+                        <AvatarFallback className="bg-[#1B3668]/10 text-[#1B3668] text-lg font-bold">
                           {comment.author.firstName.charAt(0)}
                         </AvatarFallback>
                       </Avatar>
                       <div className="flex-1">
                         <div className="flex items-center mb-1">
-                          <h3 className="font-medium text-[#1F2937]">{comment.author.firstName}</h3>
+                          <h3 className="font-semibold text-[#1F2937]">{comment.author.firstName}</h3>
                           <span className="mx-2 inline-block w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
                           <span className="text-xs text-gray-500">
                             {formatDistanceToNow(new Date(comment.createdAt))} ago
                           </span>
                         </div>
-                        <p className="text-sm text-[#1F2937] whitespace-pre-line">{comment.content}</p>
+                        <p className="text-base text-[#1F2937] whitespace-pre-line mt-1">{comment.content}</p>
                       </div>
                     </div>
                   </CardContent>
@@ -501,7 +523,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
               ))}
             </div>
           ) : (
-            <Card className="border-[#E5E7EB] bg-white">
+            <Card className="border-[#E5E7EB] bg-white rounded-xl shadow-sm">
               <CardContent className="p-6 text-center text-gray-500">
                 No comments yet. Be the first to comment!
               </CardContent>
@@ -509,11 +531,11 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
           )}
         </div>
 
-        <Card className="border-[#E5E7EB] bg-white shadow-sm">
-          <CardHeader className="border-b p-4">
-            <CardTitle className="text-lg font-semibold text-[#1F2937]">Add a Comment</CardTitle>
+        <Card className="border-[#E5E7EB] bg-white shadow-lg rounded-2xl">
+          <CardHeader className="border-b p-6">
+            <CardTitle className="text-xl font-bold text-[#1F2937]">Add a Comment</CardTitle>
           </CardHeader>
-          <CardContent className="p-4">
+          <CardContent className="p-6">
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmitComment)} className="space-y-4">
                 <FormField
@@ -524,7 +546,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                       <FormControl>
                         <Textarea
                           placeholder="Write your comment here..."
-                          className="min-h-[100px] resize-none"
+                          className="min-h-[100px] resize-none rounded-lg shadow-sm"
                           {...field}
                         />
                       </FormControl>
@@ -535,7 +557,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                 <div className="flex justify-end">
                   <Button
                     type="submit"
-                    className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200"
+                    className="bg-[#1B3668] hover:bg-[#0A2240] transition-colors duration-200 shadow rounded-full"
                     disabled={submitting || !user}
                   >
                     {submitting ? (
