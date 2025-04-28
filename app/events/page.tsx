@@ -610,9 +610,8 @@ export default function EventsPage() {
                                   {event.documentType === "image" ? (
                                     <div className="relative h-full w-full">
                                       <Image
-                                        src={event.documentUrl}
+                                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
                                         alt={`Document for ${event.title}`}
-                                        fill
                                         className="object-cover"
                                       />
                                     </div>
@@ -714,9 +713,8 @@ export default function EventsPage() {
                                   {event.documentType === "image" ? (
                                     <div className="relative h-full w-full">
                                       <Image
-                                        src={event.documentUrl}
+                                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
                                         alt={`Document for ${event.title}`}
-                                        fill
                                         className="object-cover"
                                       />
                                     </div>

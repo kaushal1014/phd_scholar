@@ -311,9 +311,9 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                   <div className="flex flex-col items-center justify-center">
                     <div className="relative max-w-full overflow-hidden rounded-lg border border-gray-200 mb-4">
                       <img
-                        src={event.documentUrl}
+                        src={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
                         alt={event.title}
-                        className="object-contain w-full h-full"
+                        className="object-contain"
                         style={{ maxWidth: '100%', height: 'auto' }}
                       />
                     </div>
