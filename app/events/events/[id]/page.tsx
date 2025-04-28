@@ -256,7 +256,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                   </div>
                 </div>
                 <a
-                  href={event.documentUrl}
+                  href={`/api/events/upload?path=${encodeURIComponent(event.documentUrl || '')}`}
                   download
                   target="_blank"
                   rel="noopener noreferrer"
