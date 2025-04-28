@@ -380,16 +380,19 @@ export default function EventsPage() {
     const currentDate = new Date()
     const currentYear = currentDate.getFullYear()
     
-    for (let month = 0; month < 12; month++) {
-      const lastDay = new Date(currentYear, month + 1, 0)
-      const lastSaturday = new Date(lastDay)
-      
-      // Move back to the last Saturday
-      while (lastSaturday.getDay() !== 6) {
-        lastSaturday.setDate(lastSaturday.getDate() - 1)
+    // Calculate for previous, current, and next year
+    for (let year = currentYear - 1; year <= currentYear + 1; year++) {
+      for (let month = 0; month < 12; month++) {
+        const lastDay = new Date(year, month + 1, 0)
+        const lastSaturday = new Date(lastDay)
+        
+        // Move back to the last Saturday
+        while (lastSaturday.getDay() !== 6) {
+          lastSaturday.setDate(lastSaturday.getDate() - 1)
+        }
+        
+        lastSaturdays.push(lastSaturday)
       }
-      
-      lastSaturdays.push(lastSaturday)
     }
     
     return lastSaturdays

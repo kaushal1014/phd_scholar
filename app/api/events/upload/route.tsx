@@ -69,25 +69,12 @@ export async function POST(req: NextRequest) {
     // Return the file URL with proper content type
     const fileUrl = `/uploads/${fileName}`
 
-    // For images, return both the URL and the file path
-    if (type === "image") {
-      return NextResponse.json({ 
-        fileUrl,
-        filePath: fileUrl,
-        mimeType: file.type,
-        fileName: file.name
-      }, {
-        headers: {
-          'Cache-Control': 'no-store, must-revalidate',
-          'Pragma': 'no-cache',
-          'Expires': '0',
-          'Content-Type': 'application/json'
-        }
-      })
-    }
-
-    // For other files, return just the URL
-    return NextResponse.json({ fileUrl }, {
+    // Return the file URL with proper content type and headers
+    return NextResponse.json({ 
+      fileUrl,
+      mimeType: file.type,
+      fileName: file.name
+    }, {
       headers: {
         'Cache-Control': 'no-store, must-revalidate',
         'Pragma': 'no-cache',
@@ -139,6 +126,7 @@ export async function GET(req: NextRequest) {
     return new NextResponse(fileBuffer, {
       headers: {
         'Content-Type': contentType,
+        'Content-Disposition': `inline; filename="${path.basename(fullPath)}"`,
         'Cache-Control': 'no-store, must-revalidate',
         'Pragma': 'no-cache',
         'Expires': '0'
