@@ -322,6 +322,18 @@ const PhDScholarForm: React.FC = () => {
     }
   };
 
+  const deleteDcmMeeting = (index: number) => {
+    if (formData.dcMeetings.length > 1) {
+      setFormData({
+        ...formData,
+        dcMeetings: formData.dcMeetings.filter((_, i) => i !== index)
+      });
+      notifyInfo("DC meeting deleted.");
+    } else {
+      notifyErr("You must have at least one DC meeting.");
+    }
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
   
@@ -357,99 +369,446 @@ const PhDScholarForm: React.FC = () => {
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50 py-4 sm:py-8 px-2 sm:px-6">
-      <Card className="w-full max-w-2xl sm:max-w-3xl mx-auto p-2 sm:p-6 rounded-lg shadow-md">
+      <Card className="w-full max-w-4xl mx-auto p-2 sm:p-6 rounded-lg shadow-md">
         <CardHeader className="p-2 sm:p-6">
           <CardTitle className="text-lg sm:text-2xl font-bold text-center">PhD Scholar Signup</CardTitle>
         </CardHeader>
         <form className="space-y-4 sm:space-y-6" onSubmit={handleSubmit}>
-          <div className="flex flex-col sm:flex-row gap-2 sm:gap-4 w-full">
-            <div className="w-full">
-              <Label htmlFor="firstName" className="text-sm sm:text-base">First Name</Label>
-              <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+          {/* Personal Information Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Personal Information</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="firstName">First Name *</Label>
+                <Input id="firstName" name="firstName" value={formData.firstName} onChange={handleChange} required />
+              </div>
+              <div>
+                <Label htmlFor="middleName">Middle Name</Label>
+                <Input id="middleName" name="middleName" value={formData.middleName} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="lastName">Last Name *</Label>
+                <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} required />
+              </div>
             </div>
-            <div className="w-full">
-              <Label htmlFor="middleName" className="text-sm sm:text-base">Middle Name</Label>
-              <Input id="middleName" name="middleName" value={formData.middleName} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="email">Email *</Label>
+                <Input id="email" name="email" type="email" value={formData.email} onChange={handleChange} required />
+              </div>
+              <div>
+                <Label htmlFor="password">Password *</Label>
+                <div className="relative">
+                  <Input id="password" name="password" type={showPassword ? "text" : "password"} value={formData.password} onChange={handleChange} required />
+                  <button type="button" onClick={togglePasswordVisibility} className="absolute right-2 top-2">
+                    {showPassword ? <EyeOffIcon className="h-5 w-5" /> : <EyeIcon className="h-5 w-5" />}
+                  </button>
+                </div>
+              </div>
             </div>
-            <div className="w-full">
-              <Label htmlFor="lastName" className="text-sm sm:text-base">Last Name</Label>
-              <Input id="lastName" name="lastName" value={formData.lastName} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <Label htmlFor="dateOfBirth">Date of Birth</Label>
+                <Input id="dateOfBirth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="nationality">Nationality</Label>
+                <Input id="nationality" name="nationality" value={formData.nationality} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="mobileNumber">Mobile Number</Label>
+                <Input id="mobileNumber" name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} />
+              </div>
             </div>
           </div>
-          <div className="w-full">
-            <Label htmlFor="email" className="text-sm sm:text-base">Email</Label>
-            <Input id="email" name="email" type="email" placeholder="example@pesu.pes.edu" onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-          </div>
-          <div className="w-full">
-            <Label htmlFor="password" className="text-sm sm:text-base">Password</Label>
-            <div className="relative">
-              <Input id="password" name="password" type={showPassword ? "text" : "password"} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-              <button
-                type="button"
-                onClick={togglePasswordVisibility}
-                className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600 dark:text-gray-300 dark:hover:text-gray-100"
-              >
-                {showPassword ? (
-                  <EyeOffIcon className="h-5 w-5" />
-                ) : (
-                  <EyeIcon className="h-5 w-5" />
-                )}
-              </button>
+
+          {/* Admission Details Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Admission Details</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="entranceExamination">Entrance Examination</Label>
+                <Input id="entranceExamination" name="entranceExamination" value={formData.entranceExamination} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="qualifyingExamination">Qualifying Examination</Label>
+                <Input id="qualifyingExamination" name="qualifyingExamination" value={formData.qualifyingExamination} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="allotmentNumber">Allotment Number</Label>
+                <Input id="allotmentNumber" name="allotmentNumber" value={formData.allotmentNumber} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="admissionDate">Admission Date</Label>
+                <Input id="admissionDate" name="admissionDate" type="date" value={formData.admissionDate} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="department">Department</Label>
+                <Input id="department" name="department" value={formData.department} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="modeOfProgram">Mode of Program</Label>
+                <Input id="modeOfProgram" name="modeOfProgram" value={formData.modeOfProgram} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="usn">USN</Label>
+                <Input id="usn" name="usn" value={formData.usn} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="srn">SRN</Label>
+                <Input id="srn" name="srn" value={formData.srn} onChange={handleChange} />
+              </div>
             </div>
           </div>
-          <div className="w-full">
-            <Label htmlFor="dateOfBirth" className="text-sm sm:text-base">Date of Birth</Label>
-            <Input id="dateOfBirth" name="dateOfBirth" type="date" value={formData.dateOfBirth} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* Research Details Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Research Details</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="researchSupervisor">Research Supervisor</Label>
+                <Input id="researchSupervisor" name="researchSupervisor" value={formData.researchSupervisor} onChange={handleChange} />
+              </div>
+              <div>
+                <Label htmlFor="researchCoSupervisor">Research Co-Supervisor</Label>
+                <Input id="researchCoSupervisor" name="researchCoSupervisor" value={formData.researchCoSupervisor} onChange={handleChange} />
+              </div>
+            </div>
           </div>
-          <div className="w-full">
-            <Label htmlFor="nationality" className="text-sm sm:text-base">Nationality</Label>
-            <Input id="nationality" name="nationality" value={formData.nationality} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* Doctoral Committee Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Doctoral Committee Members</h3>
+              <Button type="button" onClick={addNewCommitteeMember} disabled={formData.doctoralCommitteeMembers.length >= MAX_DCMEMBERS}>
+                Add Member
+              </Button>
+            </div>
+            {formData.doctoralCommitteeMembers.map((member, index) => (
+              <div key={index} className="flex gap-4 items-end">
+                <div className="flex-1">
+                  <Label htmlFor={`doctoralCommitteeMembers[${index}].name`}>Member {index + 1}</Label>
+                  <Input
+                    id={`doctoralCommitteeMembers[${index}].name`}
+                    name={`doctoralCommitteeMembers[${index}].name`}
+                    value={member.name}
+                    onChange={handleChange}
+                  />
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => deleteCommitteeMember(index)}
+                  disabled={formData.doctoralCommitteeMembers.length <= 1}
+                >
+                  Delete
+                </Button>
+              </div>
+            ))}
           </div>
-          <div className="w-full">
-            <Label htmlFor="mobileNumber" className="text-sm sm:text-base">Mobile Number</Label>
-            <Input id="mobileNumber" name="mobileNumber" value={formData.mobileNumber} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* Coursework Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">Coursework Details</h3>
+            <div className="space-y-6">
+              {[1, 2, 3, 4].map((courseNum) => (
+                <div key={courseNum} className="border p-4 rounded-lg">
+                  <h4 className="text-md font-semibold mb-4">Coursework {courseNum}</h4>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor={`courseWork${courseNum}SubjectCode`}>Subject Code</Label>
+                      <Input
+                        id={`courseWork${courseNum}SubjectCode`}
+                        name={`courseWork${courseNum}SubjectCode`}
+                        value={formData[`courseWork${courseNum}SubjectCode` as keyof FormData] as string}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`courseWork${courseNum}SubjectName`}>Subject Name</Label>
+                      <Input
+                        id={`courseWork${courseNum}SubjectName`}
+                        name={`courseWork${courseNum}SubjectName`}
+                        value={formData[`courseWork${courseNum}SubjectName` as keyof FormData] as string}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`courseWork${courseNum}SubjectGrade`}>Grade</Label>
+                      <Input
+                        id={`courseWork${courseNum}SubjectGrade`}
+                        name={`courseWork${courseNum}SubjectGrade`}
+                        value={formData[`courseWork${courseNum}SubjectGrade` as keyof FormData] as string}
+                        onChange={handleChange}
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor={`courseWork${courseNum}EligibilityDate`}>Eligibility Date</Label>
+                      <Input
+                        id={`courseWork${courseNum}EligibilityDate`}
+                        name={`courseWork${courseNum}EligibilityDate`}
+                        type="date"
+                        value={formData[`courseWork${courseNum}EligibilityDate` as keyof FormData] as string}
+                        onChange={handleChange}
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
-          <div className="w-full">
-            <Label htmlFor="entranceExamination" className="text-sm sm:text-base">Entrance Examination</Label>
-            <Input id="entranceExamination" name="entranceExamination" value={formData.entranceExamination} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* DC Meetings Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Doctoral Committee Meetings</h3>
+              <Button type="button" onClick={addDcmMeetings} disabled={formData.dcMeetings.length >= MAXDCMMEETINGS}>
+                Add Meeting
+              </Button>
+            </div>
+            {formData.dcMeetings.map((meeting, index) => (
+              <div key={index} className="space-y-4 border p-4 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor={`dcMeetings[${index}].scheduledDate`}>Scheduled Date</Label>
+                    <Input
+                      id={`dcMeetings[${index}].scheduledDate`}
+                      name={`dcMeetings[${index}].scheduledDate`}
+                      type="date"
+                      value={meeting.scheduledDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`dcMeetings[${index}].actualDate`}>Actual Date</Label>
+                    <Input
+                      id={`dcMeetings[${index}].actualDate`}
+                      name={`dcMeetings[${index}].actualDate`}
+                      type="date"
+                      value={meeting.actualDate}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => deleteDcmMeeting(index)}
+                  disabled={formData.dcMeetings.length <= 1}
+                >
+                  Delete Meeting
+                </Button>
+              </div>
+            ))}
           </div>
-          <div className="w-full">
-            <Label htmlFor="qualifyingExamination" className="text-sm sm:text-base">Qualifying Examination</Label>
-            <Input id="qualifyingExamination" name="qualifyingExamination" value={formData.qualifyingExamination} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* PhD Milestones Section */}
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold">PhD Milestones</h3>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div>
+                <Label htmlFor="comprehensiveExamDate">Comprehensive Exam Date</Label>
+                <Input
+                  id="comprehensiveExamDate"
+                  name="comprehensiveExamDate"
+                  type="date"
+                  value={formData.comprehensiveExamDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="proposalDefenseDate">Proposal Defense Date</Label>
+                <Input
+                  id="proposalDefenseDate"
+                  name="proposalDefenseDate"
+                  type="date"
+                  value={formData.proposalDefenseDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="openSeminarDate1">Open Seminar Date</Label>
+                <Input
+                  id="openSeminarDate1"
+                  name="openSeminarDate1"
+                  type="date"
+                  value={formData.openSeminarDate1}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="preSubmissionSeminarDate">Pre-Submission Seminar Date</Label>
+                <Input
+                  id="preSubmissionSeminarDate"
+                  name="preSubmissionSeminarDate"
+                  type="date"
+                  value={formData.preSubmissionSeminarDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="synopsisSubmissionDate">Synopsis Submission Date</Label>
+                <Input
+                  id="synopsisSubmissionDate"
+                  name="synopsisSubmissionDate"
+                  type="date"
+                  value={formData.synopsisSubmissionDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="thesisSubmissionDate">Thesis Submission Date</Label>
+                <Input
+                  id="thesisSubmissionDate"
+                  name="thesisSubmissionDate"
+                  type="date"
+                  value={formData.thesisSubmissionDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="thesisDefenseDate">Thesis Defense Date</Label>
+                <Input
+                  id="thesisDefenseDate"
+                  name="thesisDefenseDate"
+                  type="date"
+                  value={formData.thesisDefenseDate}
+                  onChange={handleChange}
+                />
+              </div>
+              <div>
+                <Label htmlFor="awardOfDegreeDate">Award of Degree Date</Label>
+                <Input
+                  id="awardOfDegreeDate"
+                  name="awardOfDegreeDate"
+                  type="date"
+                  value={formData.awardOfDegreeDate}
+                  onChange={handleChange}
+                />
+              </div>
+            </div>
           </div>
-          <div className="w-full">
-            <Label htmlFor="allotmentNumber" className="text-sm sm:text-base">Allotment Number</Label>
-            <Input id="allotmentNumber" name="allotmentNumber" value={formData.allotmentNumber} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* Publications Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Journal Publications</h3>
+              <Button type="button" onClick={addNewJournal} disabled={formData.journals.length >= MAXJOURNALS}>
+                Add Journal
+              </Button>
+            </div>
+            {formData.journals.map((journal, index) => (
+              <div key={index} className="space-y-4 border p-4 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor={`journals[${index}].title`}>Title</Label>
+                    <Input
+                      id={`journals[${index}].title`}
+                      name={`journals[${index}].title`}
+                      value={journal.title}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`journals[${index}].journalName`}>Journal Name</Label>
+                    <Input
+                      id={`journals[${index}].journalName`}
+                      name={`journals[${index}].journalName`}
+                      value={journal.journalName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`journals[${index}].publicationYear`}>Publication Year</Label>
+                    <Input
+                      id={`journals[${index}].publicationYear`}
+                      name={`journals[${index}].publicationYear`}
+                      type="number"
+                      value={journal.publicationYear}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`journals[${index}].impactFactor`}>Impact Factor</Label>
+                    <Input
+                      id={`journals[${index}].impactFactor`}
+                      name={`journals[${index}].impactFactor`}
+                      type="number"
+                      value={journal.impactFactor}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => deleteJournal(index)}
+                  disabled={formData.journals.length <= MIN_JOURNALS}
+                >
+                  Delete Journal
+                </Button>
+              </div>
+            ))}
           </div>
-          <div className="w-full">
-            <Label htmlFor="admissionDate" className="text-sm sm:text-base">Admission Date</Label>
-            <Input id="admissionDate" name="admissionDate" type="date" value={formData.admissionDate} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* Conference Section */}
+          <div className="space-y-4">
+            <div className="flex justify-between items-center">
+              <h3 className="text-lg font-semibold">Conference Publications</h3>
+              <Button type="button" onClick={addNewConference} disabled={formData.conferences.length >= MAXCONFERENCES}>
+                Add Conference
+              </Button>
+            </div>
+            {formData.conferences.map((conference, index) => (
+              <div key={index} className="space-y-4 border p-4 rounded-lg">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor={`conferences[${index}].title`}>Title</Label>
+                    <Input
+                      id={`conferences[${index}].title`}
+                      name={`conferences[${index}].title`}
+                      value={conference.title}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`conferences[${index}].conferenceName`}>Conference Name</Label>
+                    <Input
+                      id={`conferences[${index}].conferenceName`}
+                      name={`conferences[${index}].conferenceName`}
+                      value={conference.conferenceName}
+                      onChange={handleChange}
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor={`conferences[${index}].publicationYear`}>Publication Year</Label>
+                    <Input
+                      id={`conferences[${index}].publicationYear`}
+                      name={`conferences[${index}].publicationYear`}
+                      type="number"
+                      value={conference.publicationYear}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+                <Button
+                  type="button"
+                  variant="destructive"
+                  onClick={() => deleteConference(index)}
+                  disabled={formData.conferences.length <= MIN_CONFERENCES}
+                >
+                  Delete Conference
+                </Button>
+              </div>
+            ))}
           </div>
-          <div className="w-full">
-            <Label htmlFor="department" className="text-sm sm:text-base">Department</Label>
-            <Input id="department" name="department" value={formData.department} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
+
+          {/* Submit Button */}
+          <div className="flex justify-center">
+            <Button type="submit" className="w-full sm:w-auto">
+              Submit
+            </Button>
           </div>
-          <div className="w-full">
-            <Label htmlFor="usn" className="text-sm sm:text-base">USN</Label>
-            <Input id="usn" name="usn" value={formData.usn} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-          </div>
-          <div className="w-full">
-            <Label htmlFor="srn" className="text-sm sm:text-base">SRN</Label>
-            <Input id="srn" name="srn" value={formData.srn} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-          </div>
-          <div className="w-full">
-            <Label htmlFor="modeOfProgram" className="text-sm sm:text-base">Mode of Program</Label>
-            <Input id="modeOfProgram" name="modeOfProgram" value={formData.modeOfProgram} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-          </div>
-          <div className="w-full">
-            <Label htmlFor="researchSupervisor" className="text-sm sm:text-base">Research Supervisor</Label>
-            <Input id="researchSupervisor" name="researchSupervisor" value={formData.researchSupervisor} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-          </div>
-          <div className="w-full">
-            <Label htmlFor="researchCoSupervisor" className="text-sm sm:text-base">Research Co-Supervisor</Label>
-            <Input id="researchCoSupervisor" name="researchCoSupervisor" value={formData.researchCoSupervisor} onChange={handleChange} className="w-full px-2 py-2 text-sm sm:text-base" />
-          </div>
-          <Button type="submit" className="w-full sm:w-auto mt-4 bg-[#1B3668] text-white hover:bg-[#0F2341] py-2 text-base rounded-lg">Submit</Button>
         </form>
       </Card>
     </div>

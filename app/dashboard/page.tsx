@@ -322,7 +322,27 @@ export default function Dashboard() {
   const getMilestones = (): Milestone[] => {
     return [
       {
-        label:"Admission Date",
+        label: "Coursework 1 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework1?.toString(),
+        icon: <CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Coursework 2 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework2?.toString(),
+        icon: <CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Coursework 3 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework3?.toString(),
+        icon: <CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Coursework 4 Completion",
+        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework4?.toString(),
+        icon: <CalendarCheck className="h-4 w-4"/>
+      },
+      {
+        label: "Admission Date",
         date: phdScholarData?.admissionDetails?.admissionDate?.toString(),
         icon: <ContactRound className="h-4 w-4" />
       },
@@ -365,26 +385,6 @@ export default function Dashboard() {
         label: "Award of Degree",
         date: phdScholarData?.phdMilestones?.awardOfDegreeDate?.toString(),
         icon: <Award className="h-4 w-4" />,
-      },
-      {
-        label: "Coursework 1 Completion",
-        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework1?.toString(),
-        icon:<CalendarCheck className="h-4 w-4"/>
-      },
-      {
-        label: "Coursework 2 Completion",
-        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework2?.toString(),
-        icon:<CalendarCheck className="h-4 w-4"/>
-      },
-      {
-        label: "Coursework 3 Completion",
-        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework3?.toString(),
-        icon:<CalendarCheck className="h-4 w-4"/>
-      },
-      {
-        label: "Coursework 4 Completion",
-        date: phdScholarData?.phdMilestones?.courseworkCompletionDate?.coursework4?.toString(),
-        icon:<CalendarCheck className="h-4 w-4"/>
       }
     ].sort((a, b) => {
       const dateA = a.date ? new Date(a.date).getTime() : Number.POSITIVE_INFINITY

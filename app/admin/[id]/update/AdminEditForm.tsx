@@ -29,7 +29,7 @@ const formSchema = z.object({
     firstName: z.string().min(2, { message: "First name must be at least 2 characters." }),
     middleName: z.string().optional(),
     lastName: z.string().min(2, { message: "Last name must be at least 2 characters." }),
-    dateOfBirth: z.date(),
+    dateOfBirth: z.date().nullable().optional(),
     nationality: z.string().min(2, { message: "Nationality must be at least 2 characters." }),
     mobileNumber: z.string().min(10, { message: "Mobile number must be at least 10 characters." }),
   }),
@@ -37,7 +37,7 @@ const formSchema = z.object({
     entranceExamination: z.string(),
     qualifyingExamination: z.string(),
     allotmentNumber: z.string(),
-    admissionDate: z.date(),
+    admissionDate: z.date().nullable().optional(),
     department: z.string(),
     usn: z.string(),
     srn: z.string(),
@@ -57,54 +57,54 @@ const formSchema = z.object({
     subjectName: z.string(),
     subjectGrade: z.string(),
     status: z.string(),
-    eligibilityDate: z.date(),
+    eligibilityDate: z.date().nullable().optional(),
   }),
   courseWork2: z.object({
     subjectCode: z.string(),
     subjectName: z.string(),
     subjectGrade: z.string(),
     status: z.string(),
-    eligibilityDate: z.date(),
+    eligibilityDate: z.date().nullable().optional(),
   }),
   courseWork3: z.object({
     subjectCode: z.string(),
     subjectName: z.string(),
     subjectGrade: z.string(),
     status: z.string(),
-    eligibilityDate: z.date(),
+    eligibilityDate: z.date().nullable().optional(),
   }),
   courseWork4: z.object({
     subjectCode: z.string(),
     subjectName: z.string(),
     subjectGrade: z.string(),
     status: z.string(),
-    eligibilityDate: z.date(),
+    eligibilityDate: z.date().nullable().optional(),
   }),
   phdMilestones: z.object({
     courseworkCompletionDate: z.object({
-      coursework1: z.date(),
-      coursework2: z.date(),
-      coursework3: z.date(),
-      coursework4: z.date(),
+      coursework1: z.date().nullable().optional(),
+      coursework2: z.date().nullable().optional(),
+      coursework3: z.date().nullable().optional(),
+      coursework4: z.date().nullable().optional(),
     }),
     dcMeetings: z.object({
       DCM: z.array(
         z.object({
-          scheduledDate: z.date(),
-          actualDate: z.date(),
+          scheduledDate: z.date().nullable().optional(),
+          actualDate: z.date().nullable().optional(),
           happened: z.boolean(),
           summary: z.string(),
         })
       ),
     }),
-    comprehensiveExamDate: z.date(),
-    proposalDefenseDate: z.date(),
-    openSeminarDate1: z.date(),
-    preSubmissionSeminarDate: z.date(),
-    synopsisSubmissionDate: z.date(),
-    thesisSubmissionDate: z.date(),
-    thesisDefenseDate: z.date(),
-    awardOfDegreeDate: z.date(),
+    comprehensiveExamDate: z.date().nullable().optional(),
+    proposalDefenseDate: z.date().nullable().optional(),
+    openSeminarDate1: z.date().nullable().optional(),
+    preSubmissionSeminarDate: z.date().nullable().optional(),
+    synopsisSubmissionDate: z.date().nullable().optional(),
+    thesisSubmissionDate: z.date().nullable().optional(),
+    thesisDefenseDate: z.date().nullable().optional(),
+    awardOfDegreeDate: z.date().nullable().optional(),
   }),
 });
 
@@ -133,7 +133,7 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
         firstName: phdScholarData.personalDetails?.firstName,
         middleName: phdScholarData.personalDetails.middleName || "",
         lastName: phdScholarData.personalDetails.lastName,
-        dateOfBirth: new Date(phdScholarData.personalDetails.dateOfBirth),
+        dateOfBirth: phdScholarData.personalDetails.dateOfBirth ? new Date(phdScholarData.personalDetails.dateOfBirth) : null,
         nationality: phdScholarData.personalDetails.nationality,
         mobileNumber: phdScholarData.personalDetails.mobileNumber,
       },
@@ -141,7 +141,7 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
         entranceExamination: phdScholarData.admissionDetails.entranceExamination,
         qualifyingExamination: phdScholarData.admissionDetails.qualifyingExamination,
         allotmentNumber: phdScholarData.admissionDetails.allotmentNumber,
-        admissionDate: new Date(phdScholarData.admissionDetails.admissionDate),
+        admissionDate: phdScholarData.admissionDetails.admissionDate ? new Date(phdScholarData.admissionDetails.admissionDate) : null,
         department: phdScholarData.admissionDetails.department,
         usn: phdScholarData.admissionDetails.usn,
         srn: phdScholarData.admissionDetails.srn,
@@ -157,52 +157,52 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
         subjectName: phdScholarData.courseWork1.subjectName,
         subjectGrade: phdScholarData.courseWork1.subjectGrade,
         status: phdScholarData.courseWork1.status,
-        eligibilityDate: new Date(phdScholarData.courseWork1.eligibilityDate),
+        eligibilityDate: phdScholarData.courseWork1.eligibilityDate ? new Date(phdScholarData.courseWork1.eligibilityDate) : null,
       },
       courseWork2: {
         subjectCode: phdScholarData.courseWork2.subjectCode,
         subjectName: phdScholarData.courseWork2.subjectName,
         subjectGrade: phdScholarData.courseWork2.subjectGrade,
         status: phdScholarData.courseWork2.status,
-        eligibilityDate: new Date(phdScholarData.courseWork2.eligibilityDate),
+        eligibilityDate: phdScholarData.courseWork2.eligibilityDate ? new Date(phdScholarData.courseWork2.eligibilityDate) : null,
       },
       courseWork3: {
         subjectCode: phdScholarData.courseWork3.subjectCode,
         subjectName: phdScholarData.courseWork3.subjectName,
         subjectGrade: phdScholarData.courseWork3.subjectGrade,
         status: phdScholarData.courseWork3.status,
-        eligibilityDate: new Date(phdScholarData.courseWork3.eligibilityDate),
+        eligibilityDate: phdScholarData.courseWork3.eligibilityDate ? new Date(phdScholarData.courseWork3.eligibilityDate) : null,
       },
       courseWork4: {
         subjectCode: phdScholarData.courseWork4.subjectCode,
         subjectName: phdScholarData.courseWork4.subjectName,
         subjectGrade: phdScholarData.courseWork4.subjectGrade,
         status: phdScholarData.courseWork4.status,
-        eligibilityDate: new Date(phdScholarData.courseWork4.eligibilityDate),
+        eligibilityDate: phdScholarData.courseWork4.eligibilityDate ? new Date(phdScholarData.courseWork4.eligibilityDate) : null,
       },
       phdMilestones: {
         courseworkCompletionDate: {
-          coursework1: new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework1),
-          coursework2: new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework2),
-          coursework3: new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework3),
-          coursework4: new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework4),
+          coursework1: phdScholarData.phdMilestones.courseworkCompletionDate.coursework1 ? new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework1) : null,
+          coursework2: phdScholarData.phdMilestones.courseworkCompletionDate.coursework2 ? new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework2) : null,
+          coursework3: phdScholarData.phdMilestones.courseworkCompletionDate.coursework3 ? new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework3) : null,
+          coursework4: phdScholarData.phdMilestones.courseworkCompletionDate.coursework4 ? new Date(phdScholarData.phdMilestones.courseworkCompletionDate.coursework4) : null,
         },
         dcMeetings: {
-            DCM: phdScholarData.phdMilestones.dcMeetings?.DCM.map(meeting => ({
-              scheduledDate: new Date(meeting.scheduledDate),
-              actualDate: new Date(meeting.actualDate),
-              happened: meeting.happened,
-              summary: meeting.summary ?? "", // 👈 Ensuring summary is never null
-            })) || [],
+          DCM: phdScholarData.phdMilestones.dcMeetings?.DCM.map(meeting => ({
+            scheduledDate: meeting.scheduledDate ? new Date(meeting.scheduledDate) : null,
+            actualDate: meeting.actualDate ? new Date(meeting.actualDate) : null,
+            happened: meeting.happened,
+            summary: meeting.summary ?? "",
+          })) || [],
         },
-        comprehensiveExamDate: new Date(phdScholarData.phdMilestones.comprehensiveExamDate),
-        proposalDefenseDate: new Date(phdScholarData.phdMilestones.proposalDefenseDate),
-        openSeminarDate1: new Date(phdScholarData.phdMilestones.openSeminarDate1),
-        preSubmissionSeminarDate: new Date(phdScholarData.phdMilestones.preSubmissionSeminarDate),
-        synopsisSubmissionDate: new Date(phdScholarData.phdMilestones.synopsisSubmissionDate),
-        thesisSubmissionDate: new Date(phdScholarData.phdMilestones.thesisSubmissionDate),
-        thesisDefenseDate: new Date(phdScholarData.phdMilestones.thesisDefenseDate),
-        awardOfDegreeDate: new Date(phdScholarData.phdMilestones.awardOfDegreeDate),
+        comprehensiveExamDate: phdScholarData.phdMilestones.comprehensiveExamDate ? new Date(phdScholarData.phdMilestones.comprehensiveExamDate) : null,
+        proposalDefenseDate: phdScholarData.phdMilestones.proposalDefenseDate ? new Date(phdScholarData.phdMilestones.proposalDefenseDate) : null,
+        openSeminarDate1: phdScholarData.phdMilestones.openSeminarDate1 ? new Date(phdScholarData.phdMilestones.openSeminarDate1) : null,
+        preSubmissionSeminarDate: phdScholarData.phdMilestones.preSubmissionSeminarDate ? new Date(phdScholarData.phdMilestones.preSubmissionSeminarDate) : null,
+        synopsisSubmissionDate: phdScholarData.phdMilestones.synopsisSubmissionDate ? new Date(phdScholarData.phdMilestones.synopsisSubmissionDate) : null,
+        thesisSubmissionDate: phdScholarData.phdMilestones.thesisSubmissionDate ? new Date(phdScholarData.phdMilestones.thesisSubmissionDate) : null,
+        thesisDefenseDate: phdScholarData.phdMilestones.thesisDefenseDate ? new Date(phdScholarData.phdMilestones.thesisDefenseDate) : null,
+        awardOfDegreeDate: phdScholarData.phdMilestones.awardOfDegreeDate ? new Date(phdScholarData.phdMilestones.awardOfDegreeDate) : null,
       },
     },
   });
@@ -249,9 +249,15 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
           <Popover>
             <FormControl>
               <Input
-              type="date"
-              value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
-              onChange={(e) => field.onChange(e.target.value ? new Date(e.target.value) : null)}
+                type="date"
+                value={field.value ? format(field.value, "yyyy-MM-dd") : ""}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    field.onChange(new Date(e.target.value));
+                  } else {
+                    field.onChange(null);
+                  }
+                }}
               />
             </FormControl>
           </Popover>
@@ -1030,9 +1036,10 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
                   <CardDescription>Update the scholar's milestone dates</CardDescription>
                 </CardHeader>
                 <CardContent className="pt-6 space-y-4">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">Course Work Completion Dates</h3>
+                  {/* Course Work Completion Dates Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Course Work Completion Dates</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <DatePickerFormField 
                         control={form.control}
                         name="phdMilestones.courseworkCompletionDate.coursework1"
@@ -1054,9 +1061,14 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
                         label="Course Work 4 Completion"
                       />
                     </div>
-                    
-                    <div className="space-y-4">
-                      <h3 className="text-lg font-medium">Key Milestones</h3>
+                  </div>
+
+                  <Separator className="my-4" />
+
+                  {/* Other Milestones Section */}
+                  <div className="space-y-4">
+                    <h3 className="text-lg font-medium">Key Milestones</h3>
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <DatePickerFormField 
                         control={form.control}
                         name="phdMilestones.comprehensiveExamDate"
@@ -1077,13 +1089,6 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
                         name="phdMilestones.preSubmissionSeminarDate"
                         label="Pre-Submission Seminar"
                       />
-                    </div>
-                  </div>
-
-                  <Separator className="my-4" />
-
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                    <div className="space-y-4">
                       <DatePickerFormField 
                         control={form.control}
                         name="phdMilestones.synopsisSubmissionDate"
@@ -1094,8 +1099,6 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
                         name="phdMilestones.thesisSubmissionDate"
                         label="Thesis Submission"
                       />
-                    </div>
-                    <div className="space-y-4">
                       <DatePickerFormField 
                         control={form.control}
                         name="phdMilestones.thesisDefenseDate"
