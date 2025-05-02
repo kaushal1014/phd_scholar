@@ -211,8 +211,9 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
-        console.log("Submitting data:", values);
       setIsSubmitting(true);
+      console.log("Submitting data:", values);
+
       // Make API call to update the PhD scholar data
       const response = await fetch(`/api/user/phd-scholar/${userData.phdScholar}`, {
         method: 'PUT',
@@ -222,17 +223,21 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
         body: JSON.stringify(values),
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to update PhD scholar data');
-      }
-      notifySucc("PhD scholar data updated successfully")
-      
+      const result = await response.json();
 
-      // Refresh the page to show updated data
-      onCancel();
+      if (!response.ok) {
+        throw new Error(result.error || 'Failed to update PhD scholar data');
+      }
+
+      if (result.success) {
+        notifySucc(result.message || "PhD scholar data updated successfully");
+        onCancel();
+      } else {
+        throw new Error(result.error || 'Failed to update PhD scholar data');
+      }
     } catch (error) {
       console.error('Error updating PhD scholar data:', error);
-      notifyErr("Failed to update PhD scholar data")
+      notifyErr(error instanceof Error ? error.message : "Failed to update PhD scholar data");
     } finally {
       setIsSubmitting(false);
     }

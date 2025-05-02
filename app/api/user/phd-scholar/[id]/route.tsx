@@ -38,12 +38,18 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
     }
 
     const updatedData = await req.json();
+    console.log("Received update data:", updatedData);
 
-    // ✅ Update PhD Scholar
-    const phdScholar = await PhdScholar.findByIdAndUpdate(params.id, updatedData, {
-      new: true,
-      runValidators: true,
-    });
+    // ✅ Update PhD Scholar with proper nested update handling
+    const phdScholar = await PhdScholar.findByIdAndUpdate(
+      params.id,
+      { $set: updatedData },
+      {
+        new: true,
+        runValidators: true,
+        context: 'query'
+      }
+    );
 
     if (!phdScholar) {
       return NextResponse.json({ error: "PhD Scholar not found" }, { status: 404 });
@@ -51,17 +57,36 @@ export async function PUT(req: NextRequest, { params }: { params: { id: string }
 
     // ✅ If PhD Scholar has a linked User, update it as well
     if (phdScholar.user) {
-      await User.findByIdAndUpdate(phdScholar.user, {
-        firstName: updatedData.personalDetails?.firstName,
-        lastName: updatedData.personalDetails?.lastName,
-      });
+      try {
+        await User.findByIdAndUpdate(
+          phdScholar.user,
+          {
+            $set: {
+              firstName: updatedData.personalDetails?.firstName,
+              lastName: updatedData.personalDetails?.lastName,
+            }
+          },
+          { new: true }
+        );
+      } catch (userUpdateError) {
+        console.error("Error updating linked user:", userUpdateError);
+        // Continue with the response even if user update fails
+      }
     }
-    console.log(phdScholar.user)
-    return NextResponse.json({ data: phdScholar }, { status: 200 });
+
+    return NextResponse.json({ 
+      success: true,
+      data: phdScholar,
+      message: "PhD scholar data updated successfully"
+    }, { status: 200 });
   } catch (error) {
     const errorMessage = (error as Error).message;
     console.error("Error updating PhD Scholar:", errorMessage);
-    return NextResponse.json({ error: errorMessage }, { status: 500 });
+    return NextResponse.json({ 
+      success: false,
+      error: errorMessage,
+      details: error instanceof Error ? error.stack : undefined
+    }, { status: 500 });
   }
 }
 
