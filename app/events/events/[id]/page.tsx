@@ -263,15 +263,15 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                               <div className="mt-4 flex justify-center">
                                 <a
                                   href={`/api/events/download?path=${encodeURIComponent(file)}`}
-                                  download
-                                  target="_blank"
-                                  rel="noopener noreferrer"
+                        download
+                        target="_blank"
+                        rel="noopener noreferrer"
                                   className="inline-flex items-center px-4 py-2 bg-[#1B3668] text-white rounded-lg hover:bg-[#0A2240] transition-colors shadow w-full sm:w-auto justify-center"
-                                >
-                                  <Download className="h-4 w-4 mr-2" />
-                                  Download PDF
-                                </a>
-                              </div>
+                      >
+                        <Download className="h-4 w-4 mr-2" />
+                        Download PDF
+                      </a>
+                    </div>
                             </div>
                           );
                         }
@@ -282,15 +282,15 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                               <p className="text-center mb-2 text-sm">PowerPoint Presentation</p>
                               <a
                                 href={`/api/events/download?path=${encodeURIComponent(file)}`}
-                                download
-                                target="_blank"
-                                rel="noopener noreferrer"
+                      download
+                      target="_blank"
+                      rel="noopener noreferrer"
                                 className="inline-flex items-center px-3 py-1 bg-[#1B3668] text-white rounded-md hover:bg-[#0A2240] transition-colors text-sm shadow w-full sm:w-auto justify-center"
-                              >
+                    >
                                 <Download className="h-3 w-3 mr-1" />
-                                Download PowerPoint
-                              </a>
-                            </div>
+                      Download PowerPoint
+                    </a>
+                  </div>
                           );
                         }
                         return null;
@@ -318,7 +318,7 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                                   </div>
                                 </div>
                               </button>
-                            </div>
+                    </div>
                             {imagesExpanded && (
                               <div className="grid grid-cols-1 gap-2 sm:grid-cols-3 sm:gap-4 mt-4">
                                 {imageFiles.map((img, idx) => (
@@ -333,13 +333,13 @@ export default function EventDetailPage({ params }: { params: { id: string } }) 
                                       <a
                                         href={`/api/events/download?path=${encodeURIComponent(img)}`}
                                         download
-                                        target="_blank"
-                                        rel="noopener noreferrer"
+                      target="_blank"
+                      rel="noopener noreferrer"
                                         className="inline-flex items-center px-3 py-1 bg-white text-[#1B3668] rounded-md hover:bg-gray-100 transition-colors text-xs sm:text-sm shadow w-full sm:w-auto justify-center"
-                                      >
+                    >
                                         <Download className="h-3 w-3 mr-1" />
-                                        Download Image
-                                      </a>
+                      Download Image
+                    </a>
                                     </div>
                                   </div>
                                 ))}

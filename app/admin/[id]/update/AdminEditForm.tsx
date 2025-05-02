@@ -491,8 +491,10 @@ export default function AdminEditForm({ userData, phdScholarData, onCancel }: Ad
                             </SelectTrigger>
                           </FormControl>
                           <SelectContent>
-                            <SelectItem value="Full Time">Full Time</SelectItem>
-                            <SelectItem value="Part Time">Part Time</SelectItem>
+                            <SelectItem value="full time phd scholar">Full Time PhD Scholar</SelectItem>
+                            <SelectItem value="part time phd scholar">Part Time PhD Scholar</SelectItem>
+                            <SelectItem value="direct phd">Direct PhD</SelectItem>
+                            <SelectItem value="phd by mtech">PhD by MTech</SelectItem>
                           </SelectContent>
                         </Select>
                         <FormMessage />

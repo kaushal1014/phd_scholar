@@ -44,12 +44,14 @@ function Header() {
 
   const handleSignOut = async () => {
     try {
-      await signOut({ redirect: false })
-      if (pathname === "/dashboard") {
-        router.push("/login")
-      }
+      await signOut({ 
+        redirect: false,
+        callbackUrl: "/login"
+      })
+      router.push("/login")
     } catch (error) {
       console.log("signout error", error)
+      router.push("/login") // Ensure redirect even if signOut fails
     }
   }
 

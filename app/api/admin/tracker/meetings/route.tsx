@@ -26,12 +26,19 @@ export async function GET(req: NextRequest) {
       },
     })
       .select("personalDetails admissionDetails phdMilestones.dcMeetings user")
-      .populate("user", "firstName lastName email") // Populate user details
+      .populate({
+        path: "user",
+        select: "firstName lastName email",
+        match: { deletedAt: null } // Only populate if user is not deleted
+      })
 
     // Extract and format the meetings
     const meetings = []
 
     for (const scholar of scholars) {
+      // Skip if user is null (deleted user or no matching user)
+      if (!scholar.user) continue;
+
       const upcomingMeetings = scholar.phdMilestones.dcMeetings.DCM.filter(
         (meeting: any) => meeting.scheduledDate && new Date(meeting.scheduledDate) >= now && !meeting.happened,
       )

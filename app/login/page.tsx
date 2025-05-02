@@ -7,7 +7,7 @@ import { useForm } from "react-hook-form"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { EyeIcon, EyeOffIcon } from "lucide-react"
-import { toast } from "react-toastify"
+import { toast, ToastContainer } from "react-toastify"
 import "react-toastify/dist/ReactToastify.css"
 import axios from "axios"
 import Image from "next/image"
@@ -30,8 +30,30 @@ type ForgotPasswordFormData = {
   email: string
 }
 
-const notifyErr = (msg: string) => toast.error(msg)
-const notifySucc = (msg: string) => toast.success(msg)
+const notifyErr = (msg: string) => toast.error(msg, {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+  style: {
+    background: '#fff',
+    color: '#dc2626',
+    border: '1px solid #dc2626',
+  },
+})
+
+const notifySucc = (msg: string) => toast.success(msg, {
+  position: "top-right",
+  autoClose: 3000,
+  hideProgressBar: false,
+  closeOnClick: true,
+  pauseOnHover: true,
+  draggable: true,
+  progress: undefined,
+})
 
 export default function LoginPage() {
   const [showPassword, setShowPassword] = useState(false)
@@ -69,7 +91,13 @@ export default function LoginPage() {
         notifySucc("Login successful")
         router.push("/dashboard")
       } else {
-        notifyErr("Invalid credentials")
+        if (response?.error === "Wrong Password") {
+          notifyErr("Incorrect password. Please try again.")
+        } else if (response?.error === "Wrong Email") {
+          notifyErr("No account found with this email.")
+        } else {
+          notifyErr("Invalid credentials")
+        }
       }
     } catch (err) {
       notifyErr("Something went wrong")
@@ -108,6 +136,18 @@ export default function LoginPage() {
 
   return (
     <div className="flex flex-col lg:flex-row min-h-screen">
+      <ToastContainer
+        position="top-right"
+        autoClose={3000}
+        hideProgressBar={false}
+        newestOnTop
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="light"
+      />
       {/* Left side - Login form */}
       <div className="w-full lg:w-1/2 flex items-start justify-center p-2 sm:p-4 lg:p-8 bg-[#f5f7fa]">
         <div className="w-full max-w-md mt-8">
