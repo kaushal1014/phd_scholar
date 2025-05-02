@@ -16,17 +16,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-type User = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  password: string;
-  isVerified: boolean;
-  isAdmin: boolean;
-  phdScholar?: string;
-}
-
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
