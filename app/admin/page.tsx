@@ -26,10 +26,11 @@ export default function AdminUsers() {
   const [userDetails, setUserDetails] = useState<{[key: string]: any}>({})
   const [phdStats, setPhdStats] = useState({
     total: 0,
-    fullTime: 0,
-    partTime: 0,
-    direct: 0,
-    mtech: 0
+    phdFullTime: 0,
+    phdPartTimeInternal: 0,
+    phdPartTimeExternal: 0,
+    mtechFullTime: 0,
+    mtechPartTime: 0
   })
   const router = useRouter()
   const { data: session, status } = useSession()
@@ -90,17 +91,20 @@ export default function AdminUsers() {
         // Calculate statistics
         const stats = {
           total: phdScholars.length,
-          fullTime: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram?.toLowerCase().trim() === 'full time phd scholar'
+          phdFullTime: phdScholars.filter(scholar => 
+            scholar.data?.admissionDetails?.modeOfProgram === 'PhD Full time'
           ).length,
-          partTime: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram?.toLowerCase().trim() === 'part time phd scholar'
+          phdPartTimeInternal: phdScholars.filter(scholar => 
+            scholar.data?.admissionDetails?.modeOfProgram === 'PhD part time (internal candidate)'
           ).length,
-          direct: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram?.toLowerCase().trim() === 'direct phd'
+          phdPartTimeExternal: phdScholars.filter(scholar => 
+            scholar.data?.admissionDetails?.modeOfProgram === 'PhD part time (external candidate)'
           ).length,
-          mtech: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram?.toLowerCase().trim() === 'phd by mtech'
+          mtechFullTime: phdScholars.filter(scholar => 
+            scholar.data?.admissionDetails?.modeOfProgram === 'Mtech full time'
+          ).length,
+          mtechPartTime: phdScholars.filter(scholar => 
+            scholar.data?.admissionDetails?.modeOfProgram === 'Mtech part time'
           ).length
         }
 
@@ -150,10 +154,11 @@ export default function AdminUsers() {
       const userDetail = userDetails[user.id]
       const userProgramMode = userDetail?.data?.admissionDetails?.modeOfProgram?.toLowerCase().trim()
       const matchesProgram = programFilter === "all" || 
-        (programFilter === "full time" && userProgramMode === "full time phd scholar") ||
-        (programFilter === "part time" && userProgramMode === "part time phd scholar") ||
-        (programFilter === "direct" && userProgramMode === "direct phd") ||
-        (programFilter === "mtech" && userProgramMode === "phd by mtech")
+        (programFilter === "phd full time" && userProgramMode === "phd full time") ||
+        (programFilter === "phd part time internal" && userProgramMode === "phd part time (internal candidate)") ||
+        (programFilter === "phd part time external" && userProgramMode === "phd part time (external candidate)") ||
+        (programFilter === "mtech full time" && userProgramMode === "mtech full time") ||
+        (programFilter === "mtech part time" && userProgramMode === "mtech part time")
       
       return matchesSearch && matchesRole && matchesVerification && matchesProgram
     }
@@ -185,7 +190,7 @@ export default function AdminUsers() {
       </div>
 
       {/* PhD Scholar Statistics Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
         <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-blue-700 flex items-center gap-2">
@@ -200,25 +205,28 @@ export default function AdminUsers() {
             <div className="w-16 h-16">
               <Pie
                 data={{
-                  labels: ['Full Time', 'Part Time', 'Direct PhD', 'PhD by MTech'],
+                  labels: ['PhD Full Time', 'PhD Part Time (Internal)', 'PhD Part Time (External)', 'MTech Full Time', 'MTech Part Time'],
                   datasets: [{
                     data: [
-                      phdStats.fullTime,
-                      phdStats.partTime,
-                      phdStats.direct,
-                      phdStats.mtech
+                      phdStats.phdFullTime,
+                      phdStats.phdPartTimeInternal,
+                      phdStats.phdPartTimeExternal,
+                      phdStats.mtechFullTime,
+                      phdStats.mtechPartTime
                     ],
                     backgroundColor: [
                       'rgba(34, 197, 94, 0.8)',  // Green
                       'rgba(168, 85, 247, 0.8)', // Purple
                       'rgba(249, 115, 22, 0.8)', // Orange
                       'rgba(239, 68, 68, 0.8)',  // Red
+                      'rgba(59, 130, 246, 0.8)', // Blue
                     ],
                     borderColor: [
                       'rgba(34, 197, 94, 1)',
                       'rgba(168, 85, 247, 1)',
                       'rgba(249, 115, 22, 1)',
                       'rgba(239, 68, 68, 1)',
+                      'rgba(59, 130, 246, 1)',
                     ],
                     borderWidth: 1,
                   }]
@@ -242,17 +250,17 @@ export default function AdminUsers() {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
-              Full Time
+              PhD Full Time
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-green-800">{phdStats.fullTime}</div>
+            <div className="text-3xl font-bold text-green-800">{phdStats.phdFullTime}</div>
             <div className="w-16 h-16">
               <Pie
                 data={{
-                  labels: ['Full Time', 'Others'],
+                  labels: ['PhD Full Time', 'Others'],
                   datasets: [{
-                    data: [phdStats.fullTime, phdStats.total - phdStats.fullTime],
+                    data: [phdStats.phdFullTime, phdStats.total - phdStats.phdFullTime],
                     backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(34, 197, 94, 0.1)'],
                     borderColor: ['rgba(34, 197, 94, 1)', 'rgba(34, 197, 94, 0.3)'],
                     borderWidth: 1,
@@ -278,17 +286,17 @@ export default function AdminUsers() {
                 <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
                 <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
               </svg>
-              Part Time
+              PhD Part Time (Internal)
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-purple-800">{phdStats.partTime}</div>
+            <div className="text-3xl font-bold text-purple-800">{phdStats.phdPartTimeInternal}</div>
             <div className="w-16 h-16">
               <Pie
                 data={{
-                  labels: ['Part Time', 'Others'],
+                  labels: ['PhD Part Time (Internal)', 'Others'],
                   datasets: [{
-                    data: [phdStats.partTime, phdStats.total - phdStats.partTime],
+                    data: [phdStats.phdPartTimeInternal, phdStats.total - phdStats.phdPartTimeInternal],
                     backgroundColor: ['rgba(168, 85, 247, 0.8)', 'rgba(168, 85, 247, 0.1)'],
                     borderColor: ['rgba(168, 85, 247, 1)', 'rgba(168, 85, 247, 0.3)'],
                     borderWidth: 1,
@@ -311,19 +319,20 @@ export default function AdminUsers() {
           <CardHeader className="pb-2">
             <CardTitle className="text-sm font-medium text-orange-700 flex items-center gap-2">
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
+                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
               </svg>
-              Direct PhD
+              PhD Part Time (External)
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-orange-800">{phdStats.direct}</div>
+            <div className="text-3xl font-bold text-orange-800">{phdStats.phdPartTimeExternal}</div>
             <div className="w-16 h-16">
               <Pie
                 data={{
-                  labels: ['Direct PhD', 'Others'],
+                  labels: ['PhD Part Time (External)', 'Others'],
                   datasets: [{
-                    data: [phdStats.direct, phdStats.total - phdStats.direct],
+                    data: [phdStats.phdPartTimeExternal, phdStats.total - phdStats.phdPartTimeExternal],
                     backgroundColor: ['rgba(249, 115, 22, 0.8)', 'rgba(249, 115, 22, 0.1)'],
                     borderColor: ['rgba(249, 115, 22, 1)', 'rgba(249, 115, 22, 0.3)'],
                     borderWidth: 1,
@@ -348,19 +357,54 @@ export default function AdminUsers() {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
                 <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
               </svg>
-              PhD by MTech
+              MTech Full Time
             </CardTitle>
           </CardHeader>
           <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-red-800">{phdStats.mtech}</div>
+            <div className="text-3xl font-bold text-red-800">{phdStats.mtechFullTime}</div>
             <div className="w-16 h-16">
               <Pie
                 data={{
-                  labels: ['PhD by MTech', 'Others'],
+                  labels: ['MTech Full Time', 'Others'],
                   datasets: [{
-                    data: [phdStats.mtech, phdStats.total - phdStats.mtech],
+                    data: [phdStats.mtechFullTime, phdStats.total - phdStats.mtechFullTime],
                     backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(239, 68, 68, 0.1)'],
                     borderColor: ['rgba(239, 68, 68, 1)', 'rgba(239, 68, 68, 0.3)'],
+                    borderWidth: 1,
+                  }]
+                }}
+                options={{
+                  responsive: true,
+                  maintainAspectRatio: true,
+                  plugins: {
+                    legend: { display: false },
+                    tooltip: { enabled: false }
+                  }
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
+          <CardHeader className="pb-2">
+            <CardTitle className="text-sm font-medium text-blue-700 flex items-center gap-2">
+              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
+              </svg>
+              MTech Part Time
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex items-center justify-between">
+            <div className="text-3xl font-bold text-blue-800">{phdStats.mtechPartTime}</div>
+            <div className="w-16 h-16">
+              <Pie
+                data={{
+                  labels: ['MTech Part Time', 'Others'],
+                  datasets: [{
+                    data: [phdStats.mtechPartTime, phdStats.total - phdStats.mtechPartTime],
+                    backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(59, 130, 246, 0.1)'],
+                    borderColor: ['rgba(59, 130, 246, 1)', 'rgba(59, 130, 246, 0.3)'],
                     borderWidth: 1,
                   }]
                 }}
@@ -426,10 +470,11 @@ export default function AdminUsers() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="all">All Programs</SelectItem>
-                    <SelectItem value="full time">Full Time PhD</SelectItem>
-                    <SelectItem value="part time">Part Time PhD</SelectItem>
-                    <SelectItem value="direct">Direct PhD</SelectItem>
-                    <SelectItem value="mtech">PhD by MTech</SelectItem>
+                    <SelectItem value="phd full time">PhD Full Time</SelectItem>
+                    <SelectItem value="phd part time internal">PhD Part Time (Internal)</SelectItem>
+                    <SelectItem value="phd part time external">PhD Part Time (External)</SelectItem>
+                    <SelectItem value="mtech full time">MTech Full Time</SelectItem>
+                    <SelectItem value="mtech part time">MTech Part Time</SelectItem>
                   </SelectContent>
                 </Select>
               </div>

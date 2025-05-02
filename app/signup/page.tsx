@@ -458,10 +458,11 @@ const PhDScholarForm: React.FC = () => {
                   required
                 >
                   <option value="">Select mode of program</option>
-                  <option value="full time phd scholar">Full Time PhD Scholar</option>
-                  <option value="part time phd scholar">Part Time PhD Scholar</option>
-                  <option value="direct phd">Direct PhD</option>
-                  <option value="phd by mtech">PhD by MTech</option>
+                  <option value="PhD Full time">PhD Full time</option>
+                  <option value="PhD part time (internal candidate)">PhD part time (internal candidate)</option>
+                  <option value="PhD part time (external candidate)">PhD part time (external candidate)</option>
+                  <option value="Mtech full time">Mtech full time</option>
+                  <option value="Mtech part time">Mtech part time</option>
                 </select>
               </div>
             </div>
