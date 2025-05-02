@@ -16,6 +16,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
+type User = {
+  id: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  isVerified: boolean;
+  isAdmin: boolean;
+  phdScholar?: string;
+}
+
 export default function AdminUsers() {
   const [users, setUsers] = useState<User[]>([])
   const [loading, setLoading] = useState(true)
@@ -58,8 +69,8 @@ export default function AdminUsers() {
 
         // Fetch PhD scholar details for statistics and user details
         const phdScholarsPromises = mappedUsers
-          .filter(user => user.phdScholar && !user.isAdmin)
-          .map(async user => {
+          .filter((user: User) => user.phdScholar && !user.isAdmin)
+          .map(async (user: User) => {
             try {
               const response = await fetch(`/api/user/phd-scholar/${user.phdScholar}`)
               if (!response.ok) {
