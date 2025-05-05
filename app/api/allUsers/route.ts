@@ -6,8 +6,18 @@ export async function GET() {
   try {
     await connectDB();
     const users = await User.find();
-    
-    return NextResponse.json(users);
+    const mappedUsers = users.map(user => ({
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      password: user.password,
+      isVerified: user.isVerified,
+      isAdmin: user.isAdmin,
+      isSupervisor: user.isSupervisor,
+      phdScholar: user.phdScholar,
+    }));
+    return NextResponse.json(mappedUsers);
   } catch (error) {
     console.error('Error fetching user IDs:', error);
     return NextResponse.json({ error: 'Failed to fetch user IDs' }, { status: 500 });

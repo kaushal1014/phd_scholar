@@ -199,6 +199,10 @@ export function AdminTracker() {
             {upcomingMeetings.length > 0 ? (
               <div className="space-y-4">
                 {upcomingMeetings.map((meeting) => {
+                  if (!meeting?.phdScholar?.personalDetails || !meeting?.phdScholar?.admissionDetails) {
+                    return null;
+                  }
+                  
                   const daysRemaining = getDaysRemaining(meeting.scheduledDate)
 
                   return (

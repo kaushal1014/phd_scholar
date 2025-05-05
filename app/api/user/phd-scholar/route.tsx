@@ -3,7 +3,6 @@ import connectDB from '@/server/db';
 import PhdScholar from '@/server/models/PhdScholar';
 import { getToken } from 'next-auth/jwt';
 import User from '@/server/models/userModel';
-import { ObjectId } from 'mongodb';
 
 connectDB();
 
@@ -14,21 +13,25 @@ export async function GET(req: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
+    // If user is admin or supervisor, return all PhD scholars
     const user = await User.findById(token.id);
-    if (!user || !user.phdScholar) {
-      return NextResponse.json({ error: 'PhD Scholar data not found' }, { status: 404 });
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
 
-    const phdScholarId = new ObjectId(user.phdScholar);
-    console.log(phdScholarId)
-    const phdScholar = await PhdScholar.findById(phdScholarId.toString());
-    if (!phdScholar) {
-      return NextResponse.json({ error: 'PhD Scholar data not found' }, { status: 404 });
+    let query = {};
+    if (!user.isAdmin && !user.isSupervisor) {
+      // For regular users, only return their own PhD scholar data
+      query = { user: token.id };
     }
 
-    return NextResponse.json(phdScholar, { status: 200 });
+    const phdScholars = await PhdScholar.find(query)
+      .populate('user', 'firstName lastName email')
+      .sort({ createdAt: -1 });
+
+    return NextResponse.json({ data: phdScholars }, { status: 200 });
   } catch (error) {
-    console.error('Error fetching PhD Scholar data:', error);
+    console.error('Error fetching PhD Scholars:', error);
     return NextResponse.json({ error: 'Failed to fetch data' }, { status: 500 });
   }
 }

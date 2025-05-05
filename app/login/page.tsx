@@ -89,7 +89,21 @@ export default function LoginPage() {
       })
       if (response?.ok) {
         notifySucc("Login successful")
-        router.push("/dashboard")
+        // Get the user's role from the session
+        const userResponse = await fetch('/api/user/me')
+        if (!userResponse.ok) {
+          throw new Error("Failed to fetch user data")
+        }
+        const userData = await userResponse.json()
+        
+        // Redirect based on user role
+        if (userData.isSupervisor) {
+          router.push("/supervisor")
+        } else if (userData.isAdmin) {
+          router.push("/admin")
+        } else {
+          router.push("/dashboard")
+        }
       } else {
         if (response?.error === "Wrong Password") {
           notifyErr("Incorrect password. Please try again.")
@@ -100,6 +114,7 @@ export default function LoginPage() {
         }
       }
     } catch (err) {
+      console.error("Login error:", err)
       notifyErr("Something went wrong")
     }
   }

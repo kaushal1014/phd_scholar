@@ -33,3 +33,26 @@ export async function GET(req: NextRequest, { params }: { params: { id: string }
     return NextResponse.json({ error: errorMessage }, { status: 500 })
   }
 }
+
+export async function DELETE(req: NextRequest, { params }: { params: { id: string } }) {
+  try {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token || !token.isAdmin) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 })
+    }
+    await connectDB()
+    const user = await User.findById(params.id)
+    if (!user) {
+      return NextResponse.json({ error: 'User not found' }, { status: 404 })
+    }
+    // Delete linked PhD scholar if exists
+    if (user.phdScholar) {
+      await PhdScholar.findByIdAndDelete(user.phdScholar)
+    }
+    await User.findByIdAndDelete(params.id)
+    return NextResponse.json({ message: 'User deleted successfully' }, { status: 200 })
+  } catch (error) {
+    const errorMessage = (error as Error).message
+    return NextResponse.json({ error: errorMessage }, { status: 500 })
+  }
+}

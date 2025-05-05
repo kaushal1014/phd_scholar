@@ -6,13 +6,14 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { User } from "@/types"
 import { useSession } from "next-auth/react"
 import { AdminTracker } from "@/components/admin-tracker"
-import { Loader2, Search, UserPlus } from "lucide-react"
+import { Loader2, Search, UserPlus, Trash2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { toast } from "react-toastify"
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -53,6 +54,7 @@ export default function AdminUsers() {
           password: user.password,
           isVerified: user.isVerified,
           isAdmin: user.isAdmin,
+          isSupervisor: user.isSupervisor,
           phdScholar: user.phdScholar,
         }))
         setUsers(mappedUsers)
@@ -136,8 +138,28 @@ export default function AdminUsers() {
     router.push(`/admin/${id}`)
   }
 
+  const handleDeleteUser = async (userId: string) => {
+    if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) return;
+    try {
+      const response = await fetch(`/api/user/user/${userId}`, {
+        method: "DELETE",
+      })
+      if (response.ok) {
+        toast.success("User deleted successfully")
+        setUsers((prev) => prev.filter((u) => u.id !== userId))
+      } else {
+        const data = await response.json()
+        toast.error(data.error || "Failed to delete user")
+      }
+    } catch (error) {
+      toast.error("Failed to delete user")
+    }
+  }
+
   const filteredUsers = users.filter(
     (user) => {
+      if (!user) return false;
+      
       const matchesSearch = 
         user.firstName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
         user.lastName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -145,14 +167,15 @@ export default function AdminUsers() {
       
       const matchesRole = roleFilter === "all" || 
         (roleFilter === "admin" && user.isAdmin) ||
-        (roleFilter === "user" && !user.isAdmin)
+        (roleFilter === "supervisor" && user.isSupervisor) ||
+        (roleFilter === "scholar" && !user.isAdmin && !user.isSupervisor)
       
       const matchesVerification = verificationFilter === "all" ||
         (verificationFilter === "verified" && user.isVerified) ||
         (verificationFilter === "unverified" && !user.isVerified)
 
       const userDetail = userDetails[user.id]
-      const userProgramMode = userDetail?.data?.admissionDetails?.modeOfProgram?.toLowerCase().trim()
+      const userProgramMode = userDetail?.data?.admissionDetails?.modeOfProgram?.toLowerCase()?.trim() || ''
       const matchesProgram = programFilter === "all" || 
         (programFilter === "phd full time" && userProgramMode === "phd full time") ||
         (programFilter === "phd part time internal" && userProgramMode === "phd part time (internal candidate)") ||
@@ -176,12 +199,20 @@ export default function AdminUsers() {
     <div className="container mx-auto p-2 sm:p-4 space-y-6 sm:space-y-8">
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
         <h1 className="text-xl sm:text-2xl font-bold text-[#1B3668]">Admin Dashboard</h1>
-        <Link href="/admin/create-user" className="w-full sm:w-auto">
-          <Button className="bg-[#1B3668] hover:bg-[#1B3668]/90 w-full sm:w-auto">
-            <UserPlus className="h-4 w-4 mr-2" />
-            Add User
-          </Button>
-        </Link>
+        <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Link href="/admin/create-user" className="w-full sm:w-auto">
+            <Button className="bg-[#1B3668] hover:bg-[#1B3668]/90 w-full sm:w-auto">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Add User
+            </Button>
+          </Link>
+          <Link href="/admin/create-supervisor" className="w-full sm:w-auto">
+            <Button className="bg-[#1B3668] hover:bg-[#1B3668]/90 w-full sm:w-auto">
+              <UserPlus className="h-4 w-4 mr-2" />
+              Create Supervisor
+            </Button>
+          </Link>
+        </div>
       </div>
 
       {/* Admin Tracker Section */}
@@ -190,236 +221,28 @@ export default function AdminUsers() {
       </div>
 
       {/* PhD Scholar Statistics Section */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-6 gap-4">
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-blue-700 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M13 6a3 3 0 11-6 0 3 3 0 016 0zM18 8a2 2 0 11-4 0 2 2 0 014 0zM14 15a4 4 0 00-8 0v3h8v-3zM6 8a2 2 0 11-4 0 2 2 0 014 0zM16 18v-3a5.972 5.972 0 00-.75-2.906A3.005 3.005 0 0119 15v3h-3zM4.75 12.094A5.973 5.973 0 004 15v3H1v-3a3 3 0 013.75-2.906z" />
-              </svg>
-              Total Scholars
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-blue-800">{phdStats.total}</div>
-            <div className="w-16 h-16">
-              <Pie
-                data={{
-                  labels: ['PhD Full Time', 'PhD Part Time (Internal)', 'PhD Part Time (External)', 'MTech Full Time', 'MTech Part Time'],
-                  datasets: [{
-                    data: [
-                      phdStats.phdFullTime,
-                      phdStats.phdPartTimeInternal,
-                      phdStats.phdPartTimeExternal,
-                      phdStats.mtechFullTime,
-                      phdStats.mtechPartTime
-                    ],
-                    backgroundColor: [
-                      'rgba(34, 197, 94, 0.8)',  // Green
-                      'rgba(168, 85, 247, 0.8)', // Purple
-                      'rgba(249, 115, 22, 0.8)', // Orange
-                      'rgba(239, 68, 68, 0.8)',  // Red
-                      'rgba(59, 130, 246, 0.8)', // Blue
-                    ],
-                    borderColor: [
-                      'rgba(34, 197, 94, 1)',
-                      'rgba(168, 85, 247, 1)',
-                      'rgba(249, 115, 22, 1)',
-                      'rgba(239, 68, 68, 1)',
-                      'rgba(59, 130, 246, 1)',
-                    ],
-                    borderWidth: 1,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }}
-              />
+      <div className="w-full max-w-2xl mx-auto my-8">
+        <h2 className="text-xl font-bold mb-4 text-[#1B3668]">PhD/MTech Program Distribution</h2>
+        {[
+          { label: 'PhD Full Time', value: phdStats.phdFullTime, color: 'bg-green-500' },
+          { label: 'PhD Part Time (Internal)', value: phdStats.phdPartTimeInternal, color: 'bg-purple-500' },
+          { label: 'PhD Part Time (External)', value: phdStats.phdPartTimeExternal, color: 'bg-orange-500' },
+          { label: 'MTech Full Time', value: phdStats.mtechFullTime, color: 'bg-red-500' },
+          { label: 'MTech Part Time', value: phdStats.mtechPartTime, color: 'bg-blue-500' },
+        ].map((item, idx) => (
+          <div key={item.label} className="flex items-center mb-4">
+            <span className="w-48 text-sm font-medium text-gray-700">{item.label}</span>
+            <div className="flex-1 h-8 relative bg-gray-200 rounded overflow-hidden mx-2">
+              <div
+                className={`${item.color} h-full flex items-center pl-4 text-white font-bold text-base transition-all duration-500`}
+                style={{ width: `${phdStats.total ? (item.value / phdStats.total) * 100 : 0}%`, minWidth: item.value > 0 ? '2.5rem' : 0 }}
+              >
+                {item.value}
+              </div>
             </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-green-50 to-green-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-green-700 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-              PhD Full Time
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-green-800">{phdStats.phdFullTime}</div>
-            <div className="w-16 h-16">
-              <Pie
-                data={{
-                  labels: ['PhD Full Time', 'Others'],
-                  datasets: [{
-                    data: [phdStats.phdFullTime, phdStats.total - phdStats.phdFullTime],
-                    backgroundColor: ['rgba(34, 197, 94, 0.8)', 'rgba(34, 197, 94, 0.1)'],
-                    borderColor: ['rgba(34, 197, 94, 1)', 'rgba(34, 197, 94, 0.3)'],
-                    borderWidth: 1,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-purple-50 to-purple-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-purple-700 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-              </svg>
-              PhD Part Time (Internal)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-purple-800">{phdStats.phdPartTimeInternal}</div>
-            <div className="w-16 h-16">
-              <Pie
-                data={{
-                  labels: ['PhD Part Time (Internal)', 'Others'],
-                  datasets: [{
-                    data: [phdStats.phdPartTimeInternal, phdStats.total - phdStats.phdPartTimeInternal],
-                    backgroundColor: ['rgba(168, 85, 247, 0.8)', 'rgba(168, 85, 247, 0.1)'],
-                    borderColor: ['rgba(168, 85, 247, 1)', 'rgba(168, 85, 247, 0.3)'],
-                    borderWidth: 1,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-orange-50 to-orange-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-orange-700 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10 12a2 2 0 100-4 2 2 0 000 4z" />
-                <path fillRule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z" clipRule="evenodd" />
-              </svg>
-              PhD Part Time (External)
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-orange-800">{phdStats.phdPartTimeExternal}</div>
-            <div className="w-16 h-16">
-              <Pie
-                data={{
-                  labels: ['PhD Part Time (External)', 'Others'],
-                  datasets: [{
-                    data: [phdStats.phdPartTimeExternal, phdStats.total - phdStats.phdPartTimeExternal],
-                    backgroundColor: ['rgba(249, 115, 22, 0.8)', 'rgba(249, 115, 22, 0.1)'],
-                    borderColor: ['rgba(249, 115, 22, 1)', 'rgba(249, 115, 22, 0.3)'],
-                    borderWidth: 1,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-red-50 to-red-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-red-700 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-              </svg>
-              MTech Full Time
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-red-800">{phdStats.mtechFullTime}</div>
-            <div className="w-16 h-16">
-              <Pie
-                data={{
-                  labels: ['MTech Full Time', 'Others'],
-                  datasets: [{
-                    data: [phdStats.mtechFullTime, phdStats.total - phdStats.mtechFullTime],
-                    backgroundColor: ['rgba(239, 68, 68, 0.8)', 'rgba(239, 68, 68, 0.1)'],
-                    borderColor: ['rgba(239, 68, 68, 1)', 'rgba(239, 68, 68, 0.3)'],
-                    borderWidth: 1,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
-
-        <Card className="bg-gradient-to-br from-blue-50 to-blue-100 border-none shadow-lg hover:shadow-xl transition-all duration-300">
-          <CardHeader className="pb-2">
-            <CardTitle className="text-sm font-medium text-blue-700 flex items-center gap-2">
-              <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                <path d="M10.394 2.08a1 1 0 00-.788 0l-7 3a1 1 0 000 1.84L5.25 8.051a.999.999 0 01.356-.257l4-1.714a1 1 0 11.788 1.838L7.667 9.088l1.94.831a1 1 0 00.787 0l7-3a1 1 0 000-1.838l-7-3zM3.31 9.397L5 10.12v4.102a8.969 8.969 0 00-1.05-.174 1 1 0 01-.89-.89 11.115 11.115 0 01.25-3.762zM9.3 16.573A9.026 9.026 0 007 14.935v-3.957l1.818.78a3 3 0 002.364 0l5.508-2.361a11.026 11.026 0 01.25 3.762 1 1 0 01-.89.89 8.968 8.968 0 00-5.35 2.524 1 1 0 01-1.4 0zM6 18a1 1 0 001-1v-2.065a8.935 8.935 0 00-2-.712V17a1 1 0 001 1z" />
-              </svg>
-              MTech Part Time
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="flex items-center justify-between">
-            <div className="text-3xl font-bold text-blue-800">{phdStats.mtechPartTime}</div>
-            <div className="w-16 h-16">
-              <Pie
-                data={{
-                  labels: ['MTech Part Time', 'Others'],
-                  datasets: [{
-                    data: [phdStats.mtechPartTime, phdStats.total - phdStats.mtechPartTime],
-                    backgroundColor: ['rgba(59, 130, 246, 0.8)', 'rgba(59, 130, 246, 0.1)'],
-                    borderColor: ['rgba(59, 130, 246, 1)', 'rgba(59, 130, 246, 0.3)'],
-                    borderWidth: 1,
-                  }]
-                }}
-                options={{
-                  responsive: true,
-                  maintainAspectRatio: true,
-                  plugins: {
-                    legend: { display: false },
-                    tooltip: { enabled: false }
-                  }
-                }}
-              />
-            </div>
-          </CardContent>
-        </Card>
+          </div>
+        ))}
+        <div className="flex justify-end text-xs text-gray-500 mt-2">Total Scholars: {phdStats.total}</div>
       </div>
 
       {/* User Management Section */}
@@ -447,7 +270,8 @@ export default function AdminUsers() {
                   <SelectContent>
                     <SelectItem value="all">All Roles</SelectItem>
                     <SelectItem value="admin">Admin</SelectItem>
-                    <SelectItem value="user">User</SelectItem>
+                    <SelectItem value="supervisor">Supervisor</SelectItem>
+                    <SelectItem value="scholar">Scholar</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -489,10 +313,12 @@ export default function AdminUsers() {
                 <TableHead className="w-[100px] font-semibold">ID</TableHead>
                 <TableHead className="font-semibold">First Name</TableHead>
                 <TableHead className="font-semibold">Last Name</TableHead>
+                <TableHead className="font-semibold">Research Supervisor</TableHead>
                 <TableHead className="font-semibold">Email</TableHead>
                 <TableHead className="font-semibold">Role</TableHead>
                 <TableHead className="font-semibold">Status</TableHead>
                 <TableHead className="font-semibold">Program</TableHead>
+                <TableHead className="font-semibold">Actions</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -505,14 +331,23 @@ export default function AdminUsers() {
                   <TableCell className="font-medium text-[#1B3668]">{index + 1}</TableCell>
                   <TableCell>{user.firstName}</TableCell>
                   <TableCell>{user.lastName}</TableCell>
+                  <TableCell>{userDetails[user.id]?.data?.researchSupervisor || <span className="text-gray-400">-</span>}</TableCell>
                   <TableCell>{user.email}</TableCell>
                   <TableCell>
                     <span
                       className={`px-2 py-1 rounded-full text-xs font-medium ${
-                        user.isAdmin ? "bg-purple-100 text-purple-800" : "bg-blue-100 text-blue-800"
+                        user.isAdmin
+                          ? "bg-purple-100 text-purple-800"
+                          : user.isSupervisor
+                          ? "bg-orange-100 text-orange-800"
+                          : "bg-blue-100 text-blue-800"
                       }`}
                     >
-                      {user.isAdmin ? "Admin" : "User"}
+                      {user.isAdmin
+                        ? "Admin"
+                        : user.isSupervisor
+                        ? "Supervisor"
+                        : "User"}
                     </span>
                   </TableCell>
                   <TableCell>
@@ -539,6 +374,15 @@ export default function AdminUsers() {
                     ) : (
                       <span className="text-gray-400">-</span>
                     )}
+                  </TableCell>
+                  <TableCell>
+                    <button
+                      className="p-1 text-red-600 hover:text-red-800"
+                      title="Delete User"
+                      onClick={e => { e.stopPropagation(); handleDeleteUser(user.id); }}
+                    >
+                      <Trash2 className="w-5 h-5" />
+                    </button>
                   </TableCell>
                 </TableRow>
               ))}

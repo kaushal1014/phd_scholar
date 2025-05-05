@@ -7,17 +7,16 @@ import { NextRequest } from "next/server"
 export async function GET(req: NextRequest) {
   try {
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (!token) {
+    if (!token || !token.id) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
-
+    const supervisorId = token.id;
+    console.log('Supervisor ID:', supervisorId);
     await connectDB()
-
-    // Get current date
     const now = new Date()
-
-    // Find all upcoming DC meetings (scheduled in the future and not happened yet)
+    // Find all scholars supervised by this supervisor
     const scholars = await PhdScholar.find({
+      researchSupervisor: supervisorId,
       $and: [
         { "phdMilestones": { $exists: true } },
         { "phdMilestones.dcMeetings": { $exists: true } },
@@ -36,28 +35,23 @@ export async function GET(req: NextRequest) {
       .populate({
         path: "user",
         select: "firstName lastName email",
-        match: { deletedAt: null } // Only populate if user is not deleted
+        match: { deletedAt: null }
       })
+    console.log('Number of scholars found:', scholars.length);
 
-    // Extract and format the meetings
     const meetings = []
-
     for (const scholar of scholars) {
-      // Skip if user is null (deleted user or no matching user)
       if (!scholar.user) continue;
-
-      // Skip if phdMilestones or dcMeetings is not properly initialized
       if (!scholar.phdMilestones?.dcMeetings?.DCM) continue;
-
+      console.log('Scholar:', scholar._id, scholar.personalDetails, scholar.admissionDetails);
       const upcomingMeetings = scholar.phdMilestones.dcMeetings.DCM.filter(
-        (meeting: any) => meeting?.scheduledDate && new Date(meeting.scheduledDate) >= now && !meeting.happened,
+        (meeting) => meeting?.scheduledDate && new Date(meeting.scheduledDate) >= now && !meeting.happened,
       )
-
+      console.log('Upcoming meetings for scholar', scholar._id, ':', upcomingMeetings);
       if (upcomingMeetings.length > 0) {
-        const closestMeeting = upcomingMeetings.reduce((closest:any, meeting:any) => {
+        const closestMeeting = upcomingMeetings.reduce((closest, meeting) => {
           return !closest || new Date(meeting.scheduledDate) < new Date(closest.scheduledDate) ? meeting : closest
         }, null)
-
         if (closestMeeting) {
           meetings.push({
             _id: closestMeeting._id,
@@ -73,13 +67,11 @@ export async function GET(req: NextRequest) {
         }
       }
     }
-
-    // Sort by date (closest first)
+    console.log('Final meetings array:', meetings);
     meetings.sort((a, b) => new Date(a.scheduledDate).getTime() - new Date(b.scheduledDate).getTime())
-
     return NextResponse.json({ meetings })
   } catch (error) {
-    console.error("Error fetching upcoming meetings:", error)
+    console.error("Error fetching supervisor's upcoming meetings:", error)
     return NextResponse.json({ error: "Failed to fetch upcoming meetings" }, { status: 500 })
   }
-}
+} 
