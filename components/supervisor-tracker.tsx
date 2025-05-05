@@ -51,11 +51,11 @@ export function SupervisorTracker({ scholars }: SupervisorTrackerProps) {
       )
       for (const meeting of futureMeetings) {
         meetings.push({
-          _id: meeting._id,
+          _id: meeting._id || `meeting-${scholar._id || 'unknown'}-${meeting.scheduledDate}`,
           scheduledDate: meeting.scheduledDate,
           happened: meeting.happened,
           phdScholar: {
-            _id: scholar._id,
+            _id: scholar._id || 'unknown',
             personalDetails: scholar.personalDetails,
             admissionDetails: scholar.admissionDetails,
           },

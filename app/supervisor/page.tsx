@@ -69,8 +69,8 @@ export default function SupervisorDashboard() {
               </TableRow>
             </TableHeader>
             <TableBody>
-              {scholars.map((scholar) => (
-                <TableRow key={scholar._id}>
+              {scholars.map((scholar, idx) => (
+                <TableRow key={idx}>
                   <TableCell>
                     {scholar.personalDetails.firstName} {scholar.personalDetails.lastName}
                   </TableCell>
@@ -85,7 +85,7 @@ export default function SupervisorDashboard() {
                   <TableCell>
                     <button
                       className="px-3 py-1 bg-blue-600 text-white rounded hover:bg-blue-700 transition"
-                      onClick={() => router.push(`/supervisor/scholar/${scholar._id}`)}
+                      onClick={() => router.push(`/supervisor/scholar/${(scholar as any)._id || idx}`)}
                     >
                       View Details
                     </button>

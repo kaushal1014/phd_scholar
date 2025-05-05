@@ -1,5 +1,6 @@
 import mongoose, { Schema, Document } from "mongoose";
 export interface PhdScholar {
+  _id: string;
   personalDetails: {
     firstName: string;
     middleName?: string;
@@ -62,6 +63,7 @@ export interface PhdScholar {
     };
     dcMeetings: {
       DCM: {
+        _id: string;
         scheduledDate: Date;
         actualDate: Date;
         happened: boolean; 

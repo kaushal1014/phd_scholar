@@ -6,9 +6,10 @@ import { useSession } from "next-auth/react"
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Badge } from "@/components/ui/badge"
-import { Calendar, Users, FileText, BookOpen, Shield, Award, Mail, User, CheckCircle, GraduationCap, Clock } from "lucide-react"
+import { Calendar, Users, FileText, BookOpen, Shield, Award, Mail, User as UserIcon, CheckCircle, GraduationCap, Clock } from "lucide-react"
+import type { PhdScholar, User } from "@/types"
 
-function formatDate(date) {
+function formatDate(date: any) {
   if (!date) return "Not Available"
   const dateObj = typeof date === "string" ? new Date(date) : date
   return dateObj.toLocaleDateString("en-US", {
@@ -22,8 +23,8 @@ export default function ScholarDetailPage() {
   const { id } = useParams()
   const { data: session, status } = useSession()
   const router = useRouter()
-  const [scholar, setScholar] = useState(null)
-  const [user, setUser] = useState(null)
+  const [scholar, setScholar] = useState<PhdScholar | null>(null)
+  const [user, setUser] = useState<User | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -57,7 +58,7 @@ export default function ScholarDetailPage() {
     <div className="container mx-auto p-6 max-w-5xl">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-[#003b7a] flex items-center gap-2">
-          <User className="h-7 w-7" /> Scholar Profile
+          <UserIcon className="h-7 w-7" /> Scholar Profile
         </h1>
         <Badge variant="outline" className="px-3 py-1 text-sm bg-[#003b7a] text-white">
           View Only
@@ -67,13 +68,13 @@ export default function ScholarDetailPage() {
         <Card className="md:col-span-1">
           <CardHeader className="bg-[#003b7a]/5 border-b">
             <CardTitle className="text-[#003b7a] flex items-center gap-2">
-              <User className="h-5 w-5" /> Basic Information
+              <UserIcon className="h-5 w-5" /> Basic Information
             </CardTitle>
           </CardHeader>
           <CardContent className="pt-6 space-y-4">
             <div className="flex items-center gap-2">
               <div className="bg-[#003b7a]/10 p-2 rounded-full">
-                <User className="h-5 w-5 text-[#003b7a]" />
+                <UserIcon className="h-5 w-5 text-[#003b7a]" />
               </div>
               <div>
                 <p className="text-sm text-muted-foreground">Full Name</p>
@@ -171,7 +172,7 @@ export default function ScholarDetailPage() {
               {scholar.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
                 <ul className="space-y-2">
                   {scholar.phdMilestones.dcMeetings.DCM.map((meeting, idx) => (
-                    <li key={meeting._id || idx} className="border-b pb-2">
+                    <li key={idx} className="border-b pb-2">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-[#003b7a]" />
                         <span><b>Date:</b> {formatDate(meeting.scheduledDate)}</span>
@@ -193,7 +194,7 @@ export default function ScholarDetailPage() {
             </CardHeader>
             <CardContent className="pt-6">
               {[1,2,3,4].map((num) => {
-                const cw = scholar[`courseWork${num}`]
+                const cw = (scholar as any)[`courseWork${num}`]
                 if (!cw) return null
                 return (
                   <div key={num} className="mb-4 p-2 border rounded">
@@ -239,16 +240,37 @@ export default function ScholarDetailPage() {
               <CardTitle className="text-[#003b7a] flex items-center gap-2"><FileText className="h-5 w-5" />Publications</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              {scholar.publications && scholar.publications.length > 0 ? (
-                <ul className="space-y-2">
-                  {scholar.publications.map((pub, idx) => (
-                    <li key={idx} className="border-b pb-2">
-                      <div><b>Title:</b> {pub.title}</div>
-                      <div><b>Journal:</b> {pub.journal}</div>
-                      <div><b>Year:</b> {pub.year}</div>
-                    </li>
-                  ))}
-                </ul>
+              {scholar.publications && (scholar.publications.journals.length > 0 || scholar.publications.conferences.length > 0) ? (
+                <>
+                  {scholar.publications.journals.length > 0 && (
+                    <>
+                      <div className="font-semibold mb-2">Journals</div>
+                      <ul className="space-y-2 mb-4">
+                        {scholar.publications.journals.map((pub, idx) => (
+                          <li key={idx} className="border-b pb-2">
+                            <div><b>Title:</b> {pub.title}</div>
+                            <div><b>Journal Name:</b> {pub.journalName}</div>
+                            <div><b>Year:</b> {pub.publicationYear}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                  {scholar.publications.conferences.length > 0 && (
+                    <>
+                      <div className="font-semibold mb-2">Conferences</div>
+                      <ul className="space-y-2">
+                        {scholar.publications.conferences.map((pub, idx) => (
+                          <li key={idx} className="border-b pb-2">
+                            <div><b>Title:</b> {pub.title}</div>
+                            <div><b>Conference Name:</b> {pub.conferenceName}</div>
+                            <div><b>Year:</b> {pub.publicationYear}</div>
+                          </li>
+                        ))}
+                      </ul>
+                    </>
+                  )}
+                </>
               ) : (
                 <div>No publications found.</div>
               )}

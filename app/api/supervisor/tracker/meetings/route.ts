@@ -45,11 +45,11 @@ export async function GET(req: NextRequest) {
       if (!scholar.phdMilestones?.dcMeetings?.DCM) continue;
       console.log('Scholar:', scholar._id, scholar.personalDetails, scholar.admissionDetails);
       const upcomingMeetings = scholar.phdMilestones.dcMeetings.DCM.filter(
-        (meeting) => meeting?.scheduledDate && new Date(meeting.scheduledDate) >= now && !meeting.happened,
+        (meeting: any) => meeting?.scheduledDate && new Date(meeting.scheduledDate) >= now && !meeting.happened,
       )
       console.log('Upcoming meetings for scholar', scholar._id, ':', upcomingMeetings);
       if (upcomingMeetings.length > 0) {
-        const closestMeeting = upcomingMeetings.reduce((closest, meeting) => {
+        const closestMeeting = upcomingMeetings.reduce((closest: any, meeting: any) => {
           return !closest || new Date(meeting.scheduledDate) < new Date(closest.scheduledDate) ? meeting : closest
         }, null)
         if (closestMeeting) {
