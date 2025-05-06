@@ -105,9 +105,7 @@ export default function Dashboard() {
           setPhdScholarData(data)
           setLoading(false)
           calculateJourneyProgress(data)
-          if (data.phdMilestones?.dcMeetings?.DCM) {
-            checkPastDCMeetings(data.phdMilestones.dcMeetings.DCM)
-          }
+          checkPastDCMeetings(data?.phdMilestones?.dcMeetings?.DCM || [])
         })
         .catch((error) => {
           console.error("Error fetching data:", error)
@@ -293,9 +291,8 @@ export default function Dashboard() {
               ...prevData.phdMilestones,
               dcMeetings: {
                 ...prevData.phdMilestones.dcMeetings,
-                DCM: prevData.phdMilestones.dcMeetings.DCM.map((meeting) =>
-                  meeting.scheduledDate === currentDCMeeting.scheduledDate ? updatedMeeting : meeting,
-                ),
+                DCM: prevData.phdMilestones.dcMeetings.DCM?.map((meeting) =>
+                  meeting.scheduledDate === currentDCMeeting.scheduledDate ? updatedMeeting : meeting) || [],
               },
             },
           }
@@ -309,7 +306,7 @@ export default function Dashboard() {
   }
 
   const nextDCMeeting =
-    phdScholarData?.phdMilestones.dcMeetings.DCM.find(
+    phdScholarData?.phdMilestones?.dcMeetings?.DCM?.find(
       (meeting) => meeting.scheduledDate && new Date(meeting.scheduledDate) > new Date(),
     ) || null
 
@@ -636,7 +633,7 @@ export default function Dashboard() {
             <div className="flex items-center space-x-4 mt-2 sm:mt-0">
               <div className="text-right">
                 <p className="font-medium text-sm sm:text-base">{session.user.name}</p>
-                <p className="text-xs sm:text-sm opacity-80">{phdScholarData.admissionDetails.department}</p>
+                <p className="text-xs sm:text-sm opacity-80">{phdScholarData?.admissionDetails?.department || "N/A"}</p>
               </div>
               <div className="h-8 w-8 sm:h-10 sm:w-10 rounded-full bg-white/20 flex items-center justify-center">
                 {session.user.name?.charAt(0) || "U"}
@@ -786,11 +783,11 @@ export default function Dashboard() {
                               {userData.firstName} {userData.lastName}
                             </p>
                             <p className="text-sm text-muted-foreground">
-                              Department: {phdScholarData.admissionDetails.department}
+                              Department: {phdScholarData?.admissionDetails?.department || "N/A"}
                             </p>
                             <p className="text-sm text-muted-foreground">
                               Admission Date:{" "}
-                              {phdScholarData.admissionDetails.admissionDate
+                              {phdScholarData?.admissionDetails?.admissionDate
                                 ? new Date(phdScholarData.admissionDetails.admissionDate).toLocaleDateString()
                                 : "N/A"}
                             </p>
@@ -1028,46 +1025,46 @@ export default function Dashboard() {
                           <div className="space-y-4">
                             <div>
                               <p className="text-sm text-muted-foreground">Department</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.department}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.department || "N/A"}</p>
                             </div>
 
                             <div>
                               <p className="text-sm text-muted-foreground">Admission Date</p>
                               <p className="font-medium">
-                                {formatDate(phdScholarData.admissionDetails?.admissionDate)}
+                                {formatDate(phdScholarData?.admissionDetails?.admissionDate)}
                               </p>
                             </div>
 
                             <div>
                               <p className="text-sm text-muted-foreground">Entrance Examination</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.entranceExamination}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.entranceExamination}</p>
                             </div>
 
                             <div>
                               <p className="text-sm text-muted-foreground">Qualifying Examination</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.qualifyingExamination}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.qualifyingExamination}</p>
                             </div>
                           </div>
 
                           <div className="space-y-4">
                             <div>
                               <p className="text-sm text-muted-foreground">Allotment Number</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.allotmentNumber}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.allotmentNumber}</p>
                             </div>
 
                             <div>
                               <p className="text-sm text-muted-foreground">USN</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.usn}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.usn}</p>
                             </div>
 
                             <div>
                               <p className="text-sm text-muted-foreground">SRN</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.srn}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.srn}</p>
                             </div>
 
                             <div>
                               <p className="text-sm text-muted-foreground">Mode of Program</p>
-                              <p className="font-medium">{phdScholarData.admissionDetails?.modeOfProgram}</p>
+                              <p className="font-medium">{phdScholarData?.admissionDetails?.modeOfProgram}</p>
                             </div>
                           </div>
                         </div>
@@ -1138,7 +1135,7 @@ export default function Dashboard() {
                       </CardTitle>
                     </CardHeader>
                     <CardContent className="pt-6">
-                      {phdScholarData.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
+                      {phdScholarData?.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
                         <div className="overflow-x-auto">
                           <table className="w-full border-collapse">
                             <thead>
@@ -1151,7 +1148,7 @@ export default function Dashboard() {
                               </tr>
                             </thead>
                             <tbody>
-                              {phdScholarData.phdMilestones.dcMeetings.DCM.map((meeting, index) => (
+                              {phdScholarData?.phdMilestones?.dcMeetings?.DCM?.map((meeting, index) => (
                                 <tr key={index} className="border-b hover:bg-[#003b7a]/5 transition-colors">
                                   <td className="px-4 py-3 font-medium">DC Meeting {index + 1}</td>
                                   <td className="px-4 py-3">{formatDate(meeting.scheduledDate)}</td>
@@ -1277,8 +1274,8 @@ export default function Dashboard() {
                         <div>
                           <h3 className="text-md font-semibold mb-3 text-[#F7941D]">Conference Publications</h3>
                           <div className="space-y-4">
-                            {filterNonEmptyConferences(phdScholarData?.publications?.conferences || []).map(
-                              (
+                            {filterNonEmptyConferences(phdScholarData?.publications?.conferences || [])
+                              .map((
                                 conference: { title: string; conferenceName: string; publicationYear: number },
                                 i: number,
                               ) => (

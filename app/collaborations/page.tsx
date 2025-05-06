@@ -231,41 +231,69 @@ export default function CollaborationsPage() {
                   <div className="grid gap-4">
                     {discussions.length > 0 ? (
                       discussions.map((discussion) => (
-                        <Link
-                          href={`/collaborations/discussions/${discussion._id}`}
-                          key={discussion._id}
-                          className="block"
-                        >
-                          <Card
-                            className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200"
+                        <div key={discussion._id} className="relative">
+                          <Link
+                            href={`/collaborations/discussions/${discussion._id}`}
+                            className="block"
                           >
-                            <CardContent className="p-4">
-                              <div className="flex items-start gap-4">
-                                <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
-                                  <MessageSquare className="h-5 w-5 text-[#1B3668]" />
-                                </div>
-                                <div className="flex-1">
-                                  <div className="flex items-center justify-between">
-                                    <h3 className="font-medium text-[#1F2937] mb-1">{discussion.title}</h3>
-                                    <ExternalLink className="h-4 w-4 text-[#6B7280]" />
+                            <Card
+                              className="border-[#E5E7EB] hover:border-[#1B3668] hover:shadow-md transition-all duration-200"
+                            >
+                              <CardContent className="p-4">
+                                <div className="flex items-start gap-4">
+                                  <div className="rounded-full bg-[#1B3668]/10 p-2 flex-shrink-0 border border-[#1B3668]/20">
+                                    <MessageSquare className="h-5 w-5 text-[#1B3668]" />
                                   </div>
-                                  <p className="text-sm text-[#6B7280] mb-2">
-                                    {discussion.content.length > 100
-                                      ? `${discussion.content.substring(0, 100)}...`
-                                      : discussion.content}
-                                  </p>
-                                  <div className="flex items-center text-xs text-[#6B7280]">
-                                    <span className="font-medium">Started by: {discussion.author.firstName}</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>{discussion.replies.length} replies</span>
-                                    <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
-                                    <span>Last post: {formatDistanceToNow(new Date(discussion.updatedAt))} ago</span>
+                                  <div className="flex-1">
+                                    <div className="flex items-center justify-between">
+                                      <h3 className="font-medium text-[#1F2937] mb-1">{discussion.title}</h3>
+                                      <ExternalLink className="h-4 w-4 text-[#6B7280]" />
+                                    </div>
+                                    <p className="text-sm text-[#6B7280] mb-2">
+                                      {discussion.content.length > 100
+                                        ? `${discussion.content.substring(0, 100)}...`
+                                        : discussion.content}
+                                    </p>
+                                    <div className="flex items-center text-xs text-[#6B7280]">
+                                      <span className="font-medium">Started by: {discussion.author.firstName}</span>
+                                      <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                      <span>{discussion.replies.length} replies</span>
+                                      <span className="inline-block mx-2 w-1.5 h-1.5 rounded-full bg-[#F59E0B]"></span>
+                                      <span>Last post: {formatDistanceToNow(new Date(discussion.updatedAt))} ago</span>
+                                    </div>
                                   </div>
                                 </div>
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
+                              </CardContent>
+                            </Card>
+                          </Link>
+                          {user?.isAdmin && (
+                            <Button
+                              variant="destructive"
+                              size="sm"
+                              className="absolute top-2 right-2 z-10"
+                              onClick={async (e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                if (!window.confirm('Are you sure you want to delete this discussion?')) return;
+                                try {
+                                  const res = await fetch(`/api/collaborations/discussions/${discussion._id}`, {
+                                    method: 'DELETE',
+                                  });
+                                  if (res.ok) {
+                                    setDiscussions((prev) => prev.filter((d) => d._id !== discussion._id));
+                                    toast.success('Discussion deleted successfully');
+                                  } else {
+                                    toast.error('Failed to delete discussion');
+                                  }
+                                } catch (err) {
+                                  toast.error('Failed to delete discussion');
+                                }
+                              }}
+                            >
+                              Delete
+                            </Button>
+                          )}
+                        </div>
                       ))
                     ) : (
                       <div className="text-center py-8 text-gray-500">

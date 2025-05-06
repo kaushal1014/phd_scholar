@@ -427,15 +427,7 @@ export default function EventsPage() {
         date.getMonth() === saturday.getMonth() &&
         date.getFullYear() === saturday.getFullYear()
     )
-    
-    const isToday = 
-      date.getDate() === new Date().getDate() &&
-      date.getMonth() === new Date().getMonth() &&
-      date.getFullYear() === new Date().getFullYear()
-    
-    if (isLastSaturday && isToday) return 'react-calendar__tile--last-saturday-today'
     if (isLastSaturday) return 'react-calendar__tile--last-saturday'
-    if (isToday) return 'react-calendar__tile--today'
     return ''
   }
 
@@ -496,7 +488,14 @@ export default function EventsPage() {
                 <div className="flex-1 p-4">
                   <div className="flex items-start justify-between">
                     <h4 className="font-medium text-gray-900">{event.title}</h4>
-                    <Badge className="bg-[#1B3668]">Event</Badge>
+                    <Link href={`/events/events/${event._id}`} passHref legacyBehavior>
+                      <a
+                        className="bg-[#2563eb] text-white font-semibold px-4 py-1.5 rounded-lg text-sm shadow hover:bg-[#1d4ed8] transition-colors duration-200"
+                        style={{ minWidth: 90, textAlign: 'center', display: 'inline-block' }}
+                      >
+                        Event Details
+                      </a>
+                    </Link>
                   </div>
                   <p className="text-sm text-gray-500 mt-1 mb-2 line-clamp-2">{event.description}</p>
                   <div className="flex flex-wrap gap-y-2 gap-x-4 text-xs text-gray-500">
@@ -585,9 +584,7 @@ export default function EventsPage() {
               tileDisabled={() => true}
             />
             <div className="mt-4 text-xs sm:text-sm text-gray-600">
-              <p>• Last Saturdays of each month are highlighted in blue</p>
-              <p>• Today's date is highlighted in green</p>
-              <p>• If today is a last Saturday, it's highlighted in purple</p>
+              <p>Last Saturday of every month at PESU RF conference room during 10am to 12pm. Last Saturdays are highlighted in blue.</p>
             </div>
           </div>
         </div>

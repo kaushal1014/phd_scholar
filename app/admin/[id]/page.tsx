@@ -402,7 +402,7 @@ export default function UserDetail() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="pt-6">
-                {phdScholarData.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
+                {phdScholarData?.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
                   <div className="overflow-x-auto">
                     <table className="w-full border-collapse">
                       <thead>
@@ -415,7 +415,7 @@ export default function UserDetail() {
                         </tr>
                       </thead>
                       <tbody>
-                        {phdScholarData.phdMilestones.dcMeetings.DCM.map((meeting, index) => (
+                        {phdScholarData?.phdMilestones?.dcMeetings?.DCM?.map((meeting, index) => (
                           <tr key={index} className="border-b hover:bg-[#003b7a]/5 transition-colors">
                             <td className="px-4 py-3 font-medium">DC Meeting {index + 1}</td>
                             <td className="px-4 py-3">{formatDate(meeting.scheduledDate)}</td>

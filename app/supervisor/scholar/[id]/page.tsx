@@ -169,9 +169,9 @@ export default function ScholarDetailPage() {
               <CardTitle className="text-[#003b7a] flex items-center gap-2"><Calendar className="h-5 w-5" />DC Meetings</CardTitle>
             </CardHeader>
             <CardContent className="pt-6">
-              {scholar.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
+              {scholar?.phdMilestones?.dcMeetings?.DCM?.length > 0 ? (
                 <ul className="space-y-2">
-                  {scholar.phdMilestones.dcMeetings.DCM.map((meeting, idx) => (
+                  {scholar?.phdMilestones?.dcMeetings?.DCM?.map((meeting, idx) => (
                     <li key={idx} className="border-b pb-2">
                       <div className="flex items-center gap-2">
                         <Clock className="h-4 w-4 text-[#003b7a]" />
