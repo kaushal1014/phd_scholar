@@ -357,6 +357,11 @@ export default function EventsPage() {
       console.error("Error parsing date for event:", event, error)
       return false
     }
+  }).sort((a, b) => {
+    // Sort upcoming events by date ascending (earliest first)
+    const dateA = new Date(a.date)
+    const dateB = new Date(b.date)
+    return dateA.getTime() - dateB.getTime()
   })
 
   const pastEvents = events.filter(event => {
@@ -370,6 +375,11 @@ export default function EventsPage() {
       console.error("Error parsing date for event:", event, error)
       return false
     }
+  }).sort((a, b) => {
+    // Sort past events by date descending (most recent first)
+    const dateA = new Date(a.date)
+    const dateB = new Date(b.date)
+    return dateB.getTime() - dateA.getTime()
   })
 
   console.log("Total Events:", events.length)

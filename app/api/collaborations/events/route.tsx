@@ -8,7 +8,10 @@ export async function GET(req: NextRequest) {
   try {
     await dbConnect()
 
-    const events = await Event.find({}).populate("organizer", "firstName email").sort({ date: 1 }).lean()
+    const events = await Event.find({})
+      .populate("organizer", "firstName email")
+      .sort({ date: -1, time: -1 })
+      .lean()
 
     return NextResponse.json(events)
   } catch (error) {

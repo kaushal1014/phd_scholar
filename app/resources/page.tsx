@@ -13,96 +13,130 @@ import {
   GraduationCap,
   FileCheck,
   ScrollText,
+  Loader2,
+  Plus,
+  Trash2,
+  Upload,
 } from "lucide-react"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { useSession } from "next-auth/react"
+import { toast } from "react-toastify"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogDescription } from "@/components/ui/dialog"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Textarea } from "@/components/ui/textarea"
+import { Badge } from "@/components/ui/badge"
 
-const standardProtocols = [
+interface ResourceItem {
+  href: string;
+  text: string;
+}
+
+interface ResourceCategory {
+  title: string;
+  icon: any;
+  description: string;
+  dir: string;
+  items: ResourceItem[];
+}
+
+// Define the category structure
+const categoryStructure: Omit<ResourceCategory, 'items'>[] = [
   {
     title: "General Information",
     icon: FileText,
     description: "Essential documents and guidelines for PhD scholars",
-    items: [
-      { href: "pdf/relatedInformation/General_Information/PES_Research_Policy.pdf", text: "Research Policy" },
-      { href: "pdf/relatedInformation/General_Information/PES_Research_Policy.pdf", text: "Rules and Regulations" },
-      {
-        href: "pdf/relatedInformation/General_Information/2021_Amendments_Regulations.pdf",
-        text: "Amendments to R&R",
-      },
-      { href: "pdf/relatedInformation/General_Information/Fee_Structure.pdf", text: "Fee Structure" },
-      {
-        href: "pdf/relatedInformation/General_Information/Guidelines_to_PhD-candidates-1.pdf",
-        text: "Guidelines to PhD Scholars",
-      },
-    ],
+    dir: "General_Information"
   },
   {
     title: "Doctoral Committee Meetings",
     icon: Users,
     description: "Information about DC meetings and progress reports",
-    items: [
-      { href: "pdf/relatedInformation/dcM/DCMeetings.pdf", text: "DC Meetings" },
-      { href: "pdf/relatedInformation/dcM/Half_Yearly_Progress_report.pdf", text: "Half Yearly Progress Report" },
-    ],
+    dir: "dcM"
   },
   {
     title: "Ph.D. Proposal Defense",
     icon: GraduationCap,
     description: "Guidance for preparing and presenting your research proposal",
-    items: [
-      {
-        href: "pdf/relatedInformation/PhD_Proposal_Defense/Tips_to_prepare_for_ProposalDefense.pdf",
-        text: "Tips to prepare for Proposal Defense",
-      },
-      {
-        href: "pdf/relatedInformation/PhD_Proposal_Defense/Proposal-Defense-Synopsis_format.pdf",
-        text: "Proposal Defense Synopsis Format",
-      },
-      {
-        href: "pdf/relatedInformation/PhD_Proposal_Defense/research-proposal-format-.pdf",
-        text: "Research Proposal Format",
-      },
-    ],
+    dir: "PhD_Proposal_Defense"
   },
   {
     title: "Ph.D. Comprehensive Exam",
     icon: BookOpen,
     description: "Details about the comprehensive exam process",
-    items: [{ href: "pdf/relatedInformation/PhD_Proposal_Defense/CE_Format.pdf", text: "Ph.D. Comprehensive Exam" }],
+    dir: "Ph.D._Comprehensive_Exam"
   },
   {
     title: "Ph.D. Synopsis Submission",
     icon: FileCheck,
     description: "Instructions for submitting your Ph.D. synopsis",
-    items: [{ href: "#", text: "Ph.D. Synopsis Submission" }],
+    dir: "Ph.D._Synopsis_Submission"
   },
   {
     title: "Ph.D. Thesis Format",
     icon: ScrollText,
     description: "Formatting guidelines for your Ph.D. thesis",
-    items: [{ href: "pdf/relatedInformation/PhD_Proposal_Defense/PhD_Thesis_Format.zip", text: "Ph.D. Thesis Format" }],
+    dir: "Ph.D._Thesis_Format"
   },
+  {
+    title: "Course Work Syllabus",
+    icon: BookOpen,
+    description: "Detailed syllabus for various engineering disciplines",
+    dir: "courseWork"
+  }
 ]
-
-const courseWorkSyllabus = {
-  title: "Course Work Syllabus",
-  icon: BookOpen,
-  description: "Detailed syllabus for various engineering disciplines",
-  items: [
-    { href: "pdf/relatedInformation/courseWork/CSE.pdf", text: "Computer Science Engineering" },
-    { href: "pdf/relatedInformation/courseWork/Maths.pdf", text: "Mathematics" },
-    { href: "pdf/relatedInformation/courseWork/Physics.pdf", text: "Physics" },
-    { href: "pdf/relatedInformation/courseWork/Chemistry.pdf", text: "Chemistry" },
-    { href: "pdf/relatedInformation/courseWork/EEE.pdf", text: "Electrical and Electronics Engineering" },
-    { href: "#", text: "Biotechnology Engineering" },
-  ],
-}
 
 export default function ResourcesPage() {
   const [activeCategory, setActiveCategory] = useState<string | null>(null)
   const [hoverCategory, setHoverCategory] = useState<string | null>(null)
+  const [isUploadDialogOpen, setIsUploadDialogOpen] = useState(false)
+  const [selectedFile, setSelectedFile] = useState<File | null>(null)
+  const [uploading, setUploading] = useState(false)
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(null)
+  const [fileTitle, setFileTitle] = useState("")
+  const [resources, setResources] = useState<ResourceCategory[]>(
+    categoryStructure.map(cat => ({ ...cat, items: [] }))
+  )
+  const { data: session } = useSession()
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+  const [uploadingFile, setUploadingFile] = useState<File | null>(null)
+  const [uploadTitle, setUploadTitle] = useState("")
+  const [uploadDescription, setUploadDescription] = useState("")
+  const [user, setUser] = useState<UserType | null>(null)
+
+  // Fetch files for each category
+  useEffect(() => {
+    const fetchFiles = async () => {
+      try {
+        const response = await fetch('/api/resources/list')
+        if (!response.ok) throw new Error('Failed to fetch files')
+        const files = await response.json()
+        
+        // Update resources with fetched files
+        setResources(prevResources => 
+          prevResources.map(category => ({
+            ...category,
+            items: files
+              .filter((file: any) => file.category === category.title)
+              .map((file: any) => ({
+                href: file.path,
+                text: file.title
+              }))
+          }))
+        )
+      } catch (error) {
+        console.error('Error fetching files:', error)
+        toast.error('Failed to load resources')
+      }
+    }
+
+    fetchFiles()
+  }, [])
 
   // Combine all categories for the tree view
-  const allCategories = [...standardProtocols, courseWorkSyllabus]
+  const allCategories = resources
 
   // The category to display items for (either clicked or hovered)
   const displayCategory = activeCategory || hoverCategory
@@ -110,11 +144,204 @@ export default function ResourcesPage() {
   // Find the category object that matches the current display category
   const currentCategory = allCategories.find((cat) => cat.title === displayCategory)
 
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0])
+    }
+  }
+
+  const handleUpload = async () => {
+    if (!selectedFile || !selectedCategory || !fileTitle) {
+      toast.error("Please fill in all fields")
+      return
+    }
+
+    setUploading(true)
+    const formData = new FormData()
+    formData.append("file", selectedFile)
+    formData.append("category", selectedCategory)
+    formData.append("title", fileTitle)
+
+    try {
+      const response = await fetch("/api/resources/upload", {
+        method: "POST",
+        body: formData,
+      })
+
+      if (!response.ok) {
+        throw new Error("Upload failed")
+      }
+
+      const data = await response.json()
+      
+      // Update the resources state with the new file
+      setResources(prevResources => {
+        return prevResources.map(category => {
+          if (category.title === selectedCategory) {
+            return {
+              ...category,
+              items: [
+                ...category.items,
+                {
+                  href: data.filePath,
+                  text: fileTitle
+                }
+              ]
+            }
+          }
+          return category
+        })
+      })
+
+      toast.success("File uploaded successfully")
+      setIsUploadDialogOpen(false)
+      setSelectedFile(null)
+      setFileTitle("")
+      setSelectedCategory(null)
+    } catch (error) {
+      toast.error("Failed to upload file")
+    } finally {
+      setUploading(false)
+    }
+  }
+
+  const handleDelete = async (filePath: string) => {
+    if (!window.confirm("Are you sure you want to delete this file?")) {
+      return
+    }
+
+    try {
+      const response = await fetch("/api/resources/delete", {
+        method: "DELETE",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ filePath }),
+      })
+
+      if (!response.ok) {
+        throw new Error("Delete failed")
+      }
+
+      // Update the resources state by removing the deleted file
+      setResources(prevResources => {
+        return prevResources.map(category => {
+          return {
+            ...category,
+            items: category.items.filter(item => item.href !== filePath)
+          }
+        })
+      })
+
+      toast.success("File deleted successfully")
+    } catch (error) {
+      toast.error("Failed to delete file")
+    }
+  }
+
+  const handleCategoryClick = (category: string) => {
+    setActiveCategory(activeCategory === category ? null : category)
+  }
+
   return (
     <div className="min-h-screen bg-[#F9FAFB]">
       <header className="bg-gradient-to-r from-[#1B3668] to-[#0A2240] shadow">
         <div className="max-w-7xl mx-auto py-8 px-2 sm:py-10 sm:px-4 lg:px-8">
-          <h1 className="text-2xl sm:text-3xl font-bold text-white">Resources & Information</h1>
+          <div className="flex justify-between items-center">
+            <h1 className="text-2xl sm:text-3xl font-bold text-white">Resources & Information</h1>
+            {session?.user?.isAdmin && (
+              <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
+                <DialogTrigger asChild>
+                  <Button className="bg-white text-[#1B3668] hover:bg-gray-100">
+                    <Upload className="h-4 w-4 mr-2" />
+                    Upload Resource
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Upload New Resource</DialogTitle>
+                    <DialogDescription>
+                      Add a new resource to the selected category
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={handleUpload} className="space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="category">Category</Label>
+                      <Select
+                        value={selectedCategory || ""}
+                        onValueChange={setSelectedCategory}
+                        required
+                      >
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a category" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {allCategories.map((category) => (
+                            <SelectItem key={category.title} value={category.title}>
+                              {category.title}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="title">Title</Label>
+                      <Input
+                        id="title"
+                        value={fileTitle}
+                        onChange={(e) => setFileTitle(e.target.value)}
+                        placeholder="Enter resource title"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="description">Description</Label>
+                      <Textarea
+                        id="description"
+                        value={uploadDescription}
+                        onChange={(e) => setUploadDescription(e.target.value)}
+                        placeholder="Enter resource description"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="file">File</Label>
+                      <Input
+                        id="file"
+                        type="file"
+                        accept=".pdf,.zip"
+                        onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
+                        required
+                      />
+                    </div>
+                    <div className="flex justify-end gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        onClick={() => setIsUploadDialogOpen(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        type="submit"
+                        className="bg-[#1B3668] text-white hover:bg-[#0F2341]"
+                        disabled={uploading}
+                      >
+                        {uploading ? (
+                          <>
+                            <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                            Uploading...
+                          </>
+                        ) : (
+                          "Upload"
+                        )}
+                      </Button>
+                    </div>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
+          </div>
         </div>
       </header>
 
@@ -133,6 +360,7 @@ export default function ResourcesPage() {
               </div>
             </div>
           </CardHeader>
+          
           <CardContent className="p-4 sm:p-6">
             <div className="flex flex-col md:flex-row gap-4 sm:gap-6">
               {/* Left side - Category tree */}
@@ -148,7 +376,7 @@ export default function ResourcesPage() {
                     >
                       <button
                         className="w-full flex items-center p-3 sm:p-4 text-left"
-                        onClick={() => setActiveCategory(activeCategory === category.title ? null : category.title)}
+                        onClick={() => handleCategoryClick(category.title)}
                         onMouseEnter={() => setHoverCategory(category.title)}
                         onMouseLeave={() => setHoverCategory(null)}
                       >
@@ -183,24 +411,33 @@ export default function ResourcesPage() {
                         </div>
                       </div>
                     </div>
-                    <div className="p-3 sm:p-4">
-                      <ul className="grid grid-cols-1 gap-2 sm:gap-3">
-                        {currentCategory.items.map((item, itemIndex) => (
-                          <li key={itemIndex}>
-                            <Link
-                              href={item.href}
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="flex items-center p-2 sm:p-3 rounded-lg text-[#1F2937] bg-[#F9FAFB] hover:bg-[#4C1D95]/10 hover:text-[#4C1D95] transition-all duration-200 group/item"
+                    
+                    <ul className="grid grid-cols-1 gap-2 sm:gap-3 p-4">
+                      {currentCategory.items.map((item, itemIndex) => (
+                        <li key={itemIndex} className="flex items-center justify-between p-2 sm:p-3 rounded-lg text-[#1F2937] bg-[#F9FAFB] hover:bg-[#4C1D95]/10 hover:text-[#4C1D95] transition-all duration-200 group/item">
+                          <Link
+                            href={item.href}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center flex-1"
+                          >
+                            <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0 transition-transform duration-200 group-hover/item:translate-x-1" />
+                            <span className="font-medium text-sm sm:text-base">{item.text}</span>
+                            <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 ml-auto text-[#4C1D95]" />
+                          </Link>
+                          {session?.user?.isAdmin && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="ml-2 text-red-500 hover:text-red-700 hover:bg-red-50"
+                              onClick={() => handleDelete(item.href)}
                             >
-                              <ArrowRight className="h-4 w-4 sm:h-5 sm:w-5 mr-2 sm:mr-3 flex-shrink-0 transition-transform duration-200 group-hover/item:translate-x-1" />
-                              <span className="font-medium text-sm sm:text-base">{item.text}</span>
-                              <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 ml-auto text-[#4C1D95]" />
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </li>
+                      ))}
+                    </ul>
                   </>
                 ) : (
                   <div className="flex flex-col items-center justify-center h-full p-6">
@@ -214,7 +451,7 @@ export default function ResourcesPage() {
           </CardContent>
         </Card>
 
-        <div className="mt-16 text-center">
+        <div className="mt-8 flex justify-center">
           <Button
             asChild
             variant="outline"
