@@ -41,6 +41,15 @@ interface ResourceCategory {
   items: ResourceItem[];
 }
 
+interface UserType {
+  _id: string;
+  name: string;
+  email: string;
+  role: string;
+  isAdmin?: boolean;
+  isSupervisor?: boolean;
+}
+
 // Define the category structure
 const categoryStructure: Omit<ResourceCategory, 'items'>[] = [
   {
@@ -101,9 +110,6 @@ export default function ResourcesPage() {
   const { data: session } = useSession()
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  const [uploadingFile, setUploadingFile] = useState<File | null>(null)
-  const [uploadTitle, setUploadTitle] = useState("")
-  const [uploadDescription, setUploadDescription] = useState("")
   const [user, setUser] = useState<UserType | null>(null)
 
   // Fetch files for each category
@@ -150,7 +156,9 @@ export default function ResourcesPage() {
     }
   }
 
-  const handleUpload = async () => {
+  const handleUpload = async (e: React.FormEvent) => {
+    e.preventDefault()
+    
     if (!selectedFile || !selectedCategory || !fileTitle) {
       toast.error("Please fill in all fields")
       return
@@ -252,7 +260,7 @@ export default function ResourcesPage() {
             {session?.user?.isAdmin && (
               <Dialog open={isUploadDialogOpen} onOpenChange={setIsUploadDialogOpen}>
                 <DialogTrigger asChild>
-                  <Button className="bg-white text-[#1B3668] hover:bg-gray-100">
+                  <Button className="bg-[#1B3668] text-white hover:bg-[#0F2341] transition-colors duration-200">
                     <Upload className="h-4 w-4 mr-2" />
                     Upload Resource
                   </Button>
@@ -291,16 +299,6 @@ export default function ResourcesPage() {
                         value={fileTitle}
                         onChange={(e) => setFileTitle(e.target.value)}
                         placeholder="Enter resource title"
-                        required
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="description">Description</Label>
-                      <Textarea
-                        id="description"
-                        value={uploadDescription}
-                        onChange={(e) => setUploadDescription(e.target.value)}
-                        placeholder="Enter resource description"
                         required
                       />
                     </div>
