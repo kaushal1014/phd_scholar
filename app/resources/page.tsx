@@ -227,9 +227,9 @@ export default function ResourcesPage() {
     }
 
     try {
-      // Extract the actual file path from the API URL
-      const url = new URL(filePath)
-      const actualPath = url.searchParams.get('path')
+      // Extract the path from the API URL format
+      const pathMatch = filePath.match(/path=([^&]+)/)
+      const actualPath = pathMatch ? decodeURIComponent(pathMatch[1]) : null
       
       if (!actualPath) {
         throw new Error("Invalid file path")
