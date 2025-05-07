@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server"
 import { getToken } from "next-auth/jwt"
 import { writeFile, mkdir } from "fs/promises"
 import path from "path"
+import fs from "fs"
 
 // Map category names to their directory names exactly as shown in the resources page
 const categoryToDirMap: { [key: string]: string } = {
@@ -55,14 +56,30 @@ export async function POST(req: NextRequest) {
       await mkdir(uploadDir, { recursive: true })
       
       // Write the file
-      await writeFile(path.join(uploadDir, filename), Buffer.from(await file.arrayBuffer()))
+      const fileBuffer = Buffer.from(await file.arrayBuffer())
+      await writeFile(path.join(uploadDir, filename), fileBuffer)
+
+      // Verify the file was written successfully
+      const filePath = path.join(uploadDir, filename)
+      const stats = await fs.promises.stat(filePath)
+      
+      if (stats.size === 0) {
+        throw new Error("File was not written properly")
+      }
 
       return NextResponse.json(
         { 
           success: true,
-          filePath: `pdf/relatedInformation/${dirName}/${filename}`
+          filePath: `pdf/relatedInformation/${dirName}/${filename}`,
+          fileSize: stats.size
         },
-        { status: 200 }
+        { 
+          status: 200,
+          headers: {
+            'Cache-Control': 'no-store, must-revalidate',
+            'Pragma': 'no-cache'
+          }
+        }
       )
     } catch (error) {
       console.error("Error creating directory or writing file:", error)

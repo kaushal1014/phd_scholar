@@ -1,50 +1,91 @@
 import { NextRequest, NextResponse } from "next/server"
-import { readdir } from "fs/promises"
+import { getToken } from "next-auth/jwt"
+import { readdir, stat } from "fs/promises"
 import path from "path"
 
-// Map directory names to category names
-const dirToCategoryMap: { [key: string]: string } = {
+const categoryMap: { [key: string]: string } = {
   "General_Information": "General Information",
-  "dcM": "Doctoral Committee Meetings",
-  "PhD_Proposal_Defense": "Ph.D. Proposal Defense",
-  "Ph.D._Comprehensive_Exam": "Ph.D. Comprehensive Exam",
-  "Ph.D._Synopsis_Submission": "Ph.D. Synopsis Submission",
-  "Ph.D._Thesis_Format": "Ph.D. Thesis Format",
-  "courseWork": "Course Work Syllabus"
+  "Academic_Regulations": "Academic Regulations",
+  "Research_Guidelines": "Research Guidelines",
+  "Forms_and_Templates": "Forms and Templates",
+  "Other_Resources": "Other Resources"
 }
 
 export async function GET(req: NextRequest) {
   try {
-    const baseDir = path.join(process.cwd(), "public", "pdf", "relatedInformation")
-    const files: { path: string; title: string; category: string }[] = []
-
-    // Read each category directory
-    for (const [dir, category] of Object.entries(dirToCategoryMap)) {
-      try {
-        const dirPath = path.join(baseDir, dir)
-        const fileNames = await readdir(dirPath)
-        
-        // Add each file to the list
-        for (const fileName of fileNames) {
-          if (fileName.endsWith('.pdf') || fileName.endsWith('.zip')) {
-            const extension = fileName.endsWith('.pdf') ? '.pdf' : '.zip'
-            files.push({
-              path: `pdf/relatedInformation/${dir}/${fileName}`,
-              title: fileName.replace(extension, '').replace(/_/g, ' '),
-              category: category
-            })
-          }
-        }
-      } catch (error) {
-        console.error(`Error reading directory ${dir}:`, error)
-        // Continue with other directories even if one fails
-        continue
-      }
+    // Verify authentication
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
+    if (!token) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    return NextResponse.json(files)
+    const searchParams = req.nextUrl.searchParams
+    const category = searchParams.get("category")
+
+    if (!category) {
+      return NextResponse.json({ error: "Category is required" }, { status: 400 })
+    }
+
+    // Map the category to the directory name
+    const directoryName = Object.entries(categoryMap).find(
+      ([_, value]) => value === category
+    )?.[0]
+
+    if (!directoryName) {
+      return NextResponse.json({ error: "Invalid category" }, { status: 400 })
+    }
+
+    const directoryPath = path.join(process.cwd(), "public", "pdf", "relatedInformation", directoryName)
+
+    try {
+      // Check if directory exists
+      const dirStats = await stat(directoryPath)
+      if (!dirStats.isDirectory()) {
+        return NextResponse.json({ error: "Invalid directory" }, { status: 400 })
+      }
+
+      // Read directory contents
+      const files = await readdir(directoryPath)
+      
+      // Get file stats for each file
+      const fileDetails = await Promise.all(
+        files.map(async (file) => {
+          const filePath = path.join(directoryPath, file)
+          const fileStats = await stat(filePath)
+          return {
+            name: file,
+            path: `/pdf/relatedInformation/${directoryName}/${file}`,
+            size: fileStats.size,
+            lastModified: fileStats.mtime,
+            isAdmin: token.isAdmin
+          }
+        })
+      )
+
+      // Filter for PDF and ZIP files only
+      const validFiles = fileDetails.filter(file => 
+        file.name.toLowerCase().endsWith('.pdf') || 
+        file.name.toLowerCase().endsWith('.zip')
+      )
+
+      return NextResponse.json({ 
+        files: validFiles,
+        category: category
+      }, {
+        headers: {
+          'Cache-Control': 'no-store, must-revalidate',
+          'Pragma': 'no-cache'
+        }
+      })
+    } catch (error: any) {
+      if (error.code === 'ENOENT') {
+        return NextResponse.json({ files: [], category: category }, { status: 200 })
+      }
+      console.error("Error reading directory:", error)
+      return NextResponse.json({ error: "Failed to read directory" }, { status: 500 })
+    }
   } catch (error) {
-    console.error("Error listing files:", error)
-    return NextResponse.json({ error: "Failed to list files" }, { status: 500 })
+    console.error("Error in list operation:", error)
+    return NextResponse.json({ error: "Failed to process list request" }, { status: 500 })
   }
 } 
