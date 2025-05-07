@@ -5,18 +5,35 @@ import mime from 'mime-types'
 
 export async function GET(request: Request) {
   try {
-    const { searchParams } = new URL(request.url)
-    const filePath = searchParams.get('path')
-
+    const { searchParams, pathname } = new URL(request.url)
+    
+    // Try to get the file path from query parameter first, then from pathname
+    let filePath = searchParams.get('path')
+    
     if (!filePath) {
-      return new NextResponse('File path is required', { status: 400 })
+      // If no query parameter, try to get it from the pathname
+      // Remove '/api/events/download' from the start if it exists
+      filePath = pathname.replace(/^\/api\/events\/download\/?/, '')
+      // If still no path, return error
+      if (!filePath) {
+        return new NextResponse('File path is required', { status: 400 })
+      }
     }
 
+    // Clean the file path to prevent directory traversal
+    const cleanPath = filePath.split('/').filter(Boolean).join('/')
+    
     // Ensure the file path is within your uploads directory
-    const fullPath = path.join(process.cwd(), 'public', filePath)
+    const fullPath = path.join(process.cwd(), 'public', cleanPath)
     
     // Check if file exists
-    if (!fs.existsSync(fullPath)) {
+    try {
+      const stats = await fs.promises.stat(fullPath)
+      if (!stats.isFile()) {
+        console.error(`Not a file: ${fullPath}`)
+        return new NextResponse('Not a file', { status: 400 })
+      }
+    } catch (error) {
       console.error(`File not found: ${fullPath}`)
       return new NextResponse('File not found', { status: 404 })
     }
