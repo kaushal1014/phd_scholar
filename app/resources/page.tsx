@@ -112,24 +112,30 @@ export default function ResourcesPage() {
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<UserType | null>(null)
 
+  // Combine all categories for the tree view
+  const allCategories = resources
+
+  // The category to display items for (either clicked or hovered)
+  const displayCategory = activeCategory || hoverCategory
+
   // Fetch files for each category
   useEffect(() => {
     const fetchFiles = async () => {
       try {
-        const response = await fetch('/api/resources/list')
+        const response = await fetch('/api/resources/list?category=' + encodeURIComponent(displayCategory || ''))
         if (!response.ok) throw new Error('Failed to fetch files')
-        const files = await response.json()
+        const data = await response.json()
         
         // Update resources with fetched files
         setResources(prevResources => 
           prevResources.map(category => ({
             ...category,
-            items: files
-              .filter((file: any) => file.category === category.title)
-              .map((file: any) => ({
+            items: category.title === data.category ? 
+              data.files.map((file: any) => ({
                 href: file.path,
-                text: file.title
-              }))
+                text: file.name.replace(/\.[^/.]+$/, '') // Remove file extension
+              })) : 
+              category.items
           }))
         )
       } catch (error) {
@@ -138,14 +144,10 @@ export default function ResourcesPage() {
       }
     }
 
-    fetchFiles()
-  }, [])
-
-  // Combine all categories for the tree view
-  const allCategories = resources
-
-  // The category to display items for (either clicked or hovered)
-  const displayCategory = activeCategory || hoverCategory
+    if (displayCategory) {
+      fetchFiles()
+    }
+  }, [displayCategory])
 
   // Find the category object that matches the current display category
   const currentCategory = allCategories.find((cat) => cat.title === displayCategory)
