@@ -134,9 +134,9 @@ export default function ResourcesPage() {
             ...category,
             items: category.title === data.category ? 
               data.files.map((file: any) => ({
-                href: file.path,
+                href: `/api/events/download?path=${encodeURIComponent(file.path)}`,
                 text: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
-                isAdmin: file.isAdmin // Pass through the admin flag
+                isAdmin: file.isAdmin
               })) : 
               category.items
           }))
@@ -198,7 +198,7 @@ export default function ResourcesPage() {
               items: [
                 ...category.items,
                 {
-                  href: data.filePath,
+                  href: `/api/events/download?path=${encodeURIComponent(data.filePath)}`,
                   text: fileTitle,
                   isAdmin: data.isAdmin
                 }
