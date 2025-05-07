@@ -31,6 +31,7 @@ import { Badge } from "@/components/ui/badge"
 interface ResourceItem {
   href: string;
   text: string;
+  isAdmin?: boolean;
 }
 
 interface ResourceCategory {
@@ -108,7 +109,7 @@ export default function ResourcesPage() {
     categoryStructure.map(cat => ({ ...cat, items: [] }))
   )
   const { data: session } = useSession()
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [user, setUser] = useState<UserType | null>(null)
 
@@ -121,6 +122,7 @@ export default function ResourcesPage() {
   // Fetch files for each category
   useEffect(() => {
     const fetchFiles = async () => {
+      setLoading(true)
       try {
         const response = await fetch('/api/resources/list?category=' + encodeURIComponent(displayCategory || ''))
         if (!response.ok) throw new Error('Failed to fetch files')
@@ -133,7 +135,8 @@ export default function ResourcesPage() {
             items: category.title === data.category ? 
               data.files.map((file: any) => ({
                 href: file.path,
-                text: file.name.replace(/\.[^/.]+$/, '') // Remove file extension
+                text: file.name.replace(/\.[^/.]+$/, ''), // Remove file extension
+                isAdmin: file.isAdmin // Pass through the admin flag
               })) : 
               category.items
           }))
@@ -141,6 +144,8 @@ export default function ResourcesPage() {
       } catch (error) {
         console.error('Error fetching files:', error)
         toast.error('Failed to load resources')
+      } finally {
+        setLoading(false)
       }
     }
 
@@ -194,7 +199,8 @@ export default function ResourcesPage() {
                 ...category.items,
                 {
                   href: data.filePath,
-                  text: fileTitle
+                  text: fileTitle,
+                  isAdmin: data.isAdmin
                 }
               ]
             }
@@ -398,7 +404,12 @@ export default function ResourcesPage() {
 
               {/* Right side - Items for selected category */}
               <div className="w-full md:w-2/3 border rounded-lg overflow-hidden">
-                {currentCategory ? (
+                {loading ? (
+                  <div className="flex flex-col items-center justify-center h-full p-6">
+                    <Loader2 className="h-10 w-10 text-[#4C1D95] mb-4 animate-spin" />
+                    <h3 className="text-base sm:text-lg font-semibold text-[#1F2937] mb-2 text-center">Loading resources...</h3>
+                  </div>
+                ) : currentCategory ? (
                   <>
                     <div className="p-3 sm:p-4 bg-[#F9FAFB] border-b">
                       <div className="flex items-center">
@@ -425,7 +436,7 @@ export default function ResourcesPage() {
                             <span className="font-medium text-sm sm:text-base">{item.text}</span>
                             <ExternalLink className="h-4 w-4 sm:h-5 sm:w-5 ml-auto text-[#4C1D95]" />
                           </Link>
-                          {session?.user?.isAdmin && (
+                          {item.isAdmin && (
                             <Button
                               variant="ghost"
                               size="icon"

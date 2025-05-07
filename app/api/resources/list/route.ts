@@ -16,11 +16,9 @@ const categoryMap: { [key: string]: string } = {
 
 export async function GET(req: NextRequest) {
   try {
-    // Verify authentication
+    // Get token but don't require authentication
     const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET })
-    if (!token) {
-      return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
-    }
+    const isAdmin = token?.isAdmin || false
 
     const searchParams = req.nextUrl.searchParams
     const category = searchParams.get("category")
@@ -64,7 +62,7 @@ export async function GET(req: NextRequest) {
             path: `/pdf/relatedInformation/${directoryName}/${file}`,
             size: fileStats.size,
             lastModified: fileStats.mtime,
-            isAdmin: token.isAdmin
+            isAdmin: isAdmin // Only set isAdmin if user is authenticated and is admin
           }
         })
       )
