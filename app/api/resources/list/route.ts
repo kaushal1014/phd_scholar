@@ -3,12 +3,15 @@ import { getToken } from "next-auth/jwt"
 import { readdir, stat } from "fs/promises"
 import path from "path"
 
+// Map directory names to category names exactly as shown in the resources page
 const categoryMap: { [key: string]: string } = {
   "General_Information": "General Information",
-  "Academic_Regulations": "Academic Regulations",
-  "Research_Guidelines": "Research Guidelines",
-  "Forms_and_Templates": "Forms and Templates",
-  "Other_Resources": "Other Resources"
+  "dcM": "Doctoral Committee Meetings",
+  "PhD_Proposal_Defense": "Ph.D. Proposal Defense",
+  "Ph.D._Comprehensive_Exam": "Ph.D. Comprehensive Exam",
+  "Ph.D._Synopsis_Submission": "Ph.D. Synopsis Submission",
+  "Ph.D._Thesis_Format": "Ph.D. Thesis Format",
+  "courseWork": "Course Work Syllabus"
 }
 
 export async function GET(req: NextRequest) {
@@ -32,20 +35,24 @@ export async function GET(req: NextRequest) {
     )?.[0]
 
     if (!directoryName) {
+      console.error(`Invalid category: ${category}`)
       return NextResponse.json({ error: "Invalid category" }, { status: 400 })
     }
 
     const directoryPath = path.join(process.cwd(), "public", "pdf", "relatedInformation", directoryName)
+    console.log(`Looking for files in: ${directoryPath}`)
 
     try {
       // Check if directory exists
       const dirStats = await stat(directoryPath)
       if (!dirStats.isDirectory()) {
+        console.error(`Path is not a directory: ${directoryPath}`)
         return NextResponse.json({ error: "Invalid directory" }, { status: 400 })
       }
 
       // Read directory contents
       const files = await readdir(directoryPath)
+      console.log(`Found ${files.length} files in directory`)
       
       // Get file stats for each file
       const fileDetails = await Promise.all(
@@ -68,6 +75,7 @@ export async function GET(req: NextRequest) {
         file.name.toLowerCase().endsWith('.zip')
       )
 
+      console.log(`Returning ${validFiles.length} valid files`)
       return NextResponse.json({ 
         files: validFiles,
         category: category
@@ -79,6 +87,7 @@ export async function GET(req: NextRequest) {
       })
     } catch (error: any) {
       if (error.code === 'ENOENT') {
+        console.log(`Directory not found: ${directoryPath}`)
         return NextResponse.json({ files: [], category: category }, { status: 200 })
       }
       console.error("Error reading directory:", error)
