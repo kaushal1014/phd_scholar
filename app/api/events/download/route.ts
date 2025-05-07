@@ -17,6 +17,7 @@ export async function GET(request: Request) {
     
     // Check if file exists
     if (!fs.existsSync(fullPath)) {
+      console.error(`File not found: ${fullPath}`)
       return new NextResponse('File not found', { status: 404 })
     }
 
@@ -33,12 +34,16 @@ export async function GET(request: Request) {
     const headers: Record<string, string> = {
       'Content-Type': mimeType,
       'Content-Length': fileBuffer.length.toString(),
+      'Cache-Control': 'no-store, must-revalidate',
+      'Pragma': 'no-cache',
+      'Expires': '0'
     }
 
     // For PDFs, add additional headers to allow embedding
     if (mimeType === 'application/pdf') {
       headers['Content-Disposition'] = 'inline'
       headers['X-Content-Type-Options'] = 'nosniff'
+      headers['Access-Control-Allow-Origin'] = '*'
     } else {
       headers['Content-Disposition'] = `attachment; filename="${fileName}"`
     }
