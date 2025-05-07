@@ -57,27 +57,34 @@ export async function POST(req: NextRequest) {
       
       // Write the file
       const fileBuffer = Buffer.from(await file.arrayBuffer())
-      await writeFile(path.join(uploadDir, filename), fileBuffer)
+      const filePath = path.join(uploadDir, filename)
+      await writeFile(filePath, fileBuffer)
 
       // Verify the file was written successfully
-      const filePath = path.join(uploadDir, filename)
       const stats = await fs.promises.stat(filePath)
       
       if (stats.size === 0) {
         throw new Error("File was not written properly")
       }
 
+      // Set file permissions to ensure it's readable
+      await fs.promises.chmod(filePath, 0o644)
+
+      // Return success with the file path and additional metadata
       return NextResponse.json(
         { 
           success: true,
           filePath: `pdf/relatedInformation/${dirName}/${filename}`,
-          fileSize: stats.size
+          fileSize: stats.size,
+          isAdmin: token.isAdmin
         },
         { 
           status: 200,
           headers: {
             'Cache-Control': 'no-store, must-revalidate',
-            'Pragma': 'no-cache'
+            'Pragma': 'no-cache',
+            'X-File-Path': `pdf/relatedInformation/${dirName}/${filename}`,
+            'X-File-Size': stats.size.toString()
           }
         }
       )
