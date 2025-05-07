@@ -12,6 +12,7 @@ export async function DELETE(req: NextRequest) {
     }
 
     const { filePath } = await req.json()
+    console.log("Received delete request for file:", filePath)
 
     if (!filePath) {
       return NextResponse.json({ error: "File path is required" }, { status: 400 })
@@ -19,21 +20,25 @@ export async function DELETE(req: NextRequest) {
 
     // Construct the full path to the file
     const fullPath = path.join(process.cwd(), "public", filePath)
+    console.log("Full path to delete:", fullPath)
 
     try {
       // Check if file exists and get its stats
       const stats = await stat(fullPath)
       if (!stats.isFile()) {
+        console.error("Path is not a file:", fullPath)
         return NextResponse.json({ error: "Not a file" }, { status: 400 })
       }
 
       // Delete the file
       await unlink(fullPath)
+      console.log("File deleted successfully:", fullPath)
 
       // Verify the file was deleted
       try {
         await stat(fullPath)
         // If we get here, the file still exists
+        console.error("File still exists after deletion:", fullPath)
         return NextResponse.json({ error: "File could not be deleted" }, { status: 500 })
       } catch (error) {
         // File was successfully deleted
@@ -51,6 +56,7 @@ export async function DELETE(req: NextRequest) {
     } catch (error: any) {
       // If file doesn't exist, return success (idempotent delete)
       if (error.code === 'ENOENT') {
+        console.log("File already deleted:", fullPath)
         return NextResponse.json({ 
           success: true,
           message: "File already deleted"

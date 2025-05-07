@@ -235,6 +235,8 @@ export default function ResourcesPage() {
         throw new Error("Invalid file path")
       }
 
+      console.log("Attempting to delete file:", actualPath)
+
       const response = await fetch("/api/resources/delete", {
         method: "DELETE",
         headers: {
@@ -243,8 +245,10 @@ export default function ResourcesPage() {
         body: JSON.stringify({ filePath: actualPath }),
       })
 
+      const data = await response.json()
+
       if (!response.ok) {
-        throw new Error("Delete failed")
+        throw new Error(data.error || "Delete failed")
       }
 
       // Update the resources state by removing the deleted file
@@ -260,7 +264,7 @@ export default function ResourcesPage() {
       toast.success("File deleted successfully")
     } catch (error) {
       console.error("Error deleting file:", error)
-      toast.error("Failed to delete file")
+      toast.error(error instanceof Error ? error.message : "Failed to delete file")
     }
   }
 
