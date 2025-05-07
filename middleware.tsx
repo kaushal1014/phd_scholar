@@ -21,9 +21,8 @@ export const config = {
      * - _next/static (static files)
      * - _next/image (image optimization files)
      * - favicon.ico (favicon file)
-     * - pdf/ (PDF files in public directory)
      */
-    "/((?!api/user/phd-scholar/course-certificate|_next/static|_next/image|favicon.ico|pdf/).*)",
+    "/((?!api/user/phd-scholar/course-certificate|_next/static|_next/image|favicon.ico).*)",
   ],
 }
 
