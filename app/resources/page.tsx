@@ -227,12 +227,20 @@ export default function ResourcesPage() {
     }
 
     try {
+      // Extract the actual file path from the API URL
+      const url = new URL(filePath)
+      const actualPath = url.searchParams.get('path')
+      
+      if (!actualPath) {
+        throw new Error("Invalid file path")
+      }
+
       const response = await fetch("/api/resources/delete", {
         method: "DELETE",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ filePath }),
+        body: JSON.stringify({ filePath: actualPath }),
       })
 
       if (!response.ok) {
@@ -251,6 +259,7 @@ export default function ResourcesPage() {
 
       toast.success("File deleted successfully")
     } catch (error) {
+      console.error("Error deleting file:", error)
       toast.error("Failed to delete file")
     }
   }
