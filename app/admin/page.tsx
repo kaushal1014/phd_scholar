@@ -14,6 +14,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js'
 import { Pie } from 'react-chartjs-2'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { toast } from "react-toastify"
+import { ScholarStatistics } from '../components/scholar-statistics'
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
@@ -220,30 +221,8 @@ export default function AdminUsers() {
         <AdminTracker />
       </div>
 
-      {/* PhD Scholar Statistics Section */}
-      <div className="w-full max-w-2xl mx-auto my-8">
-        <h2 className="text-xl font-bold mb-4 text-[#1B3668]">PhD/MTech Program Distribution</h2>
-        {[
-          { label: 'PhD Full Time', value: phdStats.phdFullTime, color: 'bg-green-500' },
-          { label: 'PhD Part Time (Internal)', value: phdStats.phdPartTimeInternal, color: 'bg-purple-500' },
-          { label: 'PhD Part Time (External)', value: phdStats.phdPartTimeExternal, color: 'bg-orange-500' },
-          { label: 'MTech Full Time', value: phdStats.mtechFullTime, color: 'bg-red-500' },
-          { label: 'MTech Part Time', value: phdStats.mtechPartTime, color: 'bg-blue-500' },
-        ].map((item, idx) => (
-          <div key={item.label} className="flex items-center mb-4">
-            <span className="w-48 text-sm font-medium text-gray-700">{item.label}</span>
-            <div className="flex-1 h-8 relative bg-gray-200 rounded overflow-hidden mx-2">
-              <div
-                className={`${item.color} h-full flex items-center pl-4 text-white font-bold text-base transition-all duration-500`}
-                style={{ width: `${phdStats.total ? (item.value / phdStats.total) * 100 : 0}%`, minWidth: item.value > 0 ? '2.5rem' : 0 }}
-              >
-                {item.value}
-              </div>
-            </div>
-          </div>
-        ))}
-        <div className="flex justify-end text-xs text-gray-500 mt-2">Total Scholars: {phdStats.total}</div>
-      </div>
+      {/* Scholar Statistics Section */}
+      <ScholarStatistics />
 
       {/* User Management Section */}
       <Card className="shadow-md">
