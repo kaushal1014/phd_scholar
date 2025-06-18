@@ -345,7 +345,6 @@ const PhDScholarForm: React.FC = () => {
     } else {
       setFormData({ ...formData, [name]: value });
     }
-    console.log(formData)
   };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -353,17 +352,14 @@ const PhDScholarForm: React.FC = () => {
 
     try {
       const response = await axios.post('/api/signup', formData);
-      if (response.status === 200) {
-        notifySucc(response.data.message);
-        localStorage.clear();
-        setTimeout(() => {
-          router.push('login');  // Redirect after a brief delay
+      notifySucc(response.data.message);
+      localStorage.clear();
+      setTimeout(() => {
+        router.push('login');  // Redirect after a brief delay
       }, 1500);
-      }
     } catch (err: any) {
-      console.log('Axios Error:', err); // Log full error for further details
-      const errorMsg = err.response?.data?.message || err.message;
-      notifyErr(errorMsg); //doesnt work clearly, fix!
+      const errorMsg = err.response?.data?.message || err.message || 'An error occurred during signup';
+      notifyErr(errorMsg);
     }
   };
 

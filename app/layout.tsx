@@ -2,6 +2,7 @@ import localFont from "next/font/local"
 import "./globals.css"
 import { AuthProvider } from "./Providers"
 import Header from "@/components/Header"
+import { ToastContainer, toast } from 'react-toastify';
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -28,6 +29,7 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-background text-foreground`}
       >
         <AuthProvider>
+          <ToastContainer />
           <Header />
           <main className="w-full px-4 sm:px-6 lg:px-8 py-4 sm:py-8">{children}</main>
           <footer className="w-full bg-gradient-to-r from-[#1B3668] via-[#0A2240] to-[#1B3668] text-white py-8 sm:py-16 mt-12 sm:mt-24 relative overflow-hidden">
