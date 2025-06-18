@@ -6,6 +6,7 @@ export async function GET() {
   try {
     await connectDB();
     const users = await User.find();
+    console.log("AllUsers API: Found", users.length, "users in database");
     const mappedUsers = users.map(user => ({
       _id: user._id,
       firstName: user.firstName,
@@ -17,6 +18,7 @@ export async function GET() {
       isSupervisor: user.isSupervisor,
       phdScholar: user.phdScholar,
     }));
+    console.log("AllUsers API: Returning", mappedUsers.length, "mapped users");
     return NextResponse.json(mappedUsers);
   } catch (error) {
     console.error('Error fetching user IDs:', error);

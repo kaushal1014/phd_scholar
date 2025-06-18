@@ -6,7 +6,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import type { User } from "@/types"
 import { useSession } from "next-auth/react"
 import { AdminTracker } from "@/components/admin-tracker"
-import { Loader2, Search, UserPlus, Trash2 } from "lucide-react"
+import { Loader2, Search, UserPlus, Trash2, RefreshCw } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import Link from "next/link"
@@ -37,86 +37,88 @@ export default function AdminUsers() {
   const router = useRouter()
   const { data: session, status } = useSession()
 
+  const fetchUsers = async () => {
+    try {
+      const response = await fetch("/api/allUsers")
+      const data = await response.json()
+      console.log("Fetched users from API:", data.length, "users")
+      const mappedUsers = data.map((user: any) => ({
+        id: user._id,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        email: user.email,
+        password: user.password,
+        isVerified: user.isVerified,
+        isAdmin: user.isAdmin,
+        isSupervisor: user.isSupervisor,
+        phdScholar: user.phdScholar,
+      }))
+      console.log("Mapped users:", mappedUsers.length, "users")
+      setUsers(mappedUsers)
+
+      // Fetch PhD scholar details for statistics and user details
+      const phdScholarsPromises = mappedUsers
+        .filter((user: User) => user.phdScholar && !user.isAdmin)
+        .map(async (user: User) => {
+          try {
+            const response = await fetch(`/api/user/phd-scholar/${user.phdScholar}`)
+            if (!response.ok) {
+              console.error(`Failed to fetch PhD scholar data for user ${user.id}`)
+              return null
+            }
+            const data = await response.json()
+            return {
+              userId: user.id,
+              ...data
+            }
+          } catch (error) {
+            console.error(`Error fetching PhD scholar data for user ${user.id}:`, error)
+            return null
+          }
+        })
+
+      const phdScholarsResults = await Promise.all(phdScholarsPromises)
+      const phdScholars = phdScholarsResults.filter(scholar => scholar !== null)
+
+      // Create a map of user details
+      const detailsMap = phdScholars.reduce((acc: any, scholar: any) => {
+        acc[scholar.userId] = scholar
+        return acc
+      }, {})
+      setUserDetails(detailsMap)
+
+      // Calculate statistics
+      const stats = {
+        total: phdScholars.length,
+        phdFullTime: phdScholars.filter(scholar => 
+          scholar.data?.admissionDetails?.modeOfProgram === 'PhD Full time'
+        ).length,
+        phdPartTimeInternal: phdScholars.filter(scholar => 
+          scholar.data?.admissionDetails?.modeOfProgram === 'PhD part time (internal candidate)'
+        ).length,
+        phdPartTimeExternal: phdScholars.filter(scholar => 
+          scholar.data?.admissionDetails?.modeOfProgram === 'PhD part time (external candidate)'
+        ).length,
+        mtechFullTime: phdScholars.filter(scholar => 
+          scholar.data?.admissionDetails?.modeOfProgram === 'Mtech full time'
+        ).length,
+        mtechPartTime: phdScholars.filter(scholar => 
+          scholar.data?.admissionDetails?.modeOfProgram === 'Mtech part time'
+        ).length
+      }
+
+      setPhdStats(stats)
+      setLoading(false)
+    } catch (error) {
+      console.error("Error fetching users:", error)
+      setLoading(false)
+    }
+  }
+
   useEffect(() => {
     // Ensure session is loaded before proceeding
     if (status === "loading") {
       return
-    }
-
-    const fetchUsers = async () => {
-      try {
-        const response = await fetch("/api/allUsers")
-        const data = await response.json()
-        const mappedUsers = data.map((user: any) => ({
-          id: user._id,
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          password: user.password,
-          isVerified: user.isVerified,
-          isAdmin: user.isAdmin,
-          isSupervisor: user.isSupervisor,
-          phdScholar: user.phdScholar,
-        }))
-        setUsers(mappedUsers)
-
-        // Fetch PhD scholar details for statistics and user details
-        const phdScholarsPromises = mappedUsers
-          .filter((user: User) => user.phdScholar && !user.isAdmin)
-          .map(async (user: User) => {
-            try {
-              const response = await fetch(`/api/user/phd-scholar/${user.phdScholar}`)
-              if (!response.ok) {
-                console.error(`Failed to fetch PhD scholar data for user ${user.id}`)
-                return null
-              }
-              const data = await response.json()
-              return {
-                userId: user.id,
-                ...data
-              }
-            } catch (error) {
-              console.error(`Error fetching PhD scholar data for user ${user.id}:`, error)
-              return null
-            }
-          })
-
-        const phdScholarsResults = await Promise.all(phdScholarsPromises)
-        const phdScholars = phdScholarsResults.filter(scholar => scholar !== null)
-
-        // Create a map of user details
-        const detailsMap = phdScholars.reduce((acc: any, scholar: any) => {
-          acc[scholar.userId] = scholar
-          return acc
-        }, {})
-        setUserDetails(detailsMap)
-
-        // Calculate statistics
-        const stats = {
-          total: phdScholars.length,
-          phdFullTime: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram === 'PhD Full time'
-          ).length,
-          phdPartTimeInternal: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram === 'PhD part time (internal candidate)'
-          ).length,
-          phdPartTimeExternal: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram === 'PhD part time (external candidate)'
-          ).length,
-          mtechFullTime: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram === 'Mtech full time'
-          ).length,
-          mtechPartTime: phdScholars.filter(scholar => 
-            scholar.data?.admissionDetails?.modeOfProgram === 'Mtech part time'
-          ).length
-        }
-
-        setPhdStats(stats)
-        setLoading(false)
-      } catch (error) {
-        console.error("Error fetching users:", error)
-        setLoading(false)
-      }
     }
 
     console.log("checking")
@@ -154,6 +156,16 @@ export default function AdminUsers() {
       }
     } catch (error) {
       toast.error("Failed to delete user")
+    }
+  }
+
+  const handleRefresh = async () => {
+    setLoading(true)
+    try {
+      await fetchUsers()
+      toast.success("User list refreshed successfully")
+    } catch (error) {
+      toast.error("Failed to refresh user list")
     }
   }
 
@@ -201,6 +213,15 @@ export default function AdminUsers() {
       <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-2 sm:gap-0">
         <h1 className="text-xl sm:text-2xl font-bold text-[#1B3668]">Admin Dashboard</h1>
         <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+          <Button 
+            onClick={handleRefresh} 
+            disabled={loading}
+            variant="outline" 
+            className="w-full sm:w-auto"
+          >
+            <RefreshCw className={`h-4 w-4 mr-2 ${loading ? 'animate-spin' : ''}`} />
+            Refresh
+          </Button>
           <Link href="/admin/create-user" className="w-full sm:w-auto">
             <Button className="bg-[#1B3668] hover:bg-[#1B3668]/90 w-full sm:w-auto">
               <UserPlus className="h-4 w-4 mr-2" />
