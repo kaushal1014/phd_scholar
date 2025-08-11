@@ -28,7 +28,18 @@ interface ErrorResponse {
   details?: string
 }
 
-export function ScholarStatistics() {
+interface ScholarStatisticsProps {
+  stats?: {
+    total: number
+    phdFullTime: number
+    phdPartTimeInternal: number
+    phdPartTimeExternal: number
+    mtechFullTime: number
+    mtechPartTime: number
+  }
+}
+
+export function ScholarStatistics({ stats }: ScholarStatisticsProps) {
   const [statistics, setStatistics] = useState<Statistics | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -36,6 +47,23 @@ export function ScholarStatistics() {
   const [drilldownGroup, setDrilldownGroup] = useState<string | null>(null)
 
   useEffect(() => {
+    // If stats are provided as props, use them instead of fetching
+    if (stats) {
+      // Convert the passed stats to the expected format
+      const convertedStats: Statistics = {
+        total: stats.total,
+        modeStats: {
+          FT: stats.phdFullTime,
+          IPT: stats.phdPartTimeInternal,
+          EPT: stats.phdPartTimeExternal
+        },
+        facultyStats: {} // We'll keep this empty when using passed stats
+      }
+      setStatistics(convertedStats)
+      setLoading(false)
+      return
+    }
+
     const fetchStatistics = async () => {
       try {
         const response = await fetch('/api/admin/statistics')
@@ -64,7 +92,7 @@ export function ScholarStatistics() {
     }
 
     fetchStatistics()
-  }, [])
+  }, [stats])
 
   if (loading) {
     return (
@@ -91,7 +119,7 @@ export function ScholarStatistics() {
     )
   }
 
-  if (!statistics || !statistics.facultyStats || !statistics.modeStats) {
+  if (!statistics || !statistics.modeStats) {
     return (
       <Alert>
         <AlertCircle className="h-4 w-4" />
@@ -102,6 +130,9 @@ export function ScholarStatistics() {
       </Alert>
     )
   }
+
+  // When using passed stats, we might not have facultyStats
+  const hasFacultyStats = statistics.facultyStats && Object.keys(statistics.facultyStats).length > 0
 
   // Add this function to clean faculty names
   function cleanFacultyName(name: string) {
@@ -138,36 +169,39 @@ export function ScholarStatistics() {
     return name;
   }
 
-  // Prepare data for faculty chart with Engineering aggregation
+  // Prepare data for faculty chart with Engineering aggregation (only if we have faculty stats)
   const facultyAgg: { [key: string]: { FT: number, IPT: number, EPT: number } } = {};
+  let facultyData: any[] = [];
 
-  Object.entries(statistics.facultyStats).forEach(([faculty, stats]) => {
-    let name = cleanFacultyName(faculty);
-    if (name.toUpperCase().replace(/\s+/g, '') === 'DIRECTPHD') return; // Skip Direct PhD
-    name = mapToEngineering(name);
-    name = mapToPharmacy(name);
+  if (hasFacultyStats) {
+    Object.entries(statistics.facultyStats).forEach(([faculty, stats]) => {
+      let name = cleanFacultyName(faculty);
+      if (name.toUpperCase().replace(/\s+/g, '') === 'DIRECTPHD') return; // Skip Direct PhD
+      name = mapToEngineering(name);
+      name = mapToPharmacy(name);
 
-    if (!facultyAgg[name]) {
-      facultyAgg[name] = { FT: 0, IPT: 0, EPT: 0 };
-    }
-    facultyAgg[name].FT += stats.FT;
-    facultyAgg[name].IPT += stats.IPT;
-    facultyAgg[name].EPT += stats.EPT;
-  });
+      if (!facultyAgg[name]) {
+        facultyAgg[name] = { FT: 0, IPT: 0, EPT: 0 };
+      }
+      facultyAgg[name].FT += stats.FT;
+      facultyAgg[name].IPT += stats.IPT;
+      facultyAgg[name].EPT += stats.EPT;
+    });
 
-  // Prepare and sort faculty data with 'total' for sorting
-  const facultyDataWithTotal = Object.entries(facultyAgg)
-    .map(([name, stats]) => ({
-      name,
-      'Full Time': stats.FT,
-      'Internal Part Time': stats.IPT,
-      'External Part Time': stats.EPT,
-      total: stats.FT + stats.IPT + stats.EPT
-    }))
-    .sort((a, b) => b.total - a.total); // Sort descending by total
+    // Prepare and sort faculty data with 'total' for sorting
+    const facultyDataWithTotal = Object.entries(facultyAgg)
+      .map(([name, stats]) => ({
+        name,
+        'Full Time': stats.FT,
+        'Internal Part Time': stats.IPT,
+        'External Part Time': stats.EPT,
+        total: stats.FT + stats.IPT + stats.EPT
+      }))
+      .sort((a, b) => b.total - a.total); // Sort descending by total
 
-  // Prepare facultyData for display (without 'total')
-  const facultyData = facultyDataWithTotal.map(({ total, ...rest }) => rest);
+    // Prepare facultyData for display (without 'total')
+    facultyData = facultyDataWithTotal.map(({ total, ...rest }) => rest);
+  }
 
   // Drilldown data for Engineering, Science, or Pharmacy (based on Department field from CSV)
   let drilldownData: any[] = [];
@@ -240,7 +274,7 @@ export function ScholarStatistics() {
             </Card>
           </div>
 
-          {facultyData.length > 0 ? (
+          {hasFacultyStats && facultyData.length > 0 ? (
             drilldownGroup ? (
               <div className="h-[400px] mb-6">
                 <button onClick={() => setDrilldownGroup(null)} className="mb-2 text-blue-600 underline">Back</button>
@@ -308,34 +342,36 @@ export function ScholarStatistics() {
 
           {/* Summary Table and Mode-wise Chart Side by Side */}
           <div className="flex flex-row gap-x-8 mt-8 w-full">
-            {/* Enhanced Table */}
-            <div className="w-2/3 overflow-x-auto">
-              <h3 className="text-xl font-bold mb-4 text-gray-800">Summary Table (Top-level Groups)</h3>
-              <table className="min-w-full border border-gray-200 rounded-lg shadow-sm bg-white">
-                <thead className="bg-gray-100 sticky top-0 z-10">
-                  <tr>
-                    <th className="px-4 py-3 border-b font-semibold text-gray-700">Group</th>
-                    <th className="px-4 py-3 border-b font-semibold text-gray-700">Full Time</th>
-                    <th className="px-4 py-3 border-b font-semibold text-gray-700">Internal Part Time</th>
-                    <th className="px-4 py-3 border-b font-semibold text-gray-700">External Part Time</th>
-                    <th className="px-4 py-3 border-b font-semibold text-gray-700">Total</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {facultyData.map((row, idx) => (
-                    <tr key={row.name} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
-                      <td className="px-4 py-2 border-b font-medium text-gray-800">{row.name}</td>
-                      <td className="px-4 py-2 border-b text-center">{row['Full Time']}</td>
-                      <td className="px-4 py-2 border-b text-center">{row['Internal Part Time']}</td>
-                      <td className="px-4 py-2 border-b text-center">{row['External Part Time']}</td>
-                      <td className="px-4 py-2 border-b text-center font-semibold">{row['Full Time'] + row['Internal Part Time'] + row['External Part Time']}</td>
+            {/* Enhanced Table - only show if we have faculty stats */}
+            {hasFacultyStats && (
+              <div className="w-2/3 overflow-x-auto">
+                <h3 className="text-xl font-bold mb-4 text-gray-800">Summary Table (Top-level Groups)</h3>
+                <table className="min-w-full border border-gray-200 rounded-lg shadow-sm bg-white">
+                  <thead className="bg-gray-100 sticky top-0 z-10">
+                    <tr>
+                      <th className="px-4 py-3 border-b font-semibold text-gray-700">Group</th>
+                      <th className="px-4 py-3 border-b font-semibold text-gray-700">Full Time</th>
+                      <th className="px-4 py-3 border-b font-semibold text-gray-700">Internal Part Time</th>
+                      <th className="px-4 py-3 border-b font-semibold text-gray-700">External Part Time</th>
+                      <th className="px-4 py-3 border-b font-semibold text-gray-700">Total</th>
                     </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+                  </thead>
+                  <tbody>
+                    {facultyData.map((row, idx) => (
+                      <tr key={row.name} className={idx % 2 === 0 ? 'bg-gray-50' : 'bg-white'}>
+                        <td className="px-4 py-2 border-b font-medium text-gray-800">{row.name}</td>
+                        <td className="px-4 py-2 border-b text-center">{row['Full Time']}</td>
+                        <td className="px-4 py-2 border-b text-center">{row['Internal Part Time']}</td>
+                        <td className="px-4 py-2 border-b text-center">{row['External Part Time']}</td>
+                        <td className="px-4 py-2 border-b text-center font-semibold">{row['Full Time'] + row['Internal Part Time'] + row['External Part Time']}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
             {/* Enhanced Chart Card */}
-            <div className="w-1/3 flex justify-center items-start">
+            <div className={`${hasFacultyStats ? 'w-1/3' : 'w-full'} flex justify-center items-start`}>
               <div className="w-full max-w-xs bg-white rounded-lg shadow-md p-4 flex flex-col items-center">
                 <h3 className="text-xl font-bold mb-4 text-gray-800">Mode-wise Distribution</h3>
                 <ResponsiveContainer width="100%" height={200}>

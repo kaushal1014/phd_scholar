@@ -243,7 +243,7 @@ export default function AdminUsers() {
       </div>
 
       {/* Scholar Statistics Section */}
-      <ScholarStatistics />
+      <ScholarStatistics stats={phdStats} />
 
       {/* User Management Section */}
       <Card className="shadow-md">
