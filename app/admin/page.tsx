@@ -39,7 +39,7 @@ export default function AdminUsers() {
 
   const fetchUsers = async () => {
     try {
-      const response = await fetch("/api/allUsers")
+      const response = await fetch("/api/allUsers", { cache: "no-store" })
       const data = await response.json()
       console.log("Fetched users from API:", data.length, "users")
       const mappedUsers = data.map((user: any) => ({
