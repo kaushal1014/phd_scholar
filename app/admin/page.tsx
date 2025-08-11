@@ -61,7 +61,7 @@ export default function AdminUsers() {
         .filter((user: User) => user.phdScholar && !user.isAdmin)
         .map(async (user: User) => {
           try {
-            const response = await fetch(`/api/user/phd-scholar/${user.phdScholar}`)
+            const response = await fetch(`/api/user/phd-scholar/${user.phdScholar}`, { cache: "no-store" })
             if (!response.ok) {
               console.error(`Failed to fetch PhD scholar data for user ${user.id}`)
               return null
